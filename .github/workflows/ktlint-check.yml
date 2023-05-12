@@ -12,10 +12,11 @@ on:
 
 env:
   DB_PASS: ${{ secrets.DB_PASS }}
+  BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 
 jobs:
   lint_check:
-    name: ktlintcheck
+    name: ktlint check
     timeout-minutes: 5
     runs-on: ubuntu-lates
     steps:
