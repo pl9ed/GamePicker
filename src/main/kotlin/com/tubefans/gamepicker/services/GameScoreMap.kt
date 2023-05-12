@@ -13,8 +13,8 @@ class GameScoreMap(
     init {
         botUsers.forEach { user ->
             user.gameMap.forEach { (game, score) ->
-                map[game]?.add(UserScore(user.username, score)) ?: run {
-                    map[game] = sortedSetOf(UserScore(user.username, score))
+                map[game]?.add(UserScore(user, score)) ?: run {
+                    map[game] = sortedSetOf(UserScore(user, score))
                 }
             }
         }
@@ -36,10 +36,10 @@ class GameScoreMap(
     fun getTopPlayersForGame(game: String, n: Int = 3): List<UserScore> =
         map[game]?.sortedDescending()?.take(n) ?: emptyList()
 
-    fun getNonPlayersForGame(game: String): List<String> =
+    fun getNonPlayersForGame(game: String): List<BotUser> =
         map[game]?.filter {
             it.score == 0L
         }?.map {
-            it.username
+            it.user
         } ?: emptyList()
 }

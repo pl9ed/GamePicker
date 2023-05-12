@@ -65,12 +65,12 @@ class GameScoreMapTest {
 
     @Test
     fun `should get top players for a game`() {
-        val expectedList = listOf(user1.username, user3.username)
+        val expectedList = listOf(user1, user3)
         val gameScoreMap = GameScoreMap(listOf(user1, user2, user3))
         assertEquals(
             expectedList,
             gameScoreMap.getTopPlayersForGame("game1", 2)
-                .map { it.username }
+                .map { it.user }
         )
     }
 
@@ -82,12 +82,12 @@ class GameScoreMapTest {
 
         assertEquals(1, game1NonPlayers.size)
         assertEquals(
-            user2.username,
+            user2,
             game1NonPlayers.first()
         )
 
         assertEquals(
-            listOf(user1, user2, user3).map { it.username }.toSet(),
+            listOf(user1, user2, user3).toSet(),
             game4NonPlayers.toSet()
         )
     }
