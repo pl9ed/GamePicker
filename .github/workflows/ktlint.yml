@@ -22,7 +22,7 @@ jobs:
   lint_check:
     name: Ktlint
     timeout-minutes: 5
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
