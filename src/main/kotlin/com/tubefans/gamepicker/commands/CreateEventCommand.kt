@@ -18,6 +18,7 @@ class CreateEventCommand : SlashCommand {
     override val name = "create_event"
 
     override fun handle(event: ChatInputInteractionEvent): InteractionApplicationCommandCallbackReplyMono {
+        // TODO: implement
         var channelName: String? = null
         val usersInChannel = mutableListOf<String>()
 

@@ -32,7 +32,6 @@ class GlobalCommandRegistrar @Autowired constructor(private val client: RestClie
         for (resource in matcher.getResources("commands/*.json")) {
             val request = d4jMapper.objectMapper
                 .readValue(resource.inputStream, ApplicationCommandRequest::class.java)
-            println("Adding ${request.name()}")
             commands.add(request)
         }
 
