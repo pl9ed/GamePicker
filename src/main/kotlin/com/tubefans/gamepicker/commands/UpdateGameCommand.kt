@@ -34,7 +34,7 @@ class UpdateGameCommand : SlashCommand {
         return event.reply()
             .withEphemeral(true)
             .withContent(
-                "Updated ${game.name} with score: $score"
+                "Updated $game with score: $score"
             )
     }
 }

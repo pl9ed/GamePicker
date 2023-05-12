@@ -8,7 +8,7 @@ class GameScoreMap(
     botUsers: Collection<BotUser>
 ) {
 
-    private val map = mutableMapOf<Game, SortedSet<Pair<String, Long>>>()
+    private val map = mutableMapOf<String, SortedSet<Pair<String, Long>>>()
 
     init {
         botUsers.forEach { user ->
@@ -25,7 +25,7 @@ class GameScoreMap(
         }
     }
 
-    fun getTopGames(n: Int): List<Game> =
+    fun getTopGames(n: Int): List<String> =
         map.toList()
             .sortedBy { (_, v) ->
                 var sum = 0L

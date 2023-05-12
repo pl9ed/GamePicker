@@ -12,7 +12,7 @@ class UserService @Autowired constructor(
     val userRepository: UserRepository
 ) {
 
-    fun updateGame(discordUser: User, game: Game, score: Long): BotUser =
+    fun updateGame(discordUser: User, game: String, score: Long): BotUser =
         if (userRepository.existsById(discordUser.id.toString())) {
             userRepository.findById(discordUser.id.toString())
                 .get()

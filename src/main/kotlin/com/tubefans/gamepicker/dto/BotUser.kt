@@ -8,5 +8,5 @@ data class BotUser(
     @Id
     val discordId: String,
     val username: String,
-    val gameMap: MutableMap<Game, Long>
+    val gameMap: MutableMap<String, Long> = mutableMapOf()
 )
