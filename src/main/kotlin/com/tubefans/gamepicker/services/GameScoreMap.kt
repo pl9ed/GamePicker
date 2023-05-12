@@ -27,7 +27,7 @@ class GameScoreMap(
 
     fun getTopGames(n: Int): List<String> =
         map.toList()
-            .sortedBy { (_, v) ->
+            .sortedByDescending { (_, v) ->
                 var sum = 0L
                 v.forEach {
                     sum += it.second
