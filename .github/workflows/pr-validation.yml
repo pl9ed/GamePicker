@@ -1,5 +1,17 @@
 name: PR Validations
 
+on:
+  push:
+    branches:
+      - main
+  pull_requests:
+    types:
+      - opened
+      - reopened
+      - synchronized
+    merge_group:
+      types: [checks_requested]
+
 jobs:
   unit_tests:
     name: Unit Tests
