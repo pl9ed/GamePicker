@@ -1,6 +1,5 @@
 package com.tubefans.gamepicker.extensions
 
-import com.tubefans.gamepicker.dto.Game
 import com.tubefans.gamepicker.services.GameService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 

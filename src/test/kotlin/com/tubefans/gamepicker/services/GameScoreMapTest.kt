@@ -8,18 +8,33 @@ import org.junit.jupiter.api.Test
 class GameScoreMapTest {
 
     private val user1 = BotUser(
-        "1", "user1", mutableMapOf(
-            "game1" to 10, "game2" to 5, "game3" to 1, "game4" to 0
+        "1",
+        "user1",
+        mutableMapOf(
+            "game1" to 10,
+            "game2" to 5,
+            "game3" to 1,
+            "game4" to 0
         )
     )
     private val user2 = BotUser(
-        "2", "user2", mutableMapOf(
-            "game1" to 0, "game2" to 0, "game3" to 10, "game4" to 0
+        "2",
+        "user2",
+        mutableMapOf(
+            "game1" to 0,
+            "game2" to 0,
+            "game3" to 10,
+            "game4" to 0
         )
     )
     private val user3 = BotUser(
-        "3", "user3", mutableMapOf(
-            "game1" to 9, "game2" to 5, "game3" to 0, "game4" to 0
+        "3",
+        "user3",
+        mutableMapOf(
+            "game1" to 9,
+            "game2" to 5,
+            "game3" to 0,
+            "game4" to 0
         )
     )
     private val blankUser = BotUser(
@@ -50,9 +65,12 @@ class GameScoreMapTest {
     fun `should handle blank user maps`() {
         val emptyUsers = listOf(
             BotUser(
-                "1", "user1"
-            ), BotUser(
-                "2", "user2"
+                "1",
+                "user1"
+            ),
+            BotUser(
+                "2",
+                "user2"
             )
         )
         assertTrue(GameScoreMap(emptyUsers).getTopGames(5).isEmpty())
@@ -91,5 +109,4 @@ class GameScoreMapTest {
             game4NonPlayers.toSet()
         )
     }
-
 }

@@ -6,7 +6,10 @@ class UserScore(
 ) : Comparable<UserScore> {
 
     override fun compareTo(other: UserScore): Int {
-        return if (this.score != other.score) this.score.compareTo(other.score)
-        else this.user.username.compareTo(other.user.username)
+        return if (this.score != other.score) {
+            this.score.compareTo(other.score)
+        } else {
+            this.user.username.compareTo(other.user.username)
+        }
     }
 }
