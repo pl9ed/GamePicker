@@ -6,8 +6,7 @@ class UserScore(
 ) : Comparable<UserScore> {
 
     override fun compareTo(other: UserScore): Int {
-        val scoreComparison = this.score.compareTo(other.score)
-        return if (scoreComparison != 0) scoreComparison
+        return if (this.score != other.score) this.score.compareTo(other.score)
         else this.user.username.compareTo(other.user.username)
     }
 }
