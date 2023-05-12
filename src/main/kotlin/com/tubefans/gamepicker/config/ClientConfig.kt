@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.config
 
-import com.tubefans.gamepicker.TEST_TOKEN
+import com.tubefans.gamepicker.BOT_TOKEN
 import discord4j.core.DiscordClient
 import discord4j.core.GatewayDiscordClient
 import discord4j.core.`object`.presence.ClientActivity
@@ -15,7 +15,7 @@ class ClientConfig {
 
     @Bean
     fun gatewayDiscordClient(): GatewayDiscordClient =
-        DiscordClient.create(TEST_TOKEN)
+        DiscordClient.create(BOT_TOKEN)
             .gateway()
             .setInitialPresence {
                 ClientPresence.online(ClientActivity.listening("to /commands"))
