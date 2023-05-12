@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
-val TEST_TOKEN = System.getenv()["TEST_BOT_TOKEN"] ?: ""
+val BOT_TOKEN = System.getenv()["BOT_TOKEN"] ?: ""
 
 @EnableMongoRepositories
 @SpringBootApplication

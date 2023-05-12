@@ -1,4 +1,4 @@
-name: Build
+name: Test All
 
 on:
   push:
@@ -19,8 +19,8 @@ env:
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
 
 jobs:
-  build:
-    name: Build
+  unit_tests:
+    name: Unit Tests
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -31,7 +31,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Full build
+      - name: Run unit tests
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build
+          arguments: test
