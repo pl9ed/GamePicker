@@ -2,6 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
+    id("jacoco")
+    id("org.sonarqube") version "3.5.0.2730"
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("jvm") version "1.7.22"
@@ -12,6 +14,14 @@ plugins {
 group = "com.tubefans"
 version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "pl9ed_game-picker")
+        property("sonar.organization", "pl9ed")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
 
 repositories {
     mavenCentral()
@@ -42,4 +52,11 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+    dependsOn("test")
+    reports {
+        xml.required.set(true)
+    }
 }
