@@ -10,6 +10,10 @@ on:
       - reopened
       - synchronize
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
 env:
   DB_PASS: ${{ secrets.DB_PASS }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
