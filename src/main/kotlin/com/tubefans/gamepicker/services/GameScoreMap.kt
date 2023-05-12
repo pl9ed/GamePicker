@@ -1,17 +1,17 @@
 package com.tubefans.gamepicker.services
 
+import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.dto.Game
-import com.tubefans.gamepicker.dto.User
 import java.util.*
 
 class GameScoreMap(
-    users: Collection<User>
+    botUsers: Collection<BotUser>
 ) {
 
-    private val map = mutableMapOf<Game, SortedSet<Pair<String, Int>>>()
+    private val map = mutableMapOf<Game, SortedSet<Pair<String, Long>>>()
 
     init {
-        users.forEach { user ->
+        botUsers.forEach { user ->
             user.gameMap.forEach { (game, score) ->
                 if (map[game] == null) {
                     map[game] = sortedSetOf(
@@ -28,7 +28,7 @@ class GameScoreMap(
     fun getTopGames(n: Int): List<Game> =
         map.toList()
             .sortedBy { (_, v) ->
-                var sum = 0
+                var sum = 0L
                 v.forEach {
                     sum += it.second
                 }

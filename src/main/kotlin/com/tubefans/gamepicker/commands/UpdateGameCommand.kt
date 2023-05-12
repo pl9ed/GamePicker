@@ -1,7 +1,9 @@
 package com.tubefans.gamepicker.commands
 
-import com.tubefans.gamepicker.database.UserRepository
-import com.tubefans.gamepicker.dto.User
+import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.extensions.getGame
+import com.tubefans.gamepicker.extensions.getScore
+import com.tubefans.gamepicker.services.UserService
 import discord4j.core.GatewayDiscordClient
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
@@ -15,22 +17,24 @@ class UpdateGameCommand : SlashCommand {
     lateinit var gateway: GatewayDiscordClient
 
     @Autowired
-    lateinit var userRepository: UserRepository
+    lateinit var userService: UserService
 
     override val name = "update"
 
     override fun handle(event: ChatInputInteractionEvent): InteractionApplicationCommandCallbackReplyMono {
-        var returnedUser: User? = null
+        var returnedBotUser: BotUser? = null
+
+        val game = event.getGame()
+        val score = event.getScore()
 
         event.interaction.user.let { user ->
-            // TODO: implement actual update
-            returnedUser = userRepository.save(User(user.id.toString(), user.username, mutableMapOf()))
+            returnedBotUser = userService.updateGame(user, game, score)
         }
 
         return event.reply()
             .withEphemeral(true)
             .withContent(
-                returnedUser?.toString() ?: "Null user"
+                returnedBotUser?.toString() ?: "Null user"
             )
     }
 }
