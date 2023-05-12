@@ -58,6 +58,9 @@ class GameScoreMapTest {
         )
         assertTrue(GameScoreMap(emptyUsers).getTopGames(5).isEmpty())
 
-        assertEquals(listOf("game1", "game2", "game3"), GameScoreMap(listOf(user1, blankUser)).getTopGames(3))
+        assertEquals(
+            listOf("game1", "game2", "game3"),
+            GameScoreMap(listOf(user1, blankUser)).getTopGames(3)
+        )
     }
 }
