@@ -10,6 +10,9 @@ on:
       - reopened
       - synchronize
 
+env:
+  DB_PASS: ${{ secrets.DB_PASS }}
+
 jobs:
   build:
     name: Build
