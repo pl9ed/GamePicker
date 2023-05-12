@@ -4,13 +4,11 @@ on:
   push:
     branches:
       - main
-  pull_requests:
+  pull_request:
     types:
       - opened
       - reopened
-      - synchronized
-    merge_group:
-      types: [checks_requested]
+      - synchronize
 
 jobs:
   unit_tests:
