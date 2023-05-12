@@ -1,25 +1,20 @@
 package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.dto.BotUser
-import com.tubefans.gamepicker.dto.Game
+import com.tubefans.gamepicker.dto.UserScore
 import java.util.*
 
 class GameScoreMap(
     botUsers: Collection<BotUser>
 ) {
 
-    private val map = mutableMapOf<String, SortedSet<Pair<String, Long>>>()
+    private val map = mutableMapOf<String, SortedSet<UserScore>>()
 
     init {
         botUsers.forEach { user ->
             user.gameMap.forEach { (game, score) ->
-                if (map[game] == null) {
-                    map[game] = sortedSetOf(
-                        Comparator { o1, o2 -> o1.second.compareTo(o2.second) },
-                        Pair(user.username, score)
-                    )
-                } else {
-                    map[game]?.add(Pair(user.username, score))
+                map[game]?.add(UserScore(user, score)) ?: run {
+                    map[game] = sortedSetOf(UserScore(user, score))
                 }
             }
         }
@@ -27,14 +22,24 @@ class GameScoreMap(
 
     fun getTopGames(n: Int): List<String> =
         map.toList()
-            .sortedBy { (_, v) ->
+            .sortedByDescending { (_, v) ->
                 var sum = 0L
                 v.forEach {
-                    sum += it.second
+                    sum += it.score
                 }
                 sum
             }.take(n)
             .map {
                 it.first
             }
+
+    fun getTopPlayersForGame(game: String, n: Int = 3): List<UserScore> =
+        map[game]?.sortedDescending()?.take(n) ?: emptyList()
+
+    fun getNonPlayersForGame(game: String): List<BotUser> =
+        map[game]?.filter {
+            it.score == 0L
+        }?.map {
+            it.user
+        } ?: emptyList()
 }

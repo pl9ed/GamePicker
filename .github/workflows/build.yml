@@ -1,0 +1,13 @@
+name: Build
+
+jobs:
+  build:
+    name: Build
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      -uses: actions/checkout@v3
+
+      -name: Full build
+      shell: bash
+      run: ./gradlew build

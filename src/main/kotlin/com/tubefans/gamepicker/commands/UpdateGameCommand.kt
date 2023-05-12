@@ -22,19 +22,19 @@ class UpdateGameCommand : SlashCommand {
     override val name = "update"
 
     override fun handle(event: ChatInputInteractionEvent): InteractionApplicationCommandCallbackReplyMono {
-        var returnedBotUser: BotUser? = null
+        var botUserResponse: BotUser
 
         val game = event.getGame()
         val score = event.getScore()
 
         event.interaction.user.let { user ->
-            returnedBotUser = userService.updateGame(user, game, score)
+            botUserResponse = userService.updateGame(user, game, score)
         }
 
         return event.reply()
             .withEphemeral(true)
             .withContent(
-                "Updated $game with score: $score"
+                "Updated $game with score: $score for ${botUserResponse.username}"
             )
     }
 }
