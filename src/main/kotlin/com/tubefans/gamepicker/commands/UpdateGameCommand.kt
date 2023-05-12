@@ -34,7 +34,7 @@ class UpdateGameCommand : SlashCommand {
         return event.reply()
             .withEphemeral(true)
             .withContent(
-                returnedBotUser?.toString() ?: "Null user"
+                "Updated ${game.name} with score: $score"
             )
     }
 }
