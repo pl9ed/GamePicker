@@ -1,4 +1,4 @@
-name: Build
+name: ktlint check
 
 on:
   push:
@@ -11,13 +11,13 @@ on:
       - synchronize
 
 jobs:
-  build:
-    name: Build
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
+  lint_check:
+    name: ktlintcheck
+    timeout-minutes: 5
+    runs-on: ubuntu-lates
     steps:
       - uses: actions/checkout@v3
 
-      - name: Full build
+      - name: ktlint check
         shell: bash
-        run: ./gradlew build
+        run: ./gradlew ktlintCheck
