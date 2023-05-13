@@ -20,6 +20,7 @@ env:
 jobs:
   build:
     name: Build and analyze
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -44,6 +45,10 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
+
+      - name: Create credentials.json
+        run:
+          echo "$CREDENTIALS_JSON" | base64 -d > "$GITHUB_WORKSPACE/src/main/resources/credentials.json"
 
       - name: Build and analyze
         env:

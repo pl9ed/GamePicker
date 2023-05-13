@@ -2,22 +2,22 @@ package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
 import com.tubefans.gamepicker.repositories.UserRepository
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 
 class GoogleSheetsServiceTest {
 
-    @Mock
-    private lateinit var userRepository: UserRepository
+    private var userRepository: UserRepository = mockk()
 
     @Mock
-    private lateinit var sheets: Sheets
+    private var sheets: Sheets = mockk()
 
     @InjectMocks
-    private val googleSheetsService = GoogleSheetsService(sheets, userRepository)
+    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets, userRepository)
 
     private val sheetId = "sheet-id"
     private val sheetName = "Sheet1"
@@ -29,16 +29,14 @@ class GoogleSheetsServiceTest {
 
     @BeforeEach
     fun setup() {
-        `when`(
+        every {
             sheets.spreadsheets()
                 .values()
                 .get(sheetId, range)
                 .execute()
                 .getValues()
-        ).thenReturn(
-            listOf(
-                listOf()
-            )
+        } returns listOf(
+            listOf()
         )
     }
 
