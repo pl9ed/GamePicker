@@ -17,6 +17,7 @@ concurrency:
 env:
   DB_PASS: ${{ secrets.DB_PASS }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+  CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}
 
 jobs:
   unit_tests:

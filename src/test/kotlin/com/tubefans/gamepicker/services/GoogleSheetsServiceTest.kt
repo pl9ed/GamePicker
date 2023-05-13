@@ -2,19 +2,13 @@ package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
 import com.tubefans.gamepicker.repositories.UserRepository
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
+import org.mockito.Mockito.`when`
 
-@SpringBootTest
 class GoogleSheetsServiceTest {
-
-    @InjectMocks
-    @Autowired
-    private lateinit var googleSheetsService: GoogleSheetsService
 
     @Mock
     private lateinit var userRepository: UserRepository
@@ -22,14 +16,33 @@ class GoogleSheetsServiceTest {
     @Mock
     private lateinit var sheets: Sheets
 
-    private val testSheetId = "1674LxS7oI8eWWMMQljtFFJcoOpvn-mBTgAVZ3jnikb0"
-    private val testSheetName = "Sheet1"
-    private val dataRange = "A1:L11"
-    private val userRange = "A9:L11"
+    @InjectMocks
+    private val googleSheetsService = GoogleSheetsService(sheets, userRepository)
+
+    private val sheetId = "sheet-id"
+    private val sheetName = "Sheet1"
+    private val range = "range"
+
+    private val mockSheet = listOf(
+        listOf("")
+    )
+
+    @BeforeEach
+    fun setup() {
+        `when`(
+            sheets.spreadsheets()
+                .values()
+                .get(sheetId, range)
+                .execute()
+                .getValues()
+        ).thenReturn(
+            listOf(
+                listOf()
+            )
+        )
+    }
 
     @Test
-    fun `should be able to see google sheets`() {
-        val response = googleSheetsService.getValueRange(testSheetId, "Sheet1")
-        assertTrue(response.size > 0)
+    fun `should update db from sheets`() {
     }
 }

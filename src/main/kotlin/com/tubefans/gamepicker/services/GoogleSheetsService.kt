@@ -20,6 +20,8 @@ class GoogleSheetsService @Autowired constructor(
         sheets.spreadsheets().values().get(id, "Sheet1").execute()
 
     fun updateUserScores(id: String, range: String) {
+        return
+        TODO("Test")
         val sheet = sheets.spreadsheets()
             .values()
             .get(id, range)

@@ -1,6 +1,7 @@
-package com.tubefans.gamepicker.repositories
+package com.tubefans.gamepicker.config
 
 import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.repositories.UserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class DbAccessTest {
+class DbConfigTest {
 
     @Autowired
     private lateinit var userRepository: UserRepository

@@ -14,15 +14,15 @@ import com.google.api.services.sheets.v4.SheetsScopes
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.InputStreamReader
+import java.util.Base64
 import java.util.Collections
 
 @Configuration
 class OAuthConfig {
 
     companion object {
-        const val CREDENTIALS_PATH = "/credentials.json"
+        const val CREDENTIALS_FILE = "/credentials.json"
         const val TOKENS_DIRECTORY_PATH = "tokens"
         val scopes = Collections.singletonList(
             SheetsScopes.SPREADSHEETS
@@ -38,11 +38,16 @@ class OAuthConfig {
 
     @Bean
     fun getCredentials(netHttpTransport: NetHttpTransport): Credential {
-        val input = this::class.java.getResourceAsStream(CREDENTIALS_PATH) ?: run {
-            throw FileNotFoundException("Credentials not found on $CREDENTIALS_PATH")
-        }
-
-        val clientSecrets = GoogleClientSecrets.load(jsonFactory(), InputStreamReader(input))
+        val clientSecrets: GoogleClientSecrets = this::class.java.getResourceAsStream(CREDENTIALS_FILE)?.let {
+            GoogleClientSecrets.load(jsonFactory(), InputStreamReader(it))
+        } ?: run {
+            System.getenv("CREDENTIALS_JSON")?.let {
+                jsonFactory().fromString(
+                    String(Base64.getDecoder().decode(it)),
+                    GoogleClientSecrets::class.java
+                )
+            }
+        } ?: throw NullPointerException("Couldn't set up GoogleClientSecrets from $CREDENTIALS_FILE or CREDENTIALS_JSON")
 
         val flow = GoogleAuthorizationCodeFlow
             .Builder(
