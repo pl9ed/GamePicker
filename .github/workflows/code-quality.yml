@@ -28,6 +28,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Create credentials.json
+        run: |
+          echo ${{ secrets.CREDENTIALS_JSON }} | base64 -d > credentials.json
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
         with:

@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.services
 
-import com.tubefans.gamepicker.database.UserRepository
+import com.tubefans.gamepicker.repositories.UserRepository
 import com.tubefans.gamepicker.dto.BotUser
 import discord4j.core.`object`.entity.User
 import org.springframework.beans.factory.annotation.Autowired

@@ -28,20 +28,24 @@ repositories {
 }
 
 dependencies {
-    // implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("com.discord4j:discord4j-core:3.2.4")
-    implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.6.3")
+    implementation(springLibs.starterDataMongoDb)
+    implementation(springLibs.starterDataMongoDbReactive)
+    implementation(springLibs.starterWeb)
+    implementation(springLibs.jacksonModuleKotlin)
+    implementation(springLibs.embeddedMongo)
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.projectreactor:reactor-test")
+    implementation(discord4jLibs.discord4jCore)
+    implementation(discord4jLibs.kotlinReflect)
+    implementation(discord4jLibs.kotlinXCoroutinesReactor)
+    implementation(discord4jLibs.reactorKotlinExtensions)
+
+    implementation(gdriveLibs.apiClient)
+    implementation(gdriveLibs.oauthClient)
+    implementation(gdriveLibs.apiServicesSheets)
+
+    developmentOnly(springLibs.devtools)
+    testImplementation(springLibs.starterTest)
+    testImplementation(discord4jLibs.reactorTest)
 }
 
 tasks.withType<KotlinCompile> {
