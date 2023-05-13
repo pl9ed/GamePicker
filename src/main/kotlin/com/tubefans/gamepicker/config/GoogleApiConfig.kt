@@ -24,5 +24,4 @@ class GoogleApiConfig @Autowired constructor(
                 credentials
             ).setApplicationName(APP_NAME)
             .build()
-
 }

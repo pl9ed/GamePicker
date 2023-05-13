@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.services
 
-import com.tubefans.gamepicker.repositories.UserRepository
 import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.repositories.UserRepository
 import discord4j.core.`object`.entity.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -24,6 +24,7 @@ class UserService @Autowired constructor(
                 BotUser(
                     discordUser.id.toString(),
                     discordUser.username,
+                    "",
                     mutableMapOf(
                         game to score
                     )

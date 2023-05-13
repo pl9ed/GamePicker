@@ -5,23 +5,24 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.JsonFactory
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.SheetsScopes
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStreamReader
 import java.util.Collections
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 
 @Configuration
 class OAuthConfig {
 
     companion object {
-        const val CREDENTIALS_PATH = "./credentials.json"
+        const val CREDENTIALS_PATH = "/credentials.json"
         const val TOKENS_DIRECTORY_PATH = "tokens"
         val scopes = Collections.singletonList(
             SheetsScopes.SPREADSHEETS
@@ -30,6 +31,10 @@ class OAuthConfig {
 
     @Bean
     fun jsonFactory(): JsonFactory = GsonFactory.getDefaultInstance()
+
+    @Bean
+    fun netHttpTransport(): NetHttpTransport =
+        GoogleNetHttpTransport.newTrustedTransport()
 
     @Bean
     fun getCredentials(netHttpTransport: NetHttpTransport): Credential {

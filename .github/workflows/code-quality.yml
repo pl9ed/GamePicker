@@ -13,6 +13,7 @@ concurrency:
 env:
   DB_PASS: ${{ secrets.DB_PASS }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+  ENCODED_CREDENTIALS: ${{ secrets.CREDENTIALS_JSON }}
 
 jobs:
   build:
@@ -29,8 +30,8 @@ jobs:
           distribution: 'temurin'
 
       - name: Create credentials.json
-        run: |
-          echo ${{ secrets.CREDENTIALS_JSON }} | base64 -d > credentials.json
+        run:
+          echo "$ENCODED_CREDENTIALS" | tr -d '\n' | base64 -d > credentials.json
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
