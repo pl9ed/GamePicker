@@ -37,6 +37,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("com.discord4j:discord4j-core:3.2.4")
+    implementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.6.3")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
