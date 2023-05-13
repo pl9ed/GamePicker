@@ -1,7 +1,6 @@
 package com.tubefans.gamepicker
 
 import discord4j.common.JacksonResources
-import discord4j.discordjson.json.ApplicationCommandData
 import discord4j.discordjson.json.ApplicationCommandRequest
 import discord4j.rest.RestClient
 import org.slf4j.LoggerFactory
@@ -38,7 +37,7 @@ class GlobalCommandRegistrar @Autowired constructor(private val client: RestClie
         /* Bulk overwrite commands. This is now idempotent, so it is safe to use this even when only 1 command
         is changed/added/removed
         */applicationService.bulkOverwriteGlobalApplicationCommand(applicationId, commands)
-            .doOnNext { ignore: ApplicationCommandData? -> logger.debug("Successfully registered Global Commands") }
+            .doOnNext { logger.debug("Successfully registered Global Commands") }
             .doOnError { e: Throwable? -> logger.error("Failed to register global commands", e) }
             .subscribe()
     }
