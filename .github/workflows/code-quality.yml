@@ -70,11 +70,8 @@ jobs:
       # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.
       - name: Report quality analysis
         uses: actions/github-script@v6
+        env:
+          QUALITY_STATUS: ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}
         with:
           script: >
-            github.rest.issues.createComment(
-              "The Quality Gate status for
-              $(git rev-parse --short HEAD)
-              is 
-              ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
-            )
+            echo "Quality gate status for $(git rev-parse --short HEAD) is $QUALITY_STATUS" >> $GITHUB_STEP_SUMMARY
