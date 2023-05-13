@@ -72,6 +72,9 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: >
-            github.rest.issues.createComment({
-              "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
-            })
+            github.rest.issues.createComment(
+              "The Quality Gate status for
+              $(git rev-parse --short HEAD)
+              is 
+              ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+            )
