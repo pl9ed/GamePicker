@@ -48,14 +48,14 @@ jobs:
 
       - name: Create credentials.json
         run:
-          echo "$CREDENTIALS_JSON" | base64 -d > "$GITHUB_WORKSPACE/src/main/resources/credentials.json"
+          echo "$CREDENTIALS_JSON" > "$GITHUB_WORKSPACE/service-key.json"
 
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build jacocoTestReport sonarqube --info
+          arguments: build jacocoTestReport sonarqube --info -x test
 
       # Triggering SonarQube analysis as results of it are required by Quality Gate check.
       - name: SonarQube Scan

@@ -21,7 +21,7 @@ env:
 
 jobs:
   unit_tests:
-    name: Unit Tests
+    name: Run tests
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -34,9 +34,16 @@ jobs:
 
       - name: Create credentials.json
         run:
-          echo "$CREDENTIALS_JSON" | base64 -d > "$GITHUB_WORKSPACE/src/test/resources/credentials.json"
+          echo "$CREDENTIALS_JSON" > "$GITHUB_WORKSPACE/service-key.json"
 
-      - name: Run unit tests
+      - name: Run all tests
         uses: gradle/gradle-build-action@v2
         with:
           arguments: test
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always() # always run even if the previous step fails
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          token: ${{ secrets.GITHUB_TOKEN }}

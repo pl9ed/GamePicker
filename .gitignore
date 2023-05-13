@@ -29,6 +29,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+*.hprof
+
 ### STS ###
 .apt_generated
 .classpath
@@ -68,7 +70,12 @@ tokens/
 =======
 **/credentials.json
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 35b12e3 (First pass working google sheets layer)
 =======
 tokens/
 >>>>>>> f8678ac (Added name)
+=======
+**/service-key.json
+tokens/
+>>>>>>> 07c3ac1 (Use service json)

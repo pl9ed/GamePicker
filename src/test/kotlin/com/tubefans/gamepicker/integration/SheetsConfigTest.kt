@@ -1,4 +1,4 @@
-package com.tubefans.gamepicker.config
+package com.tubefans.gamepicker.integration
 
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import org.junit.jupiter.api.AfterAll

@@ -1,4 +1,4 @@
-package com.tubefans.gamepicker.config
+package com.tubefans.gamepicker.integration
 
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.repositories.UserRepository

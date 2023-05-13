@@ -1,5 +1,5 @@
 [versions]
-embeddedMongoVersion = "4.6.3"
+# embeddedMongoVersion = "4.6.3"
 mockKVersion = "1.13.5"
 
 [libraries]
@@ -7,7 +7,7 @@ starterDataMongoDb = { group = "org.springframework.boot", name = "spring-boot-s
 starterDataMongoDbReactive = { group = "org.springframework.boot", name = "spring-boot-starter-data-mongodb" }
 starterWeb = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
 jacksonModuleKotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin" }
-embeddedMongo = { group = "de.flapdoodle.embed", name = "de.flapdoodle.embed.mongo", version.ref = "embeddedMongoVersion" }
+# embeddedMongo = { group = "de.flapdoodle.embed", name = "de.flapdoodle.embed.mongo", version.ref = "embeddedMongoVersion" }
 devtools = { group = "org.springframework.boot", name = "spring-boot-devtools" }
 starterTest = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockKVersion" }

@@ -32,7 +32,6 @@ dependencies {
     implementation(springLibs.starterDataMongoDbReactive)
     implementation(springLibs.starterWeb)
     implementation(springLibs.jacksonModuleKotlin)
-    implementation(springLibs.embeddedMongo)
 
     implementation(discord4jLibs.discord4jCore)
     implementation(discord4jLibs.kotlinReflect)
@@ -53,6 +52,12 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
+    }
+}
+
+tasks.register<Test>("unitTest") {
+    filter {
+        excludeTestsMatching("*.integration.*")
     }
 }
 

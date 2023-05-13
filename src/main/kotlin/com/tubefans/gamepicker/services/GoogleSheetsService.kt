@@ -14,14 +14,15 @@ class GoogleSheetsService @Autowired constructor(
 ) {
 
     fun getValueRange(id: String, range: String): ValueRange =
-        sheets.spreadsheets().values().get(id, range).execute()
+        sheets.spreadsheets().values()[id, range].execute()
 
     fun getAll(id: String, sheetName: String = "Sheet1"): ValueRange =
-        sheets.spreadsheets().values().get(id, "Sheet1").execute()
+        sheets.spreadsheets().values()[id, "Sheet1"].execute()
 
     fun updateUserScores(id: String, range: String) {
         return
-        TODO("Test")
+        /*
+        TODO: test
         val sheet = sheets.spreadsheets()
             .values()
             .get(id, range)
@@ -56,6 +57,7 @@ class GoogleSheetsService @Autowired constructor(
                 userRepository.save(user)
             }
         }
+         */
     }
 
     private fun Any?.toName(): String? =
