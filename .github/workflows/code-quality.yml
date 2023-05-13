@@ -71,7 +71,7 @@ jobs:
       - name: Report quality analysis
         uses: actions/github-script@v6
         with:
-          script: |
+          script: >
             github.rest.issues.createComment({
               "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
             })
