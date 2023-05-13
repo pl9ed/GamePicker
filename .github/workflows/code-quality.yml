@@ -48,7 +48,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build sonarqube --info
+          arguments: build jacocoTestReport sonarqube --info
 
       # Triggering SonarQube analysis as results of it are required by Quality Gate check.
       - name: SonarQube Scan
