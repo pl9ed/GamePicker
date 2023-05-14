@@ -1,6 +1,8 @@
 package com.tubefans.gamepicker.commands
 
 import com.mongodb.internal.VisibleForTesting
+import com.tubefans.gamepicker.extensions.getSheetId
+import com.tubefans.gamepicker.extensions.getSheetRange
 import com.tubefans.gamepicker.services.BotUserService
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
@@ -37,25 +39,8 @@ class PullFromSheetCommand @Autowired constructor(
             }.then()
 
     fun updateDbFromSheet(event: ChatInputInteractionEvent): Mono<String> = mono {
-        val id: String = try {
-            event.options
-                .first { it.name == SHEET_ID_NAME }
-                .value
-                .get()
-                .asString()
-        } catch (e: NoSuchElementException) {
-            DEFAULT_SHEET
-        }
-
-        val range: String = try {
-            event.options
-                .first { it.name == SHEET_RANGE_NAME }
-                .value
-                .get()
-                .asString()
-        } catch (e: NoSuchElementException) {
-            DEFAULT_RANGE
-        }
+        val id: String = event.getSheetId()
+        val range: String = event.getSheetRange()
 
         val sheet = try {
             googleSheetsService.getSheet(id, range)

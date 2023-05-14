@@ -15,9 +15,6 @@ import org.springframework.stereotype.Component
 class UpdateGameCommand : SlashCommand {
 
     @Autowired
-    lateinit var gateway: GatewayDiscordClient
-
-    @Autowired
     lateinit var botUserService: BotUserService
 
     override val name = "update"
