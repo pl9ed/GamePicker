@@ -55,7 +55,7 @@ class RecommendCommand @Autowired constructor(
                 val score = gameScore.second
 
                 replyString.append(
-                    "${i+1}: ${generateRow(game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))}\n"
+                    "${i + 1}: ${generateRow(game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))}\n"
                 )
             }
 
@@ -70,7 +70,7 @@ class RecommendCommand @Autowired constructor(
         fans: Collection<UserScore>,
         excludes: Collection<BotUser>
     ): String = "$game | " +
-            "$score | " +
-            "Fans: ${fans.map { it.user.name ?: it.user.username }.joinToString()} | " +
-            "Excludes: ${excludes.map { it.name ?: it.username }.joinToString()}"
+        "$score | " +
+        "Fans: ${fans.map { it.user.name ?: it.user.username }.joinToString()} | " +
+        "Excludes: ${excludes.map { it.name ?: it.username }.joinToString()}"
 }
