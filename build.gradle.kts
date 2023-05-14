@@ -43,6 +43,7 @@ dependencies {
     implementation(gdriveLibs.apiServicesSheets)
 
     developmentOnly(springLibs.devtools)
+    testImplementation(libs.kotlinxCoroutinesTest)
     testImplementation(springLibs.mockK)
     testImplementation(springLibs.starterTest)
     testImplementation(discord4jLibs.reactorTest)
