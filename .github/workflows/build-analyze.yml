@@ -50,21 +50,10 @@ jobs:
         run:
           echo "$CREDENTIALS_JSON" > "$GITHUB_WORKSPACE/service-key.json"
 
-      - name: Build and analyze
+      - name: Build
+        if: never() # disabled until we decide how we want to host
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
-
-      # Triggering SonarQube analysis as results of it are required by Quality Gate check.
-      - name: SonarQube Scan
-        if: always()
-        uses: sonarsource/sonarqube-scan-action@master
-
-      # Check the Quality Gate status.
-      - name: SonarQube Quality Gate check
-        if: always()
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
