@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class InitCommand @Autowired constructor(
+class PullFromSheetCommand @Autowired constructor(
     private val userService: UserService,
     private val googleSheetsService: GoogleSheetsService
 ) : SlashCommand {
 
     companion object {
-        const val SHEET_ID_NAME = "sheetId"
+        const val SHEET_ID_NAME = "sheetid"
         const val SHEET_RANGE_NAME = "range"
 
         const val DEFAULT_SHEET = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
@@ -25,7 +25,7 @@ class InitCommand @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override val name = "init"
+    override val name = "pull-from-sheet"
 
     override fun handle(event: ChatInputInteractionEvent): InteractionApplicationCommandCallbackReplyMono {
         val sheetId: String = try {

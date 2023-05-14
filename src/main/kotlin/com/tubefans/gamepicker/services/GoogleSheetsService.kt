@@ -2,7 +2,7 @@ package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.tubefans.gamepicker.commands.InitCommand.Companion.DEFAULT_RANGE
+import com.tubefans.gamepicker.commands.PullFromSheetCommand.Companion.DEFAULT_RANGE
 import com.tubefans.gamepicker.repositories.BotUserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
