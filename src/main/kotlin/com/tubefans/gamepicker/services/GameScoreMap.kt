@@ -8,11 +8,17 @@ class GameScoreMap(
     botUsers: Collection<BotUser>
 ) {
 
+    companion object {
+        const val MAX_SCORE = 10L
+        const val MIN_SCORE = 0L
+    }
+
     private val map = mutableMapOf<String, SortedSet<UserScore>>()
 
     init {
         botUsers.forEach { user ->
-            user.gameMap.forEach { (game, score) ->
+            user.gameMap.forEach { (game, unboundedScore) ->
+                val score = minOf(maxOf(unboundedScore, MIN_SCORE), MAX_SCORE)
                 map[game]?.add(UserScore(user, score)) ?: run {
                     map[game] = sortedSetOf(UserScore(user, score))
                 }

@@ -13,10 +13,14 @@ concurrency:
 env:
   DB_PASS: ${{ secrets.DB_PASS }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+  CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
 jobs:
   build:
     name: Build and analyze
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -42,33 +46,33 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
 
+      - name: Create credentials.json
+        run:
+          echo "$CREDENTIALS_JSON" > "$GITHUB_WORKSPACE/service-key.json"
+
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build jacocoTestReport sonarqube --info
 
       # Triggering SonarQube analysis as results of it are required by Quality Gate check.
       - name: SonarQube Scan
+        if: always()
         uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       # Check the Quality Gate status.
       - name: SonarQube Quality Gate check
+        if: always()
         id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       # Optionally you can use the output from the Quality Gate in another step.
       # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.
       - name: Report quality analysis
+        if: always()
         env:
           QUALITY_STATUS: ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}
         run:

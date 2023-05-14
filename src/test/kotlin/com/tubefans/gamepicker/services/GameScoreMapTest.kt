@@ -10,6 +10,7 @@ class GameScoreMapTest {
     private val user1 = BotUser(
         "1",
         "user1",
+        "name1",
         mutableMapOf(
             "game1" to 10,
             "game2" to 5,
@@ -20,6 +21,7 @@ class GameScoreMapTest {
     private val user2 = BotUser(
         "2",
         "user2",
+        "name2",
         mutableMapOf(
             "game1" to 0,
             "game2" to 0,
@@ -30,6 +32,7 @@ class GameScoreMapTest {
     private val user3 = BotUser(
         "3",
         "user3",
+        "name3",
         mutableMapOf(
             "game1" to 9,
             "game2" to 5,
@@ -39,7 +42,8 @@ class GameScoreMapTest {
     )
     private val blankUser = BotUser(
         "blank",
-        "blankuser"
+        "blankuser",
+        "blankname"
     )
 
     @Test
@@ -66,11 +70,13 @@ class GameScoreMapTest {
         val emptyUsers = listOf(
             BotUser(
                 "1",
-                "user1"
+                "user1",
+                "name1"
             ),
             BotUser(
                 "2",
-                "user2"
+                "user2",
+                "name2"
             )
         )
         assertTrue(GameScoreMap(emptyUsers).getTopGames(5).isEmpty())
