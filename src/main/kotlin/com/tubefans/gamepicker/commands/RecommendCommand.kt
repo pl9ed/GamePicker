@@ -13,11 +13,12 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
+@Component
 class RecommendCommand @Autowired constructor(
-    private val botUserService: BotUserService,
-    private val gateway: GatewayDiscordClient
+    private val botUserService: BotUserService
 ) : SlashCommand {
 
     override val name = "recommend"
@@ -34,14 +35,6 @@ class RecommendCommand @Autowired constructor(
                 event.editReply("Top games are: ${it.joinToString()}")
             }.then()
 
-    fun test(event: ChatInputInteractionEvent) = mono {
-        event.interaction.member.map {
-            it.voiceState.blockOptional().get()
-        }.map {
-            it.channel
-        }
-    }
-
     fun getCurrentChannel(event: ChatInputInteractionEvent): VoiceChannel? =
         event.interaction.member.get()
             .voiceState.block()
@@ -55,10 +48,5 @@ class RecommendCommand @Autowired constructor(
         }.toList()
             .awaitAll()
             .toSet()
-    }
-
-
-    fun getUsers(event: ChatInputInteractionEvent) {
-        event.interaction.user
     }
 }
