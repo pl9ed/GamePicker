@@ -21,7 +21,8 @@ class RecommendCommandTest {
 
     private val responseTemplate = """
         TOP %d GAMES:
-        1: %s | %d | Fans: %s | Excludes: %s 
+        1: %s | %d | Fans: %s | Excludes: %s
+        2: %s | %d | Fans: %s | Excludes: %s
     """.trimIndent()
 
     @Test
@@ -29,13 +30,11 @@ class RecommendCommandTest {
         assertEquals(
             String.format(
                 responseTemplate,
-                1,
-                "a",
-                10,
-                "a",
-                "b",
+                2,
+                "a", 10, "a", "b",
+                "b", 5, "a", "b"
             ).trim(),
-            command.getReplyString(gameScoreMap, 1)
+            command.getReplyString(gameScoreMap, 2)
         )
     }
 

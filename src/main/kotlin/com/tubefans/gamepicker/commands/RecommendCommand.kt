@@ -57,14 +57,10 @@ class RecommendCommand @Autowired constructor(
                 replyString.append(
                     "${i+1}: ${generateRow(game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))}\n"
                 )
-
-                return replyString.toString().trim()
             }
-        }
 
-        // we should basically never make it here
-        logger.error("Error getting return string. gameScoreMap=$gameScoreMap, gameCount=$gameCount")
-        return "Couldn't find top $gameCount games."
+            return replyString.toString().trim()
+        }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
