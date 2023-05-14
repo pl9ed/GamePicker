@@ -1,9 +1,9 @@
 package com.tubefans.gamepicker.commands
 
+import com.tubefans.gamepicker.commands.event.TestEventLibrary.createPullFromSheetEvent
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import com.tubefans.gamepicker.services.UserService
-import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
@@ -11,8 +11,13 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.dao.EmptyResultDataAccessException
+import java.io.IOException
 
 class PullFromSheetCommandTest {
+
+    private val validSheet = "valid"
+    private val emptySheet = "empty"
+    private val missingSheet = "missing-sheet"
 
     private val name = "NAME"
     private val missingName = "MISSING"
@@ -31,31 +36,28 @@ class PullFromSheetCommandTest {
 
     private val templateResponse = "Updated DB with scores for %d users.%s"
 
-    private val event: ChatInputInteractionEvent = mockk() {
-        every { options } throws NoSuchElementException()
+    private val userService: UserService = mockk {
+        every {
+            updateGameForUserWithName(name, any(), any())
+        } returns BotUser("id", "username", "name", mutableMapOf())
+        every {
+            updateGameForUserWithName(missingName, any(), any())
+        } throws EmptyResultDataAccessException(1)
     }
+
+    private val googleSheetsService: GoogleSheetsService = mockk() {
+        every { getSheet(validSheet, any()) } returns mockSheet
+        every { getSheet(emptySheet, any()) } returns emptyList()
+        every { getSheet(missingSheet, any()) } throws IOException()
+        every { mapToScores(mockSheet) } returns mockScores
+        every { mapToScores(emptyList()) } returns emptyMap()
+    }
+
+    private val command = PullFromSheetCommand(userService, googleSheetsService)
 
     @Test
     fun `should only update valid users`() {
-        val userService: UserService = mockk {
-            every {
-                updateGameForUserWithName(name, any(), any())
-            } returns BotUser("id", "username", "name", mutableMapOf())
-            every {
-                updateGameForUserWithName(missingName, any(), any())
-            } throws EmptyResultDataAccessException(1)
-        }
-
-        val googleSheetsService: GoogleSheetsService = mockk() {
-            every { getSheet(any(), any()) } returns mockSheet
-            every { mapToScores(mockSheet) } returns mockScores
-        }
-
-        val command = PullFromSheetCommand(
-            userService,
-            googleSheetsService
-        )
-
+        val event = createPullFromSheetEvent(validSheet, "range")
         val message = command.updateDbFromSheet(event).block()
 
         assertEquals(
@@ -66,21 +68,21 @@ class PullFromSheetCommandTest {
 
     @Test
     fun `should handle empty sheet`() {
-        val userService: UserService = mockk()
-
-        val googleSheetsService: GoogleSheetsService = mockk() {
-            every { getSheet(any(), any()) } returns emptyList()
-            every { mapToScores(any()) } returns emptyMap()
-        }
-
-        val command = PullFromSheetCommand(
-            userService,
-            googleSheetsService
-        )
-
+        val event = createPullFromSheetEvent(emptySheet, "range")
         val message = command.updateDbFromSheet(event).block()
 
         verify { userService wasNot called }
+
+        assertEquals(
+            String.format(templateResponse, 0, ""),
+            message
+        )
+    }
+
+    @Test
+    fun `should handle missing sheet`() {
+        val event = createPullFromSheetEvent(missingSheet, "range")
+        val message = command.updateDbFromSheet(event).block()
 
         assertEquals(
             String.format(templateResponse, 0, ""),
