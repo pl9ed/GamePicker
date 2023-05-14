@@ -7,7 +7,6 @@ import com.tubefans.gamepicker.services.BotUserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.stereotype.Component
 
 @Component
@@ -26,14 +25,9 @@ class UpdateGameCommand @Autowired constructor(
         event.interaction.user.let { user ->
             botUserResponse = try {
                 botUserService.updateGameForUserWithId(user.id.toString(), game, score)
-            } catch (e: Throwable) {
-                when (e) {
-                    is DataRetrievalFailureException, is NoSuchElementException -> {
-                        val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
-                        botUserService.insertUser(newUser)
-                    }
-                    else -> throw e
-                }
+            } catch (e: NoSuchElementException) {
+                val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
+                botUserService.insertUser(newUser)
             }
         }
 

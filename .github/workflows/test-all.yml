@@ -18,6 +18,8 @@ env:
   DB_PASS: ${{ secrets.DB_PASS }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
   CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
 jobs:
   unit_tests:
@@ -32,6 +34,20 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
       - name: Create credentials.json
         run:
           echo "$CREDENTIALS_JSON" > "$GITHUB_WORKSPACE/service-key.json"
@@ -39,7 +55,19 @@ jobs:
       - name: Run all tests
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: test
+          arguments: test jacocoTestReport sonarqube --info
+
+      # Triggering SonarQube analysis as results of it are required by Quality Gate check.
+      - name: SonarQube Scan
+        if: always()
+        uses: sonarsource/sonarqube-scan-action@master
+
+      # Check the Quality Gate status.
+      - name: SonarQube Quality Gate check
+        if: always()
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
 
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
