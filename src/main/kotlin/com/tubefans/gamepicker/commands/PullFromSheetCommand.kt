@@ -3,12 +3,12 @@ package com.tubefans.gamepicker.commands
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import com.tubefans.gamepicker.services.UserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
-import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import kotlinx.coroutines.reactor.mono
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
 
 @Component
 class PullFromSheetCommand @Autowired constructor(
@@ -28,8 +28,15 @@ class PullFromSheetCommand @Autowired constructor(
 
     override val name = "pull-from-sheet"
 
-    override fun handle(event: ChatInputInteractionEvent): InteractionApplicationCommandCallbackReplyMono {
-        val sheetId: String = try {
+    override fun handle(event: ChatInputInteractionEvent) =
+        event.deferReply()
+            .then(updateDbFromSheet(event))
+            .flatMap {
+                event.editReply(it)
+            }.then()
+
+    fun updateDbFromSheet(event: ChatInputInteractionEvent): Mono<String> = mono {
+        val id: String = try {
             event.options
                 .first { it.name == SHEET_ID_NAME }
                 .value
@@ -50,35 +57,34 @@ class PullFromSheetCommand @Autowired constructor(
         }
 
         val failedUpdateNames = mutableSetOf<String>()
-
         val usersUpdated = mutableSetOf<String>()
 
-        // TODO: async and block total
-        mono {
-            googleSheetsService.apply {
-                mapToScores(getSheet(sheetId, range)).forEach { (unformattedName, games) ->
-                    val name = unformattedName.uppercase()
-                    games.forEach { (unformattedGame, score) ->
-                        val game = unformattedGame.uppercase()
-                        try {
-                            userService.updateGameForUserWithName(name, game, score)
-                            usersUpdated.add(name)
-                        } catch (e: IllegalArgumentException) {
-                            logger.error("Null id when updating from sheet for name=$name", e)
-                            failedUpdateNames.add(name)
-                        } catch (e: EmptyResultDataAccessException) {
-                            logger.error("Could not find user with name=$name", e)
-                            failedUpdateNames.add(name)
-                        }
+        // TODO: optimize and update asynchronously
+        googleSheetsService.apply {
+            mapToScores(getSheet(id, range)).forEach { (unformattedName, games) ->
+                val name = unformattedName.uppercase()
+                games.forEach { (unformattedGame, score) ->
+                    val game = unformattedGame.uppercase()
+                    try {
+                        userService.updateGameForUserWithName(name, game, score)
+                        usersUpdated.add(name)
+                    } catch (e: IllegalArgumentException) {
+                        logger.error("Null id when updating from sheet for name=$name", e)
+                        failedUpdateNames.add(name)
+                    } catch (e: EmptyResultDataAccessException) {
+                        logger.error("Could not find user with name=$name", e)
+                        failedUpdateNames.add(name)
                     }
                 }
             }
-        }.block()
+        }
 
-        return event.reply()
-            .withContent(
-                "Updated DB with scores for ${usersUpdated.size} users. " +
-                        "Failed to update for ${failedUpdateNames.joinToString()}"
-            )
+        val replyString = StringBuilder("Updated DB with scores for ${usersUpdated.size} users.")
+
+        if (failedUpdateNames.isNotEmpty()) {
+            replyString.append(" Failed to update for ${failedUpdateNames.joinToString()}")
+        }
+
+        replyString.toString()
     }
 }

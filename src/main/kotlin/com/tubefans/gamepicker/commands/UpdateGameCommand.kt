@@ -8,6 +8,7 @@ import discord4j.core.GatewayDiscordClient
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Component
 
 @Component
@@ -30,7 +31,7 @@ class UpdateGameCommand : SlashCommand {
         event.interaction.user.let { user ->
             botUserResponse = try {
                 userService.updateGameForUserWithId(user.id.toString(), game, score)
-            } catch (e: NoSuchElementException) {
+            } catch (e: EmptyResultDataAccessException) {
                 val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
                 userService.insertUser(newUser)
             }
