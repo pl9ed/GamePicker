@@ -53,7 +53,11 @@ class GameScoreMapTest {
         val gameScoreMap = GameScoreMap(users)
 
         val n = 3
-        val expectedList = listOf("game1", "game3", "game2")
+        val expectedList: List<Pair<String, Long>> = listOf(
+            "game1" to 19,
+            "game3" to 11,
+            "game2" to 10
+        )
         val actualList = gameScoreMap.getTopGames(n)
 
         for (i in 0 until n) {
@@ -83,7 +87,7 @@ class GameScoreMapTest {
         assertTrue(GameScoreMap(emptyUsers).getTopGames(5).isEmpty())
 
         assertEquals(
-            listOf("game1", "game2", "game3"),
+            listOf("game1" to 10L, "game2" to 5L, "game3" to 1L),
             GameScoreMap(listOf(user1, blankUser)).getTopGames(3)
         )
     }

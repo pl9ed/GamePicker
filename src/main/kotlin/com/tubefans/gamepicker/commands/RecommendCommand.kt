@@ -1,6 +1,8 @@
 package com.tubefans.gamepicker.commands
 
 import com.mongodb.internal.VisibleForTesting
+import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.UserScore
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
@@ -32,15 +34,43 @@ class RecommendCommand @Autowired constructor(
                 } ?: Mono.just(emptySet())
             ).map {
                 logger.debug("Getting top games for {} users", it.size)
-                GameScoreMap(it).getTopGames(DEFAULT_GAME_COUNT)
+                GameScoreMap(it)
+            }.map {
+                getReplyString(it, DEFAULT_GAME_COUNT)
             }.flatMap {
-                event.editReply(getReplyString(it))
+                event.editReply(it)
             }.then()
 
     @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
-    fun getReplyString(games: List<String>) = if (games.isEmpty()) {
-        NO_GAMES_RESPONSE
-    } else {
-        "Top games are: ${games.joinToString()}"
+    fun getReplyString(gameScoreMap: GameScoreMap, gameCount: Int): String {
+        gameScoreMap.apply {
+            val topGames = getTopGames(gameCount)
+
+            if (topGames.isEmpty()) return NO_GAMES_RESPONSE
+
+            val replyString = StringBuilder("TOP $gameCount GAMES:\n")
+
+            topGames.forEachIndexed { i, gameScore ->
+                val game = gameScore.first
+                val score = gameScore.second
+
+                replyString.append(
+                    "${i + 1}: ${generateRow(game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))}\n"
+                )
+            }
+
+            return replyString.toString().trim()
+        }
     }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
+    fun generateRow(
+        game: String,
+        score: Long,
+        fans: Collection<UserScore>,
+        excludes: Collection<BotUser>
+    ): String = "$game | " +
+        "$score | " +
+        "Fans: ${fans.map { it.user.name ?: it.user.username }.joinToString()} | " +
+        "Excludes: ${excludes.map { it.name ?: it.username }.joinToString()}"
 }
