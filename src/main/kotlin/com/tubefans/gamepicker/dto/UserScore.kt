@@ -9,7 +9,7 @@ class UserScore(
         return if (this.score != other.score) {
             this.score.compareTo(other.score)
         } else {
-            this.user.username.compareTo(other.user.username)
+            compareValues(this.user.username, other.user.username)
         }
     }
 }

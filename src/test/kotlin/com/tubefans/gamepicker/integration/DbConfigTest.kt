@@ -39,7 +39,7 @@ class DbConfigTest {
 
     @Test
     fun `can find single entry by field`() {
-        val response = botUserRepository.findOneByName(user.name)
+        val response = user.name?.let { botUserRepository.findOneByName(it) }
         assertEquals(user, response)
     }
 }

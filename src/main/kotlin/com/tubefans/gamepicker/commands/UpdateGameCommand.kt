@@ -28,13 +28,24 @@ class UpdateGameCommand : SlashCommand {
         val score = event.getScore()
 
         event.interaction.user.let { user ->
-                botUserResponse = userService.updateGameForUserWithId(user.id.toString(), game, score)
+            botUserResponse = try {
+                userService.updateGameForUserWithId(user.id.toString(), game, score)
+            } catch (e: NoSuchElementException) {
+                val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
+                userService.insertUser(newUser)
+            }
+        }
+
+        val responseString = StringBuilder("Updated $game with score: $score for ${botUserResponse.username}. ")
+
+        if (botUserResponse.name.isNullOrBlank()) {
+            responseString.append(" Note: you do not have a name associated.") // TODO: add update features via cmd
         }
 
         return event.reply()
             .withEphemeral(true)
             .withContent(
-                "Updated $game with score: $score for ${botUserResponse.username}"
+                responseString.toString()
             )
     }
 }

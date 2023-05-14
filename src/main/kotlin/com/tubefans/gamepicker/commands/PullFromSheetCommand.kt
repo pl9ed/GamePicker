@@ -7,6 +7,7 @@ import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import kotlinx.coroutines.reactor.mono
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Component
 
 @Component
@@ -16,7 +17,7 @@ class PullFromSheetCommand @Autowired constructor(
 ) : SlashCommand {
 
     companion object {
-        const val SHEET_ID_NAME = "sheetid"
+        const val SHEET_ID_NAME = "id"
         const val SHEET_RANGE_NAME = "range"
 
         const val DEFAULT_SHEET = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
@@ -48,33 +49,36 @@ class PullFromSheetCommand @Autowired constructor(
             DEFAULT_RANGE
         }
 
-        val failedUpdateNames = mutableListOf<String>()
+        val failedUpdateNames = mutableSetOf<String>()
 
-        val updateCount = mono {
-            var count = 0
+        val usersUpdated = mutableSetOf<String>()
+
+        // TODO: async and block total
+        mono {
             googleSheetsService.apply {
-                mapToScores(getSheet(sheetId, range)).forEach { (name, games) ->
-                    games.forEach { (game, score) ->
+                mapToScores(getSheet(sheetId, range)).forEach { (unformattedName, games) ->
+                    val name = unformattedName.uppercase()
+                    games.forEach { (unformattedGame, score) ->
+                        val game = unformattedGame.uppercase()
                         try {
                             userService.updateGameForUserWithName(name, game, score)
-                            count++
+                            usersUpdated.add(name)
                         } catch (e: IllegalArgumentException) {
                             logger.error("Null id when updating from sheet for name=$name", e)
                             failedUpdateNames.add(name)
-                        } catch (e: NoSuchElementException) {
+                        } catch (e: EmptyResultDataAccessException) {
                             logger.error("Could not find user with name=$name", e)
                             failedUpdateNames.add(name)
                         }
                     }
                 }
-                return@mono count
             }
         }.block()
 
-        return event.reply().withEphemeral(false)
+        return event.reply()
             .withContent(
-                "Updated DB with scores from $updateCount users. " +
-                    "Failed to update for ${failedUpdateNames.joinToString()}"
+                "Updated DB with scores for ${usersUpdated.size} users. " +
+                        "Failed to update for ${failedUpdateNames.joinToString()}"
             )
     }
 }

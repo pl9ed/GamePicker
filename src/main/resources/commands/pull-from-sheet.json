@@ -1,9 +1,9 @@
 {
-  "name": "init",
+  "name": "pull-from-sheet",
   "description": "Initialize DB from Google sheet",
   "options": [
     {
-      "name": "sheetid",
+      "name": "id",
       "description": "ID for google sheet",
       "type": 3,
       "required": true

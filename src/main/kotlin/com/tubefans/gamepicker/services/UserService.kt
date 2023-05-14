@@ -11,11 +11,9 @@ class UserService @Autowired constructor(
     val botUserRepository: BotUserRepository
 ) {
 
-    fun updateUser(user: BotUser): BotUser = try {
-        botUserRepository.save(user)
-    } catch (e: IllegalArgumentException) {
-        botUserRepository.insert(user)
-    }
+    fun insertUser(user: BotUser) = botUserRepository.insert(user)
+
+    fun updateUser(user: BotUser): BotUser = botUserRepository.save(user)
 
     fun updateGameForUserWithName(name: String, game: String, score: Long): BotUser =
         updateUser(botUserRepository.findOneByName(name).updateGame(game, score))

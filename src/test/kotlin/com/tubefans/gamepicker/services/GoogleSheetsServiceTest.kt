@@ -24,7 +24,7 @@ class GoogleSheetsServiceTest {
 
     init {
         val text = String(javaClass.getResourceAsStream(testSheetPath)!!.readBytes())
-        text.split("\n").forEach { it ->
+        text.split("\n").forEach {
             val row = it.split(",").toMutableList()
             row.removeIf { cell -> cell == "\r" }
             mockSheet.add(row)
