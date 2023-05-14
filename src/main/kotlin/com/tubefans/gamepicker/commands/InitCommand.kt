@@ -18,7 +18,7 @@ class InitCommand @Autowired constructor(
         const val SHEET_ID_NAME = "sheetId"
         const val SHEET_RANGE_NAME = "range"
 
-        const val DEFAULT_RANGE = ""
+        const val DEFAULT_RANGE = "A1:AA11"
     }
 
     override val name = "init"
@@ -37,14 +37,15 @@ class InitCommand @Autowired constructor(
                 .get()
                 .asString()
         } catch (e: NoSuchElementException) {
-            "A1:AA11"
+            DEFAULT_RANGE
         }
 
         val updateCount = mono {
-            var count = 0
-
-            val scoreMap: Map<String, Pair<String, Long>> = googleSheetsService.getUserScores()
-        }
+            googleSheetsService.apply {
+                val scoreMap: Map<String, List<Pair<String, Long>>> = mapToScores(getSheet(sheetId, range))
+                return@mono scoreMap.size
+            }
+        }.block()
 
         return event.reply().withEphemeral(false)
             .withContent("Updated DB with scores from $updateCount users")
