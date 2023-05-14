@@ -43,7 +43,7 @@ class GameScoreMap(
             }
 
     fun getTopPlayersForGame(game: String, n: Int = 3): List<UserScore> =
-        map[game]?.sortedDescending()?.take(n) ?: emptyList()
+        map[game]?.filter { it.score != 0L }?.sortedDescending()?.take(n) ?: emptyList()
 
     fun getNonPlayersForGame(game: String): List<BotUser> =
         map[game]?.filter {
