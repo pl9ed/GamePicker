@@ -63,19 +63,6 @@ out/
 .vscode/
 
 ### Google Credentials Json ###
-<<<<<<< HEAD
 credentials.json
 **/service-key.json
 tokens/
-=======
-**/credentials.json
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 35b12e3 (First pass working google sheets layer)
-=======
-tokens/
->>>>>>> f8678ac (Added name)
-=======
-**/service-key.json
-tokens/
->>>>>>> 07c3ac1 (Use service json)
