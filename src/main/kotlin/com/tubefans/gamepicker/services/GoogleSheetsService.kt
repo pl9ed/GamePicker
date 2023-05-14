@@ -26,7 +26,7 @@ class GoogleSheetsService @Autowired constructor(
      * @return 2D array of objects from the sheet
      */
     fun getSheet(id: String, range: String = DEFAULT_RANGE): List<List<Any>> =
-        sheets.spreadsheets().values().get(id, range).execute().getValues()
+        sheets.spreadsheets().values()[id, range].execute().getValues()
 
     /**
      * Helper function to process data from Google sheets
