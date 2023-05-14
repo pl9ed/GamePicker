@@ -2,14 +2,14 @@ package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.tubefans.gamepicker.repositories.UserRepository
+import com.tubefans.gamepicker.repositories.BotUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class GoogleSheetsService @Autowired constructor(
     private val sheets: Sheets,
-    private val userRepository: UserRepository
+    private val botUserRepository: BotUserRepository
 ) {
 
     fun getValueRange(id: String, range: String): ValueRange =

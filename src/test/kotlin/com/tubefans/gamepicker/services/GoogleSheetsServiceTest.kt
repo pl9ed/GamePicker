@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
-import com.tubefans.gamepicker.repositories.UserRepository
+import com.tubefans.gamepicker.repositories.BotUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
@@ -11,13 +11,13 @@ import org.mockito.Mock
 
 class GoogleSheetsServiceTest {
 
-    private var userRepository: UserRepository = mockk()
+    private var botUserRepository: BotUserRepository = mockk()
 
     @Mock
     private var sheets: Sheets = mockk()
 
     @InjectMocks
-    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets, userRepository)
+    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets, botUserRepository)
 
     private val sheetId = "sheet-id"
     private val sheetName = "Sheet1"

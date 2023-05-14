@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.integration
 
 import com.tubefans.gamepicker.dto.BotUser
-import com.tubefans.gamepicker.repositories.UserRepository
+import com.tubefans.gamepicker.repositories.BotUserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -15,31 +15,31 @@ import org.springframework.boot.test.context.SpringBootTest
 class DbConfigTest {
 
     @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var botUserRepository: BotUserRepository
 
     private val user = BotUser("id", "username", "name")
 
     @BeforeEach
     fun setup() {
-        userRepository.save(user)
+        botUserRepository.save(user)
     }
 
     @AfterEach
     fun teardown() {
-        userRepository.delete(user)
+        botUserRepository.delete(user)
     }
 
     @Test
     fun `can save entries`() {
         val updatedName = "new name"
 
-        val response = userRepository.save(user.copy(name = updatedName))
+        val response = botUserRepository.save(user.copy(name = updatedName))
         assertEquals(response.name, updatedName)
     }
 
     @Test
     fun `can find single entry by field`() {
-        val response = userRepository.findOneByName(user.name)
+        val response = botUserRepository.findOneByName(user.name)
         assertEquals(user, response)
     }
 }
