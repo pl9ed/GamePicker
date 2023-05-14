@@ -29,7 +29,7 @@ class GoogleSheetsService @Autowired constructor(
         sheets.spreadsheets().values().get(id, range).execute().getValues()
 
     /**
-     * Helper function to process data from google sheets
+     * Helper function to process data from Google sheets
      * @param sheet 2D array to read from
      * @return Map of users -> list of scores
      */
