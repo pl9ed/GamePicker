@@ -32,15 +32,35 @@ class RecommendCommand @Autowired constructor(
                 } ?: Mono.just(emptySet())
             ).map {
                 logger.debug("Getting top games for {} users", it.size)
-                GameScoreMap(it).getTopGames(DEFAULT_GAME_COUNT)
+                GameScoreMap(it)
+            }.map {
+                getReplyString(it, DEFAULT_GAME_COUNT)
             }.flatMap {
-                event.editReply(getReplyString(it))
+                event.editReply(it)
             }.then()
 
     @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
-    fun getReplyString(games: List<String>) = if (games.isEmpty()) {
-        NO_GAMES_RESPONSE
-    } else {
-        "Top games are: ${games.joinToString()}"
+    fun getReplyString(gameScoreMap: GameScoreMap, gameCount: Int): String {
+        gameScoreMap.apply {
+            val topGames = getTopGames(gameCount)
+
+            if (topGames.isEmpty()) return NO_GAMES_RESPONSE
+
+            val replyString = StringBuilder("TOP $gameCount GAMES:")
+
+            topGames.forEachIndexed { i, gameScore ->
+                val game = gameScore.first
+                val score = gameScore.second
+
+                replyString.append(
+                    "${i+1}: $game | " +
+                    "$score | " +
+                    "Fans: ${getTopPlayersForGame(game).joinToString()} | " +
+                    "Excludes: ${getNonPlayersForGame(game).joinToString()}\n")
+            }
+
+            return "Top games are: ${replyString.trim()}"
+        }
     }
+
 }

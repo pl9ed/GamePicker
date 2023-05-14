@@ -26,7 +26,7 @@ class GameScoreMap(
         }
     }
 
-    fun getTopGames(n: Int): List<String> =
+    fun getTopGames(n: Int): List<Pair<String, Long>> =
         map.toList()
             .sortedByDescending { (_, v) ->
                 var sum = 0L
@@ -35,8 +35,11 @@ class GameScoreMap(
                 }
                 sum
             }.take(n)
-            .map {
-                it.first
+            .map { pair ->
+                val sum = pair.second.sumOf {
+                    it.score
+                }
+                Pair(pair.first, sum)
             }
 
     fun getTopPlayersForGame(game: String, n: Int = 3): List<UserScore> =
