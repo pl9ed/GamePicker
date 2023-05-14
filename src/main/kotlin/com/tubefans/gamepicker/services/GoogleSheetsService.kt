@@ -5,6 +5,8 @@ import com.google.api.services.sheets.v4.model.ValueRange
 import com.tubefans.gamepicker.repositories.BotUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import toName
+import toScore
 
 @Service
 class GoogleSheetsService @Autowired constructor(
@@ -18,16 +20,17 @@ class GoogleSheetsService @Autowired constructor(
     fun getAll(id: String, sheetName: String = "Sheet1"): ValueRange =
         sheets.spreadsheets().values()[id, "Sheet1"].execute()
 
-    fun updateUserScores(id: String, range: String) {
-        return
-        /*
-        TODO: test
-        val sheet = sheets.spreadsheets()
-            .values()
-            .get(id, range)
-            .execute()
-            .getValues()
+    /**
+     * Maps scores from the Google sheet. Assumes proper configuration of sheet with header rows for game name and
+     * genre.
+     * @param id Google Sheet id
+     * @param range String representation of range, e.x. 'A1:A5'
+     */
+    fun getUserScores(id: String, range: String): Map<String, Pair<String, Long>> {
+        val userScores: MutableMap<String, Pair<String, Long>> = mutableMapOf()
+        val sheet = getSheet(id, range) // 2d list
 
+        // which games are at which column
         val gameIndexMap = mutableMapOf<Int, String>()
 
         sheet[0].forEachIndexed { i, game ->
@@ -38,24 +41,23 @@ class GoogleSheetsService @Autowired constructor(
             }
         }
 
-        for (row in 1 until sheet.size) {
+        for (row in 2 until sheet.size) {
             val cols = sheet[row].size
-
-            // names
-            sheet[row][0]
-
             sheet[row][0].toName()?.let { name ->
-                val user = userRepository.findOneByName(name)
                 for (col in 1 until cols) {
-                    sheet[row][col]?.toScore()?.let { score ->
-                        gameIndexMap[col]?.let { game ->
-                            user.gameMap[game] = score
-                        }
+                    sheet[row][col].toScore()?.let { score ->
+                        userScores[name] = Pair(name, score)
                     }
                 }
-                userRepository.save(user)
             }
         }
-         */
+
+        return userScores
     }
+
+    private fun getSheet(id: String, range: String) = sheets.spreadsheets()
+        .values()
+        .get(id, range)
+        .execute()
+        .getValues()
 }
