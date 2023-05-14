@@ -71,7 +71,7 @@ class UpdateGameCommandTest {
                 every { username() } returns username
             }
         )
-        val botUser = BotUser(missingId.toString(), username, "name")
+        val botUser = BotUser(missingId.toString(), username, "", mutableMapOf(game to score))
 
         every { botUserService.insertUser(any()) } returns botUser
 
