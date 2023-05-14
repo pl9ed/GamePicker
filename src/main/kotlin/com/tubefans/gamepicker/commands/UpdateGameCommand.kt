@@ -4,18 +4,16 @@ import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.extensions.getGame
 import com.tubefans.gamepicker.extensions.getScore
 import com.tubefans.gamepicker.services.BotUserService
-import discord4j.core.GatewayDiscordClient
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.stereotype.Component
 
 @Component
-class UpdateGameCommand : SlashCommand {
-
-    @Autowired
-    lateinit var botUserService: BotUserService
+class UpdateGameCommand @Autowired constructor(
+    private val botUserService: BotUserService
+) : SlashCommand {
 
     override val name = "update"
 
@@ -28,22 +26,21 @@ class UpdateGameCommand : SlashCommand {
         event.interaction.user.let { user ->
             botUserResponse = try {
                 botUserService.updateGameForUserWithId(user.id.toString(), game, score)
-            } catch (e: EmptyResultDataAccessException) {
-                val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
-                botUserService.insertUser(newUser)
+            } catch (e: Throwable) {
+                when (e) {
+                    is DataRetrievalFailureException, is NoSuchElementException -> {
+                        val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
+                        botUserService.insertUser(newUser)
+                    }
+                    else -> throw e
+                }
             }
-        }
-
-        val responseString = StringBuilder("Updated $game with score: $score for ${botUserResponse.username}. ")
-
-        if (botUserResponse.name.isNullOrBlank()) {
-            responseString.append(" Note: you do not have a name associated.") // TODO: add update features via cmd
         }
 
         return event.reply()
             .withEphemeral(true)
             .withContent(
-                responseString.toString()
+                "Updated $game with score: $score for ${botUserResponse.username}."
             )
     }
 }

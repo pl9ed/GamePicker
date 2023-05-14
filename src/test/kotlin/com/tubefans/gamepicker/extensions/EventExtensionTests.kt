@@ -27,23 +27,23 @@ class EventExtensionTests {
         }
     }
 
-    private val mockOptions: List<ApplicationCommandInteractionOption> = mutableListOf(
+    private val mockGameOptions: List<ApplicationCommandInteractionOption> = mutableListOf(
         gameNameOption,
         gameScoreOptions
     )
 
-    private val event: ChatInputInteractionEvent = mockk() {
-        every { options } returns mockOptions
+    private val gameUpdateEvent: ChatInputInteractionEvent = mockk() {
+        every { options } returns mockGameOptions
     }
 
     @Test
     fun `should get first game from options`() {
-        Assertions.assertEquals(gameName, event.getGame())
+        Assertions.assertEquals(gameName, gameUpdateEvent.getGame())
     }
 
     @Test
     fun `should get score from options`() {
-        Assertions.assertEquals(gameScore, event.getScore())
+        Assertions.assertEquals(gameScore, gameUpdateEvent.getScore())
     }
 
     @Test
