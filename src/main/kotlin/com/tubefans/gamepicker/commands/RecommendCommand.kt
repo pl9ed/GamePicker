@@ -64,5 +64,4 @@ class RecommendCommand @Autowired constructor(
             .awaitAll()
             .toSet()
     }
-
 }
