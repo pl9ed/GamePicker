@@ -14,6 +14,8 @@ class BotUserService @Autowired constructor(
     private val botUserRepository: BotUserRepository
 ) {
 
+    fun findById(id: String) = botUserRepository.findById(id)
+
     fun insertUser(user: BotUser) = botUserRepository.insert(user)
 
     fun updateUser(user: BotUser): BotUser = botUserRepository.save(user)
