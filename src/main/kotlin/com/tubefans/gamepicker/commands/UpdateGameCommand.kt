@@ -3,21 +3,17 @@ package com.tubefans.gamepicker.commands
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.extensions.getGame
 import com.tubefans.gamepicker.extensions.getScore
-import com.tubefans.gamepicker.services.UserService
-import discord4j.core.GatewayDiscordClient
+import com.tubefans.gamepicker.services.BotUserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.stereotype.Component
 
 @Component
-class UpdateGameCommand : SlashCommand {
-
-    @Autowired
-    lateinit var gateway: GatewayDiscordClient
-
-    @Autowired
-    lateinit var userService: UserService
+class UpdateGameCommand @Autowired constructor(
+    private val botUserService: BotUserService
+) : SlashCommand {
 
     override val name = "update"
 
@@ -28,13 +24,23 @@ class UpdateGameCommand : SlashCommand {
         val score = event.getScore()
 
         event.interaction.user.let { user ->
-            botUserResponse = userService.updateGame(user, game, score)
+            botUserResponse = try {
+                botUserService.updateGameForUserWithId(user.id.toString(), game, score)
+            } catch (e: Throwable) {
+                when (e) {
+                    is DataRetrievalFailureException, is NoSuchElementException -> {
+                        val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
+                        botUserService.insertUser(newUser)
+                    }
+                    else -> throw e
+                }
+            }
         }
 
         return event.reply()
             .withEphemeral(true)
             .withContent(
-                "Updated $game with score: $score for ${botUserResponse.username}"
+                "Updated $game with score: $score for ${botUserResponse.username}."
             )
     }
 }

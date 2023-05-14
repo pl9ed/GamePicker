@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class BotUser(
     @Id
     val discordId: String,
-    val username: String,
-    val name: String,
+    val username: String?,
+    val name: String?,
     val gameMap: MutableMap<String, Long> = mutableMapOf()
 )

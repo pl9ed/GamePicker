@@ -1,0 +1,19 @@
+,Game1,Game2,Game3,Game4,Game5,Game6,Game7,Game8,Game9,Game10,Game11
+,Genre1,Genre1,Genre1,Genre2,Genre2,Genre3,Genre3,Genre3,Genre3,Genre3,Genre4
+All X,x,x,x,x,x,x,x,x,x,x,x
+Some X,x,,x,,x,,,,,x,x
+All 0,0,0,0,0,0,0,0,0,0,0,0
+Some 0,0,,,0,,0,,,0,,0
+Invalid Values,-10,1233,1.5,3.6,23.232,John,,,,,
+All Blank,,,,,,,,,,,
+User1,10,0,3,0,10,5,10,10,10,10,0
+User2,10,0,5,5,1,5,5,5,5,5,5
+User3,10,0,2,10,10,6,8,3,6,4,3
+,,,,,,,,,,,
+,,,,,,,,,,,
+,Extra shit,,,,,,,,,,
+,,,,,,,,,,,
+,User1,10,0,3,0,10,5,10,10,10,10,0
+,User2,10,0,5,5,1,5,5,5,5,5,5
+,User3,10,0,2,10,10,6,8,3,6,4,3
+,,30,0,10,15,21,16,23,18,21,19,8

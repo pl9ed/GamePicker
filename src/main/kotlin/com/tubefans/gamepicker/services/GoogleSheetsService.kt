@@ -2,60 +2,70 @@ package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.tubefans.gamepicker.repositories.UserRepository
+import com.tubefans.gamepicker.commands.PullFromSheetCommand.Companion.DEFAULT_RANGE
+import com.tubefans.gamepicker.repositories.BotUserRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import toName
+import toScore
 
 @Service
 class GoogleSheetsService @Autowired constructor(
     private val sheets: Sheets,
-    private val userRepository: UserRepository
+    private val botUserRepository: BotUserRepository
 ) {
 
-    fun getValueRange(id: String, range: String): ValueRange =
-        sheets.spreadsheets().values()[id, range].execute()
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun getAll(id: String, sheetName: String = "Sheet1"): ValueRange =
-        sheets.spreadsheets().values()[id, "Sheet1"].execute()
+    fun getValueRange(id: String, range: String): ValueRange = sheets.spreadsheets().values()[id, range].execute()
 
-    fun updateUserScores(id: String, range: String) {
-        return
-        /*
-        TODO: test
-        val sheet = sheets.spreadsheets()
-            .values()
-            .get(id, range)
-            .execute()
-            .getValues()
+    /**
+     * @param id Google Sheet id
+     * @param range String representation of range, e.x. 'A1:A5'
+     * @return 2D array of objects from the sheet
+     */
+    fun getSheet(id: String, range: String = DEFAULT_RANGE): List<List<Any>> =
+        sheets.spreadsheets().values()[id, range].execute().getValues()
 
+    /**
+     * Helper function to process data from Google sheets
+     * @param sheet 2D array to read from
+     * @return Map of users -> list of scores
+     */
+    fun mapToScores(sheet: List<List<Any>>): Map<String, List<Pair<String, Long>>> {
+        if (sheet.isEmpty()) return emptyMap()
+
+        val scoreMap: MutableMap<String, MutableList<Pair<String, Long>>> = mutableMapOf()
+
+        // which games are at which column
         val gameIndexMap = mutableMapOf<Int, String>()
 
         sheet[0].forEachIndexed { i, game ->
-            game?.toString()?.takeIf {
+            game.toString().takeIf {
                 it.isNotBlank()
             }?.let {
+                logger.debug("{} at {}", it, i)
                 gameIndexMap[i] = it
             }
         }
 
-        for (row in 1 until sheet.size) {
+        for (row in 2 until sheet.size) {
             val cols = sheet[row].size
+            val name = sheet[row][0].toName() ?: continue
 
-            // names
-            sheet[row][0]
+            for (col in 1 until cols) {
+                val game = gameIndexMap[col] ?: continue
+                val score = sheet[row][col].toScore() ?: continue
 
-            sheet[row][0].toName()?.let { name ->
-                val user = userRepository.findOneByName(name)
-                for (col in 1 until cols) {
-                    sheet[row][col]?.toScore()?.let { score ->
-                        gameIndexMap[col]?.let { game ->
-                            user.gameMap[game] = score
-                        }
-                    }
+                val entry = Pair(game, score)
+
+                scoreMap[name]?.add(entry) ?: run {
+                    scoreMap[name] = mutableListOf(entry)
                 }
-                userRepository.save(user)
             }
         }
-         */
+
+        return scoreMap
     }
 }
