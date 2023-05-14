@@ -1,10 +1,11 @@
 package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.models.GameScoreMap
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
+@Service
 class GameService @Autowired constructor() {
 
     companion object Keys {

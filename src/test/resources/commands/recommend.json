@@ -1,0 +1,4 @@
+{
+  "name": "recommend",
+  "description": "Recommend top 3 games for users in the current voice channel"
+}

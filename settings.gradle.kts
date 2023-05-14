@@ -11,5 +11,8 @@ dependencyResolutionManagement {
         create("gdriveLibs") {
             from(files("library/gdrive.toml"))
         }
+        create("libs") {
+            from(files("library/general.toml"))
+        }
     }
 }

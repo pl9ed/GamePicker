@@ -8,6 +8,7 @@ import discord4j.core.GatewayDiscordClient
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.command.ApplicationCommandInteractionOption
 import discord4j.core.`object`.entity.User
+import discord4j.core.`object`.entity.channel.VoiceChannel
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Optional
@@ -16,6 +17,14 @@ object TestEventLibrary {
 
     fun createGatewayDiscordClient(): GatewayDiscordClient = mockk {
         every { rest() } returns mockk()
+    }
+
+    fun createRecommendEvent(mockVoiceChannel: VoiceChannel?): ChatInputInteractionEvent = mockk {
+        every {
+            interaction.member.get()
+                .voiceState.block()
+                ?.channel?.block()
+        } returns mockVoiceChannel
     }
 
     fun createPullFromSheetEvent(id: String, range: String): ChatInputInteractionEvent = mockk {

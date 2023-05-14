@@ -1,4 +1,4 @@
-package com.tubefans.gamepicker.services
+package com.tubefans.gamepicker.models
 
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.dto.UserScore
