@@ -5,6 +5,7 @@ import com.tubefans.gamepicker.services.UserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import kotlinx.coroutines.reactor.mono
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -20,6 +21,8 @@ class InitCommand @Autowired constructor(
 
         const val DEFAULT_RANGE = "A1:AA11"
     }
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override val name = "init"
 
@@ -40,14 +43,33 @@ class InitCommand @Autowired constructor(
             DEFAULT_RANGE
         }
 
+        val failedUpdateNames = mutableListOf<String>()
+
         val updateCount = mono {
+            var count = 0
             googleSheetsService.apply {
-                val scoreMap: Map<String, List<Pair<String, Long>>> = mapToScores(getSheet(sheetId, range))
-                return@mono scoreMap.size
+                mapToScores(getSheet(sheetId, range)).forEach { (name, games) ->
+                    games.forEach {(game, score) ->
+                        try {
+                            userService.updateGameForUserWithName(name, game, score)
+                            count++
+                        } catch (e: IllegalArgumentException) {
+                            logger.error("Null id when updating from sheet for name=$name", e)
+                            failedUpdateNames.add(name)
+                        } catch (e: NoSuchElementException) {
+                            logger.error("Could not find user with name=$name", e)
+                            failedUpdateNames.add(name)
+                        }
+                    }
+                }
+                return@mono count
             }
         }.block()
 
         return event.reply().withEphemeral(false)
-            .withContent("Updated DB with scores from $updateCount users")
+            .withContent(
+                "Updated DB with scores from $updateCount users. " +
+                        "Failed to update for ${failedUpdateNames.joinToString()}"
+            )
     }
 }
