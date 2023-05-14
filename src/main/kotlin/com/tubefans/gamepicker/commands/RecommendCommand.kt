@@ -21,6 +21,10 @@ class RecommendCommand @Autowired constructor(
     private val botUserService: BotUserService
 ) : SlashCommand {
 
+    companion object {
+        const val DEFAULT_GAME_COUNT = 3
+    }
+
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override val name = "recommend"
@@ -33,7 +37,7 @@ class RecommendCommand @Autowired constructor(
                 } ?: Mono.just(emptySet())
             ).map {
                 logger.debug("Getting top games for {} users", it.size)
-                GameScoreMap(it).getTopGames(3)
+                GameScoreMap(it).getTopGames(DEFAULT_GAME_COUNT)
             }.flatMap {
                 val replyString = if (it.isEmpty()) {
                     "No games found. Are you in a voice channel?"
@@ -60,4 +64,5 @@ class RecommendCommand @Autowired constructor(
             .awaitAll()
             .toSet()
     }
+
 }
