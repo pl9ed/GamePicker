@@ -48,14 +48,14 @@ class RecommendCommand @Autowired constructor(
 
             if (topGames.isEmpty()) return NO_GAMES_RESPONSE
 
-            val replyString = StringBuilder("TOP $gameCount GAMES:")
+            val replyString = StringBuilder("TOP $gameCount GAMES:\n")
 
             topGames.forEachIndexed { i, gameScore ->
                 val game = gameScore.first
                 val score = gameScore.second
 
                 replyString.append(
-                    "${generateRow(game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))}\n"
+                    "${i+1}: ${generateRow(game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))}\n"
                 )
 
                 return replyString.toString().trim()
@@ -75,6 +75,6 @@ class RecommendCommand @Autowired constructor(
         excludes: Collection<BotUser>
     ): String = "$game | " +
             "$score | " +
-            "Fans: ${fans.map { it.user.name }.joinToString()} | " +
-            "Excludes: ${excludes.map { it.name }.joinToString()}"
+            "Fans: ${fans.map { it.user.name ?: it.user.username }.joinToString()} | " +
+            "Excludes: ${excludes.map { it.name ?: it.username }.joinToString()}"
 }
