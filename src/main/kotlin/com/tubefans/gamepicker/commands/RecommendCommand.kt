@@ -1,6 +1,8 @@
 package com.tubefans.gamepicker.commands
 
 import com.mongodb.internal.VisibleForTesting
+import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.UserScore
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
@@ -53,14 +55,26 @@ class RecommendCommand @Autowired constructor(
                 val score = gameScore.second
 
                 replyString.append(
-                    "${i+1}: $game | " +
-                    "$score | " +
-                    "Fans: ${getTopPlayersForGame(game).joinToString()} | " +
-                    "Excludes: ${getNonPlayersForGame(game).joinToString()}\n")
-            }
+                    "${generateRow(game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))}\n"
+                )
 
-            return "Top games are: ${replyString.trim()}"
+                return replyString.toString().trim()
+            }
         }
+
+        // we should basically never make it here
+        logger.error("Error getting return string. gameScoreMap=$gameScoreMap, gameCount=$gameCount")
+        return "Couldn't find top $gameCount games."
     }
 
+    @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
+    fun generateRow(
+        game: String,
+        score: Long,
+        fans: Collection<UserScore>,
+        excludes: Collection<BotUser>
+    ): String = "$game | " +
+            "$score | " +
+            "Fans: ${fans.map { it.user.name }.joinToString()} | " +
+            "Excludes: ${excludes.map { it.name }.joinToString()}"
 }
