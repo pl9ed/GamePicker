@@ -7,12 +7,12 @@ import discord4j.core.`object`.VoiceState
 import discord4j.core.`object`.entity.channel.VoiceChannel
 import io.mockk.every
 import io.mockk.mockk
-import java.util.Optional
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
+import java.util.Optional
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EventServiceTest {
@@ -70,7 +70,6 @@ class EventServiceTest {
         assertEquals(null, eventService.getCurrentChannel(event))
     }
 
-
     @Test
     fun `should get users in a voice channel`() = runTest {
         val users = eventService.getUsersInChannel(voiceChannel).block()
@@ -90,5 +89,4 @@ class EventServiceTest {
             users
         )
     }
-
 }

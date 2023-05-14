@@ -4,7 +4,6 @@ import com.tubefans.gamepicker.dto.BotUser
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.entity.channel.VoiceChannel
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -43,5 +42,4 @@ class EventService @Autowired constructor(
             it.get()
         }.toList().toSet()
     }
-
 }
