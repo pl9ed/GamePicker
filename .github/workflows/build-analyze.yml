@@ -68,12 +68,3 @@ jobs:
         id: sonarqube-quality-gate-check
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
-
-      # Optionally you can use the output from the Quality Gate in another step.
-      # The possible outputs of the `quality-gate-status` variable are `PASSED`, `WARN` or `FAILED`.
-      - name: Report quality analysis
-        if: always()
-        env:
-          QUALITY_STATUS: ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}
-        run:
-            echo "Quality gate status for $(git rev-parse --short HEAD) is $QUALITY_STATUS" >> $GITHUB_STEP_SUMMARY
