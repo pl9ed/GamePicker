@@ -59,4 +59,20 @@ class RecommendCommandTest {
         )
         assertEquals(row, command.generateRow(game, score, fans, excludes))
     }
+
+    @Test
+    fun `should fallback to username if name is null`() {
+        val game = "game"
+        val score = 100L
+        val fans = listOf(UserScore(BotUser("a", "usernamea", null, mutableMapOf("a" to 10)), 10))
+        val excludes = listOf(BotUser("b", "usernameb", null))
+        val row = String.format(
+            "%s | %d | Fans: %s | Excludes: %s",
+            game,
+            score,
+            fans.map { it.user.username }.joinToString(),
+            excludes.map { it.username }.joinToString()
+        )
+        assertEquals(row, command.generateRow(game, score, fans, excludes))
+    }
 }
