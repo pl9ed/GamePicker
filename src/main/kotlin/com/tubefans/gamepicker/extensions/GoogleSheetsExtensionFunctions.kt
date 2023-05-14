@@ -1,4 +1,4 @@
-import com.tubefans.gamepicker.services.GameScoreMap.Companion.MAX_SCORE
+import com.tubefans.gamepicker.models.GameScoreMap.Companion.MAX_SCORE
 
 fun Any?.toName(): String? =
     this?.toString()?.takeIf {

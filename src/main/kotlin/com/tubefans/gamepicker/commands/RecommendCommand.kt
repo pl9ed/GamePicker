@@ -2,7 +2,8 @@ package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.services.BotUserService
-import com.tubefans.gamepicker.services.GameScoreMap
+import com.tubefans.gamepicker.models.GameScoreMap
+import com.tubefans.gamepicker.services.EventService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.entity.channel.VoiceChannel
 import kotlinx.coroutines.async
@@ -18,7 +19,7 @@ import reactor.core.publisher.Mono
 
 @Component
 class RecommendCommand @Autowired constructor(
-    private val botUserService: BotUserService
+    private val eventService: EventService
 ) : SlashCommand {
 
     companion object {
@@ -32,8 +33,8 @@ class RecommendCommand @Autowired constructor(
     override fun handle(event: ChatInputInteractionEvent) =
         event.deferReply()
             .then(
-                getCurrentChannel(event)?.let {
-                    getUsersInChannel(it)
+                eventService.getCurrentChannel(event)?.let {
+                    eventService.getUsersInChannel(it)
                 } ?: Mono.just(emptySet())
             ).map {
                 logger.debug("Getting top games for {} users", it.size)
@@ -47,21 +48,4 @@ class RecommendCommand @Autowired constructor(
                 event.editReply(replyString)
             }.then()
 
-    fun getCurrentChannel(event: ChatInputInteractionEvent): VoiceChannel? =
-        event.interaction.member.get()
-            .voiceState.block()
-            ?.channel?.block()
-
-    fun getUsersInChannel(voiceChannel: VoiceChannel): Mono<Set<BotUser>> = mono {
-        voiceChannel.voiceStates.asFlow().map {
-            it.userId
-        }.map {
-            async {
-                logger.debug("Getting user with id {}", it.toString())
-                botUserService.findById(it.toString()).get()
-            }
-        }.toList()
-            .awaitAll()
-            .toSet()
-    }
 }

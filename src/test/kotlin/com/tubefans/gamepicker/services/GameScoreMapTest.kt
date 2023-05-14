@@ -1,6 +1,7 @@
 package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.models.GameScoreMap
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

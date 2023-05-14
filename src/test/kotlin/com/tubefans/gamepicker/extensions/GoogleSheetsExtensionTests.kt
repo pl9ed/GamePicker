@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.extensions
 
-import com.tubefans.gamepicker.services.GameScoreMap.Companion.MAX_SCORE
+import com.tubefans.gamepicker.models.GameScoreMap.Companion.MAX_SCORE
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import toName
