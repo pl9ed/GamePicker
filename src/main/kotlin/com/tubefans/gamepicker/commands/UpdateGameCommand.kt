@@ -3,7 +3,7 @@ package com.tubefans.gamepicker.commands
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.extensions.getGame
 import com.tubefans.gamepicker.extensions.getScore
-import com.tubefans.gamepicker.services.UserService
+import com.tubefans.gamepicker.services.BotUserService
 import discord4j.core.GatewayDiscordClient
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
@@ -18,7 +18,7 @@ class UpdateGameCommand : SlashCommand {
     lateinit var gateway: GatewayDiscordClient
 
     @Autowired
-    lateinit var userService: UserService
+    lateinit var botUserService: BotUserService
 
     override val name = "update"
 
@@ -30,10 +30,10 @@ class UpdateGameCommand : SlashCommand {
 
         event.interaction.user.let { user ->
             botUserResponse = try {
-                userService.updateGameForUserWithId(user.id.toString(), game, score)
+                botUserService.updateGameForUserWithId(user.id.toString(), game, score)
             } catch (e: EmptyResultDataAccessException) {
                 val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
-                userService.insertUser(newUser)
+                botUserService.insertUser(newUser)
             }
         }
 

@@ -34,6 +34,8 @@ class GoogleSheetsService @Autowired constructor(
      * @return Map of users -> list of scores
      */
     fun mapToScores(sheet: List<List<Any>>): Map<String, List<Pair<String, Long>>> {
+        if (sheet.isEmpty()) return emptyMap()
+
         val scoreMap: MutableMap<String, MutableList<Pair<String, Long>>> = mutableMapOf()
 
         // which games are at which column

@@ -2,15 +2,14 @@ package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.commands.event.TestEventLibrary.createPullFromSheetEvent
 import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.services.BotUserService
 import com.tubefans.gamepicker.services.GoogleSheetsService
-import com.tubefans.gamepicker.services.UserService
 import io.mockk.called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.springframework.dao.EmptyResultDataAccessException
 import java.io.IOException
 
 class PullFromSheetCommandTest {
@@ -36,13 +35,13 @@ class PullFromSheetCommandTest {
 
     private val templateResponse = "Updated DB with scores for %d users.%s"
 
-    private val userService: UserService = mockk {
+    private val botUserService: BotUserService = mockk {
         every {
             updateGameForUserWithName(name, any(), any())
         } returns BotUser("id", "username", "name", mutableMapOf())
         every {
             updateGameForUserWithName(missingName, any(), any())
-        } throws EmptyResultDataAccessException(1)
+        } throws NoSuchElementException()
     }
 
     private val googleSheetsService: GoogleSheetsService = mockk() {
@@ -53,7 +52,7 @@ class PullFromSheetCommandTest {
         every { mapToScores(emptyList()) } returns emptyMap()
     }
 
-    private val command = PullFromSheetCommand(userService, googleSheetsService)
+    private val command = PullFromSheetCommand(botUserService, googleSheetsService)
 
     @Test
     fun `should only update valid users`() {
@@ -71,7 +70,7 @@ class PullFromSheetCommandTest {
         val event = createPullFromSheetEvent(emptySheet, "range")
         val message = command.updateDbFromSheet(event).block()
 
-        verify { userService wasNot called }
+        verify { botUserService wasNot called }
 
         assertEquals(
             String.format(templateResponse, 0, ""),

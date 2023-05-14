@@ -1,20 +1,19 @@
 package com.tubefans.gamepicker.commands
 
 import com.mongodb.internal.VisibleForTesting
+import com.tubefans.gamepicker.services.BotUserService
 import com.tubefans.gamepicker.services.GoogleSheetsService
-import com.tubefans.gamepicker.services.UserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import kotlinx.coroutines.reactor.mono
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import java.io.IOException
 
 @Component
 class PullFromSheetCommand @Autowired constructor(
-    private val userService: UserService,
+    private val botUserService: BotUserService,
     private val googleSheetsService: GoogleSheetsService
 ) : SlashCommand {
 
@@ -74,9 +73,9 @@ class PullFromSheetCommand @Autowired constructor(
                 games.forEach { (unformattedGame, score) ->
                     val game = unformattedGame.uppercase()
                     try {
-                        userService.updateGameForUserWithName(name, game, score)
+                        botUserService.updateGameForUserWithName(name, game, score)
                         usersUpdated.add(name)
-                    } catch (e: DataRetrievalFailureException) {
+                    } catch (e: NoSuchElementException) {
                         logger.error("Could not find user with name=$name", e)
                         failedNames.add(name)
                     }

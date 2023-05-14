@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class UserService @Autowired constructor(
-    val botUserRepository: BotUserRepository
+class BotUserService @Autowired constructor(
+    private val botUserRepository: BotUserRepository
 ) {
 
     fun insertUser(user: BotUser) = botUserRepository.insert(user)
@@ -16,7 +16,7 @@ class UserService @Autowired constructor(
     fun updateUser(user: BotUser): BotUser = botUserRepository.save(user)
 
     fun updateGameForUserWithName(name: String, game: String, score: Long): BotUser =
-        updateUser(botUserRepository.findOneByName(name).updateGame(game, score))
+        updateUser(botUserRepository.findOneByName(name).get().updateGame(game, score))
 
     fun updateGameForUserWithId(id: String, game: String, score: Long): BotUser =
         updateUser(botUserRepository.findById(id).get().updateGame(game, score))

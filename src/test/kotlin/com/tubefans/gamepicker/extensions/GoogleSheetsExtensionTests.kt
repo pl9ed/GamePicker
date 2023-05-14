@@ -51,6 +51,18 @@ class GoogleSheetsExtensionTests {
     }
 
     @Test
+    fun `should handle non-integer numerical values`() {
+        assertEquals(5L, (5.5).toScore())
+    }
+
+    @Test
+    fun `should limit values between 0 and 10 numerical values`() {
+        assertEquals(10L, 35.toScore())
+        assertEquals(0L, (-10).toScore())
+        assertEquals(10L, 15.5.toScore())
+    }
+
+    @Test
     fun `should return max score on non-numeric value`() {
         assertEquals(MAX_SCORE, "x".toScore())
         assertEquals(MAX_SCORE, Object().toScore())

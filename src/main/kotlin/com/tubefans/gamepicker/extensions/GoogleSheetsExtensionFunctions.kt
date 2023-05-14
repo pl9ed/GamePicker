@@ -9,7 +9,20 @@ fun Any?.toScore(): Long? {
     if (this.toString().isBlank()) return null
     if (this.toString() == "null") return null
     return try {
-        this.toString().toLong()
+        /*
+        We need to handle this separately so we know which
+        toLong() implementation to use
+         */
+        val number: Long = when (this) {
+            is Float -> this.toLong()
+            is Double -> this.toLong()
+            else -> this.toString().toLong()
+        }
+        when {
+            number > 10L -> 10L
+            number < 0L -> 0L
+            else -> number
+        }
     } catch (e: NumberFormatException) {
         MAX_SCORE
     }
