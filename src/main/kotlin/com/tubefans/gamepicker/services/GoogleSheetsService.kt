@@ -2,10 +2,7 @@ package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.mongodb.internal.VisibleForTesting
 import com.tubefans.gamepicker.repositories.UserRepository
-import com.tubefans.gamepicker.services.GameScoreMap.Companion.MAX_SCORE
-import org.springframework.aot.generate.AccessControl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -61,5 +58,4 @@ class GoogleSheetsService @Autowired constructor(
         }
          */
     }
-
 }

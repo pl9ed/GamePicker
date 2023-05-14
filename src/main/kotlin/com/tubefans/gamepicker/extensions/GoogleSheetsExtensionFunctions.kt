@@ -10,7 +10,7 @@ fun Any?.toScore(): Long? {
     if (this.toString() == "null") return null
     return try {
         this.toString().toLong()
-    } catch (e: ClassCastException) {
+    } catch (e: NumberFormatException) {
         MAX_SCORE
     }
 }

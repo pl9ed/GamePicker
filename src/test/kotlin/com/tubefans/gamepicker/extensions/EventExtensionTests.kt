@@ -36,7 +36,6 @@ class EventExtensionTests {
         every { options } returns mockOptions
     }
 
-
     @Test
     fun `should get first game from options`() {
         Assertions.assertEquals(gameName, event.getGame())
@@ -61,5 +60,4 @@ class EventExtensionTests {
             Assertions.assertEquals(null, emptyEvent.getScore())
         }
     }
-
 }
