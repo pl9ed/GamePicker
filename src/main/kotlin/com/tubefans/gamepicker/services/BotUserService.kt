@@ -3,17 +3,11 @@ package com.tubefans.gamepicker.services
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.extensions.updateGame
 import com.tubefans.gamepicker.repositories.BotUserRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.reactor.mono
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
 
 @Service
 class BotUserService @Autowired constructor(
@@ -43,6 +37,6 @@ class BotUserService @Autowired constructor(
             }
         }.awaitAll()
 
-        return@runBlocking listOf(userSet, failedSet)
+        return@runBlocking Pair(userSet, failedSet)
     }
 }

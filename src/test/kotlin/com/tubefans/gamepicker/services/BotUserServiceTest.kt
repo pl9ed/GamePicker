@@ -64,4 +64,33 @@ class BotUserServiceTest {
             botUserService.updateGameForUserWithId(missing, "", 0L)
         }
     }
+
+    @Test
+    fun `should map valid names to users`() {
+        val names = listOf("a", "b", "c")
+        every {
+            repository.findOneByName(any()).get()
+        } returnsMany listOf(
+            BotUser("a", "username_a", "name_a"),
+            BotUser("b", "username_b", "name_b"),
+            BotUser("c", "username_c", "name_b")
+        )
+
+        val (users, failed) = botUserService.getUsersFromNames(names)
+        assertEquals(names.size, users.size)
+    }
+
+    @Test
+    fun `should add to failed set when it cannot find user by name`() {
+        val names = listOf("a", "b", "c")
+        val userA = BotUser("a", "a", "a")
+        val userC = BotUser("c", "c", "c")
+        every { repository.findOneByName("a").get() } returns userA
+        every { repository.findOneByName("b").get() } throws NoSuchElementException()
+        every { repository.findOneByName("c").get() } returns userC
+
+        val (users, failed) = botUserService.getUsersFromNames(names)
+        assertEquals(setOf(userA, userC), users)
+        assertEquals(setOf("b"), failed)
+    }
 }
