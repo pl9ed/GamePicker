@@ -28,7 +28,7 @@ class UpdateGameCommand : SlashCommand {
         val score = event.getScore()
 
         event.interaction.user.let { user ->
-            botUserResponse = userService.updateGame(user, game, score)
+            botUserResponse = userService.updateGameForUserWithId(user.id.toString(), game, score)
         }
 
         return event.reply()

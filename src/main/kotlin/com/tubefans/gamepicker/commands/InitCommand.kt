@@ -19,6 +19,7 @@ class InitCommand @Autowired constructor(
         const val SHEET_ID_NAME = "sheetId"
         const val SHEET_RANGE_NAME = "range"
 
+        const val DEFAULT_SHEET = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
         const val DEFAULT_RANGE = "A1:AA11"
     }
 
@@ -27,11 +28,15 @@ class InitCommand @Autowired constructor(
     override val name = "init"
 
     override fun handle(event: ChatInputInteractionEvent): InteractionApplicationCommandCallbackReplyMono {
-        val sheetId: String = event.options
-            .first { it.name == SHEET_ID_NAME }
-            .value
-            .get()
-            .asString()
+        val sheetId: String = try {
+            event.options
+                .first { it.name == SHEET_ID_NAME }
+                .value
+                .get()
+                .asString()
+        } catch (e: NoSuchElementException) {
+            DEFAULT_SHEET
+        }
 
         val range: String = try {
             event.options
@@ -49,7 +54,7 @@ class InitCommand @Autowired constructor(
             var count = 0
             googleSheetsService.apply {
                 mapToScores(getSheet(sheetId, range)).forEach { (name, games) ->
-                    games.forEach {(game, score) ->
+                    games.forEach { (game, score) ->
                         try {
                             userService.updateGameForUserWithName(name, game, score)
                             count++
@@ -69,7 +74,7 @@ class InitCommand @Autowired constructor(
         return event.reply().withEphemeral(false)
             .withContent(
                 "Updated DB with scores from $updateCount users. " +
-                        "Failed to update for ${failedUpdateNames.joinToString()}"
+                    "Failed to update for ${failedUpdateNames.joinToString()}"
             )
     }
 }
