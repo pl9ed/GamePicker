@@ -32,10 +32,10 @@ class RecommendCommand @Autowired constructor(
                     eventService.getUsersInChannel(it)
                 } ?: Mono.just(emptySet())
             ).map {
-                logger.debug("Getting top games for {}", it)
+                logger.info("Getting top games for {}", it)
                 GameScoreMap(it)
             }.map {
-                logger.debug(it.toString())
+                logger.info(it.toString())
                 getReplyString(it, DEFAULT_GAME_COUNT)
             }.flatMap {
                 event.editReply(it)

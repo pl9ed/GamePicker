@@ -15,8 +15,9 @@ class RecommendCommandTest {
 
     private val user1 = BotUser("a", "a", "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
     private val user2 = BotUser("b", "b", "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
+    private val emptyUser = BotUser("empty", "empty", "empty")
 
-    private val gameScoreMap = GameScoreMap(setOf(user1, user2))
+    private val gameScoreMap = GameScoreMap(setOf(user1, user2, emptyUser))
 
     private val responseTemplate = """
         TOP %d GAMES:
@@ -30,8 +31,8 @@ class RecommendCommandTest {
             String.format(
                 responseTemplate,
                 2,
-                "a", 10, "a", "b",
-                "b", 5, "a", "b"
+                "a", 10, "a", "b, empty",
+                "b", 5, "a", "b, empty"
             ).trim(),
             command.getReplyString(gameScoreMap, 2)
         )
@@ -47,7 +48,7 @@ class RecommendCommandTest {
         val game = "game"
         val score = 100L
         val fans = listOf(user1)
-        val excludes = listOf(user2)
+        val excludes = listOf(user2, emptyUser)
         val row = String.format(
             "%s | %d | Fans: %s | Excludes: %s",
             game,
@@ -63,7 +64,7 @@ class RecommendCommandTest {
         val game = "game"
         val score = 100L
         val fans = listOf(BotUser("a", "usernamea", null, mutableMapOf("a" to 10)))
-        val excludes = listOf(BotUser("b", "usernameb", null))
+        val excludes = listOf(BotUser("b", "usernameb", null), emptyUser)
         val row = String.format(
             "%s | %d | Fans: %s | Excludes: %s",
             game,

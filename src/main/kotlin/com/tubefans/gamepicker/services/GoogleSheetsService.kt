@@ -45,7 +45,7 @@ class GoogleSheetsService @Autowired constructor(
             game.toString().takeIf {
                 it.isNotBlank()
             }?.let {
-                logger.debug("{} at {}", it, i)
+                logger.info("{} at {}", it, i)
                 gameIndexMap[i] = it
             }
         }
