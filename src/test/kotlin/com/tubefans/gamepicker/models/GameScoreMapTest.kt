@@ -129,4 +129,14 @@ class GameScoreMapTest {
             game4NonPlayers.toSet()
         )
     }
+
+    @Test
+    fun `getNonPlayersForGame() should include players with no entry`() {
+        val gameScoreMap = GameScoreMap(listOf(user1, blankUser))
+
+        assertEquals(
+            listOf(blankUser),
+            gameScoreMap.getNonPlayersForGame("game1")
+        )
+    }
 }

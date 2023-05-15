@@ -4,7 +4,7 @@ import com.tubefans.gamepicker.dto.BotUser
 import java.util.*
 
 class GameScoreMap(
-    botUsers: Collection<BotUser>
+    val botUsers: Collection<BotUser>
 ) {
 
     companion object {
@@ -43,5 +43,7 @@ class GameScoreMap(
             }?.take(n) ?: emptyList()
 
     fun getNonPlayersForGame(game: String): List<BotUser> =
-        map[game]?.filter { it.gameMap[game] == 0L } ?: emptyList()
+        botUsers.filter {
+            it.gameMap[game] == 0L || it.gameMap[game] == null
+        }
 }
