@@ -2,7 +2,6 @@ package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.commands.RecommendCommand.Companion.NO_GAMES_RESPONSE
 import com.tubefans.gamepicker.dto.BotUser
-import com.tubefans.gamepicker.dto.UserScore
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
 import io.mockk.mockk
@@ -16,8 +15,9 @@ class RecommendCommandTest {
 
     private val user1 = BotUser("a", "a", "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
     private val user2 = BotUser("b", "b", "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
+    private val emptyUser = BotUser("empty", "empty", "empty")
 
-    private val gameScoreMap = GameScoreMap(setOf(user1, user2))
+    private val gameScoreMap = GameScoreMap(setOf(user1, user2, emptyUser))
 
     private val responseTemplate = """
         TOP %d GAMES:
@@ -31,8 +31,8 @@ class RecommendCommandTest {
             String.format(
                 responseTemplate,
                 2,
-                "a", 10, "a", "b",
-                "b", 5, "a", "b"
+                "a", 10, "a", "b, empty",
+                "b", 5, "a", "b, empty"
             ).trim(),
             command.getReplyString(gameScoreMap, 2)
         )
@@ -47,13 +47,13 @@ class RecommendCommandTest {
     fun `should generate properly validated row`() {
         val game = "game"
         val score = 100L
-        val fans = listOf(UserScore(user1, 10))
-        val excludes = listOf(user2)
+        val fans = listOf(user1)
+        val excludes = listOf(user2, emptyUser)
         val row = String.format(
             "%s | %d | Fans: %s | Excludes: %s",
             game,
             score,
-            fans.map { it.user.name }.joinToString(),
+            fans.joinToString { it.name!! },
             excludes.map { it.name }.joinToString()
         )
         assertEquals(row, command.generateRow(game, score, fans, excludes))
@@ -63,13 +63,13 @@ class RecommendCommandTest {
     fun `should fallback to username if name is null`() {
         val game = "game"
         val score = 100L
-        val fans = listOf(UserScore(BotUser("a", "usernamea", null, mutableMapOf("a" to 10)), 10))
-        val excludes = listOf(BotUser("b", "usernameb", null))
+        val fans = listOf(BotUser("a", "usernamea", null, mutableMapOf("a" to 10)))
+        val excludes = listOf(BotUser("b", "usernameb", null), emptyUser)
         val row = String.format(
             "%s | %d | Fans: %s | Excludes: %s",
             game,
             score,
-            fans.map { it.user.username }.joinToString(),
+            fans.joinToString { it.username!! },
             excludes.map { it.username }.joinToString()
         )
         assertEquals(row, command.generateRow(game, score, fans, excludes))

@@ -2,7 +2,6 @@ package com.tubefans.gamepicker.commands
 
 import com.mongodb.internal.VisibleForTesting
 import com.tubefans.gamepicker.dto.BotUser
-import com.tubefans.gamepicker.dto.UserScore
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
@@ -33,9 +32,10 @@ class RecommendCommand @Autowired constructor(
                     eventService.getUsersInChannel(it)
                 } ?: Mono.just(emptySet())
             ).map {
-                logger.debug("Getting top games for {} users", it.size)
+                logger.info("Getting top games for {}", it)
                 GameScoreMap(it)
             }.map {
+                logger.info(it.toString())
                 getReplyString(it, DEFAULT_GAME_COUNT)
             }.flatMap {
                 event.editReply(it)
@@ -67,10 +67,10 @@ class RecommendCommand @Autowired constructor(
     fun generateRow(
         game: String,
         score: Long,
-        fans: Collection<UserScore>,
+        fans: Collection<BotUser>,
         excludes: Collection<BotUser>
     ): String = "$game | " +
         "$score | " +
-        "Fans: ${fans.map { it.user.name ?: it.user.username }.joinToString()} | " +
+        "Fans: ${fans.map { it.name ?: it.username }.joinToString()} | " +
         "Excludes: ${excludes.map { it.name ?: it.username }.joinToString()}"
 }

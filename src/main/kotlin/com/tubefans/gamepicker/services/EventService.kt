@@ -27,19 +27,23 @@ class EventService @Autowired constructor(
             ?.channel?.block()
 
     fun getUsersInChannel(voiceChannel: VoiceChannel): Mono<Set<BotUser>> = mono {
-        voiceChannel.voiceStates.asFlow().map {
-            it.userId
-        }.map {
-            async {
-                logger.debug("Getting user with id {}", it.toString())
-                botUserService.findById(it.toString())
-            }
-        }.map {
-            it.await()
-        }.filter {
-            it.isPresent
-        }.map {
-            it.get()
-        }.toList().toSet()
+        voiceChannel.voiceStates.asFlow()
+            .map {
+                it.userId
+            }.map { snowflake ->
+                async {
+                    botUserService.findById(snowflake.toString()).also {
+                        logger.info("Getting user with id {}", snowflake.toString())
+                    }
+                }
+            }.map {
+                it.await()
+            }.filter {
+                it.isPresent
+            }.map {
+                it.get().also { user ->
+                    logger.info("Fetched user {}", user)
+                }
+            }.toList().toSet()
     }
 }
