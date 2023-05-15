@@ -32,7 +32,7 @@ class GameScoreMap(
                     sum += user.gameMap[game] ?: 0
                 }
                 Pair(game, sum)
-            }.sortedByDescending{
+            }.sortedByDescending {
                 it.second
             }.take(n)
 
