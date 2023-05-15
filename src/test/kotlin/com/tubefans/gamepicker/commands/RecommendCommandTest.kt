@@ -68,7 +68,7 @@ class RecommendCommandTest {
             "%s | %d | Fans: %s | Excludes: %s",
             game,
             score,
-            fans.joinToString { it.name!! },
+            fans.joinToString { it.username!! },
             excludes.map { it.username }.joinToString()
         )
         assertEquals(row, command.generateRow(game, score, fans, excludes))

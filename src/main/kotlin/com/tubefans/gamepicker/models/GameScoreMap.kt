@@ -33,7 +33,7 @@ class GameScoreMap(
                 }
                 Pair(game, sum)
             }.sortedByDescending{
-                it .second
+                it.second
             }.take(n)
 
     fun getTopPlayersForGame(game: String, n: Int = 3): List<BotUser> =
