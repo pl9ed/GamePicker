@@ -5,7 +5,7 @@ import discord4j.discordjson.json.ApplicationCommandOptionData
 import discord4j.discordjson.json.ApplicationCommandRequest
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class CommandStringFormatterTest {
@@ -29,8 +29,8 @@ class CommandStringFormatterTest {
     @Test
     fun `should format ApplicationCommandRequest to readable string`() {
         val expectedString = "/${cmd.name()} " +
-                "{${option1.name()}} {${option2.name()}} : " +
-                cmd.description().get()
+            "{${option1.name()}} {${option2.name()}} : " +
+            cmd.description().get()
 
         assertEquals(
             expectedString,

@@ -17,5 +17,4 @@ object CommandStringFormatter {
 
         return row.toString()
     }
-
 }

@@ -30,12 +30,12 @@ class HelpCommand @Autowired constructor(
             .withContent(response)
     }
 
+    @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
     fun getGenericHelpMessage(): String {
-        val message = StringBuilder(GENERIC_HELP_HEADER)
+        val message = StringBuilder("$GENERIC_HELP_HEADER\n")
         commands.forEach {
             message.append("${it.toRowString()}\n")
         }
         return message.trim().toString()
     }
-
 }

@@ -1,12 +1,13 @@
 package com.tubefans.gamepicker.commands
 
-import discord4j.core.`object`.command.ApplicationCommandOption
+import com.tubefans.gamepicker.commands.HelpCommand.Companion.GENERIC_HELP_HEADER
+import com.tubefans.gamepicker.utils.CommandStringFormatter.toRowString
 import discord4j.discordjson.json.ApplicationCommandOptionData
 import discord4j.discordjson.json.ApplicationCommandRequest
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-
 
 class HelpCommandTest {
 
@@ -22,6 +23,7 @@ class HelpCommandTest {
     private val cmd1: ApplicationCommandRequest = mockk {
         every { name() } returns "cmd1 name"
         every { description().get() } returns "cmd1 description"
+        every { options().get() } returns emptyList()
     }
     private val cmd2: ApplicationCommandRequest = mockk {
         every { name() } returns "cmd1 name"
@@ -38,6 +40,15 @@ class HelpCommandTest {
 
     @Test
     fun `should parse ApplicationCommandRequest to {name} {params} {description}`() {
-    }
+        val expectedString = """
+            $GENERIC_HELP_HEADER
+            ${cmd1.toRowString()}
+            ${cmd2.toRowString()}
+        """.trimIndent()
 
+        assertEquals(
+            expectedString,
+            command.getGenericHelpMessage()
+        )
+    }
 }
