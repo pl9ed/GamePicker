@@ -27,7 +27,7 @@ class UpdateGameCommand @Autowired constructor(
                 botUserService.updateGameForUserWithId(user.id.toString(), game, score)
             } catch (e: NoSuchElementException) {
                 val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
-                botUserService.insertUser(newUser)
+                botUserService.insert(newUser)
             }
         }
 

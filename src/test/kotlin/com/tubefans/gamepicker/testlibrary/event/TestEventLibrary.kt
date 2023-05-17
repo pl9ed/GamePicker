@@ -4,6 +4,7 @@ import com.tubefans.gamepicker.commands.PullFromSheetCommand.Companion.SHEET_ID_
 import com.tubefans.gamepicker.commands.PullFromSheetCommand.Companion.SHEET_RANGE_NAME
 import com.tubefans.gamepicker.services.GameService.Keys.GAME_NAME_KEY
 import com.tubefans.gamepicker.services.GameService.Keys.GAME_SCORE_KEY
+import discord4j.common.util.Snowflake
 import discord4j.core.GatewayDiscordClient
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.command.ApplicationCommandInteractionOption
@@ -15,9 +16,26 @@ import java.util.Optional
 
 object TestEventLibrary {
 
-    fun createGatewayDiscordClient(): GatewayDiscordClient = mockk {
-        every { rest() } returns mockk()
-    }
+    fun createAddMeEvent(id: Long, name: String, username: String) = ChatInputInteractionEvent(
+        createGatewayDiscordClient(),
+        mockk(),
+        mockk {
+            every { commandInteraction } returns Optional.of(
+                mockk {
+                    every { options } returns listOf(stringOptionOf("name", name))
+                    every { getUser() } returns mockk {
+                        every { getId() } returns Snowflake.of(id)
+                        every { getUsername() } returns username
+                    }
+                }
+            )
+            every { data } returns mockk() {
+                every { applicationId() } returns mockk() {
+                    every { asLong() } returns 0L
+                }
+            }
+        }
+    )
 
     fun createRecommendEvent(mockVoiceChannel: VoiceChannel?): ChatInputInteractionEvent = mockk {
         every {
@@ -54,6 +72,12 @@ object TestEventLibrary {
             )
         }
     )
+
+    private fun createGatewayDiscordClient(): GatewayDiscordClient = mockk {
+        every { rest() } returns mockk() {
+            every { webhookService } returns mockk()
+        }
+    }
 
     private fun stringOptionOf(name: String, value: String): ApplicationCommandInteractionOption = mockk {
         every { getName() } returns name
