@@ -42,6 +42,7 @@ class AddMeCommand @Autowired constructor(
             NO_NAME_PARAM_RESPONSE
         }
         return event.reply()
+            .withEphemeral(true)
             .withContent(content)
     }
 }
