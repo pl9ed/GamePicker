@@ -14,17 +14,32 @@ class HelpCommand @Autowired constructor(
     override val name: String = "help"
 
     override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
-        val commandList = getCommandList()
-        val response = StringBuilder()
-        commandList.forEach {
-            response.append(it)
-        }
-        response.trim()
+        val message = listAllCommands()
         return event.reply()
             .withEphemeral(true)
-            .withContent(response.toString())
+            .withContent(message.trim().toString())
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
-    fun getCommandList(): List<String> = commands.map { "/${it.name()} - ${it.description()}" }
+    fun listAllCommands(): String {
+        val response = StringBuilder()
+        commands.forEach {
+            response.append("${getFormattedString(it)}\n")
+        }
+
+        return response.trim().toString()
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
+    fun getFormattedString(command: ApplicationCommandRequest): String {
+        val row = StringBuilder("/${command.name()} ")
+
+        command.options().get().forEach {
+            row.append("{${it.name()}} ")
+        }
+
+        row.append(command.description().get())
+
+        return row.toString()
+    }
 }
