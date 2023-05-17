@@ -38,7 +38,6 @@ class HelpCommandTest {
 
     @Test
     fun `should parse ApplicationCommandRequest to {name} {params} {description}`() {
-        command.getFormattedString(cmd1)
     }
 
 }

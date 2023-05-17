@@ -1,6 +1,7 @@
 package com.tubefans.gamepicker.commands
 
 import com.mongodb.internal.VisibleForTesting
+import com.tubefans.gamepicker.utils.CommandStringFormatter.toRowString
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.discordjson.json.ApplicationCommandRequest
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,12 +12,30 @@ import reactor.core.publisher.Mono
 class HelpCommand @Autowired constructor(
     private val commands: List<ApplicationCommandRequest>
 ) : SlashCommand {
+
+    companion object {
+        const val GENERIC_HELP_HEADER = "Use /help {cmd} for more details"
+    }
+
     override val name: String = "help"
 
     override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
+        val response = if (event.options.isEmpty()) {
+            getGenericHelpMessage()
+        } else {
+            "NOT YET IMPLEMENTED"
+        }
         return event.reply()
             .withEphemeral(true)
-            .withContent(message.trim())
+            .withContent(response)
+    }
+
+    fun getGenericHelpMessage(): String {
+        val message = StringBuilder(GENERIC_HELP_HEADER)
+        commands.forEach {
+            message.append("${it.toRowString()}\n")
+        }
+        return message.trim().toString()
     }
 
 }

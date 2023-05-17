@@ -13,7 +13,7 @@ object CommandStringFormatter {
             }
         }
 
-        row.append(this.description().get())
+        row.append(": ${this.description().get()}")
 
         return row.toString()
     }
