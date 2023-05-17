@@ -4,6 +4,7 @@ import com.tubefans.gamepicker.commands.PullFromSheetCommand.Companion.SHEET_ID_
 import com.tubefans.gamepicker.commands.PullFromSheetCommand.Companion.SHEET_RANGE_NAME
 import com.tubefans.gamepicker.services.GameService.Keys.GAME_NAME_KEY
 import com.tubefans.gamepicker.services.GameService.Keys.GAME_SCORE_KEY
+import discord4j.common.util.Snowflake
 import discord4j.core.GatewayDiscordClient
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.command.ApplicationCommandInteractionOption
@@ -15,8 +16,10 @@ import java.util.Optional
 
 object TestEventLibrary {
 
-    fun createGatewayDiscordClient(): GatewayDiscordClient = mockk {
-        every { rest() } returns mockk()
+    fun createAddMeEvent(id: String, name: String, username: String): ChatInputInteractionEvent = mockk {
+        every { interaction.user.id } returns Snowflake.of(id)
+        every { interaction.user.username } returns username
+        every { options } returns listOf(stringOptionOf("name", name))
     }
 
     fun createRecommendEvent(mockVoiceChannel: VoiceChannel?): ChatInputInteractionEvent = mockk {
@@ -54,6 +57,10 @@ object TestEventLibrary {
             )
         }
     )
+
+    private fun createGatewayDiscordClient(): GatewayDiscordClient = mockk {
+        every { rest() } returns mockk()
+    }
 
     private fun stringOptionOf(name: String, value: String): ApplicationCommandInteractionOption = mockk {
         every { getName() } returns name

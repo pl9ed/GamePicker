@@ -15,9 +15,11 @@ class AddMeCommand @Autowired constructor(
 
     companion object {
         const val NAME = "name"
+        const val MESSAGE_TEMPLATE = "Updated name=%s, username=%s for user with id=%s"
     }
 
     override val name = "add-me"
+
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
@@ -30,7 +32,12 @@ class AddMeCommand @Autowired constructor(
             }
             botUserService.save(user)
 
-            "Updated name=$nameField, username=$username for user with id=$id"
+            String.format(
+                MESSAGE_TEMPLATE,
+                nameField,
+                username,
+                id
+            )
         } catch (e: NoSuchElementException) {
             "No name found. Did you forget to pass in your name?"
         }
