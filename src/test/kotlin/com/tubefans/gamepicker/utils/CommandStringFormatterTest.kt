@@ -20,11 +20,25 @@ class CommandStringFormatterTest {
     private val cmd: ApplicationCommandRequest = mockk {
         every { name() } returns "name"
         every { description().get() } returns "description"
+        every { options().isAbsent } returns false
         every { options().get() } returns listOf(
             option1,
             option2
         )
     }
+
+    private val noOptionsCmd: ApplicationCommandRequest = mockk {
+        every { name() } returns "name"
+        every { description().get() } returns "description"
+        every { options().isAbsent } returns true
+    }
+
+    private val emptyOptionsCmd: ApplicationCommandRequest = mockk {
+        every { name() } returns "name"
+        every { description().get() } returns "description"
+        every { options().isAbsent } returns true
+    }
+
 
     @Test
     fun `should format ApplicationCommandRequest to readable string`() {
@@ -39,12 +53,22 @@ class CommandStringFormatterTest {
     }
 
     @Test
-    fun `should be able to ignore options`() {
-        val expectedString = "/${cmd.name()} : ${cmd.description().get()}"
+    fun `should handle no option commands`() {
+        val expectedString = "/${noOptionsCmd.name()} : ${noOptionsCmd.description().get()}"
 
         assertEquals(
             expectedString,
-            cmd.toRowString(false)
+            noOptionsCmd.toRowString()
+        )
+    }
+
+    @Test
+    fun `should handle empty options`() {
+        val expectedString = "/${emptyOptionsCmd.name()} : ${emptyOptionsCmd.description().get()}"
+
+        assertEquals(
+            expectedString,
+            emptyOptionsCmd.toRowString()
         )
     }
 }
