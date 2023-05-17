@@ -24,7 +24,7 @@ class PullFromSheetCommand @Autowired constructor(
         const val SHEET_RANGE_NAME = "range"
 
         const val DEFAULT_SHEET = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
-        const val DEFAULT_RANGE = "A1:AA11"
+        const val DEFAULT_RANGE = "A1:AA12"
     }
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -55,6 +55,7 @@ class PullFromSheetCommand @Autowired constructor(
         googleSheetsService.apply {
             mapToScores(sheet).forEach { (unformattedName, games) ->
                 val name = unformattedName.uppercase()
+                logger.info("Found user $name on Google sheet")
                 games.forEach { (unformattedGame, score) ->
                     val game = unformattedGame.uppercase()
                     try {
