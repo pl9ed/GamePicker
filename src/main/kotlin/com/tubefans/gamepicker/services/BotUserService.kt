@@ -14,17 +14,19 @@ class BotUserService @Autowired constructor(
     private val botUserRepository: BotUserRepository
 ) {
 
+    fun existsById(id: String) = botUserRepository.existsById(id)
+
     fun findById(id: String) = botUserRepository.findById(id)
 
-    fun insertUser(user: BotUser) = botUserRepository.insert(user)
+    fun insert(user: BotUser) = botUserRepository.insert(user)
 
-    fun updateUser(user: BotUser): BotUser = botUserRepository.save(user)
+    fun save(user: BotUser): BotUser = botUserRepository.save(user)
 
     fun updateGameForUserWithName(name: String, game: String, score: Long): BotUser =
-        updateUser(botUserRepository.findOneByName(name).get().updateGame(game, score))
+        save(botUserRepository.findOneByName(name).get().updateGame(game, score))
 
     fun updateGameForUserWithId(id: String, game: String, score: Long): BotUser =
-        updateUser(botUserRepository.findById(id).get().updateGame(game, score))
+        save(botUserRepository.findById(id).get().updateGame(game, score))
 
     fun getUsersFromNames(names: Collection<String>) = runBlocking {
         val userSet = mutableSetOf<BotUser>()

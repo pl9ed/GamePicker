@@ -73,14 +73,14 @@ class UpdateGameCommandTest {
         )
         val botUser = BotUser(missingId.toString(), username, "", mutableMapOf(game to score))
 
-        every { botUserService.insertUser(any()) } returns botUser
+        every { botUserService.insert(any()) } returns botUser
 
         val event = createUpdateGameEvent(user, game, score)
         val response = command.handle(event)
 
         verify {
             botUserService.updateGameForUserWithId(missingId.toString(), game, score)
-            botUserService.insertUser(botUser)
+            botUserService.insert(botUser)
             event.reply()
         }
 
