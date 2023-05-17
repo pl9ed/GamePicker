@@ -1,7 +1,9 @@
 package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.commands.HelpCommand.Companion.GENERIC_HELP_HEADER
+import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createHelpEvent
 import com.tubefans.gamepicker.utils.CommandStringFormatter.toRowString
+import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import discord4j.discordjson.json.ApplicationCommandOptionData
 import discord4j.discordjson.json.ApplicationCommandRequest
 import discord4j.discordjson.possible.Possible
@@ -58,6 +60,19 @@ class HelpCommandTest {
         assertEquals(
             expectedString,
             command.getGenericHelpMessage()
+        )
+    }
+
+    @Test
+    fun `should return different string for generic help command`() {
+        val event = createHelpEvent()
+        every { event.options.isEmpty() } returns true
+
+        val response = command.handle(event) as InteractionApplicationCommandCallbackReplyMono
+
+        assertEquals(
+            command.getGenericHelpMessage(),
+            response.content().get()
         )
     }
 }

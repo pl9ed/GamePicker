@@ -10,6 +10,7 @@ import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.command.ApplicationCommandInteractionOption
 import discord4j.core.`object`.entity.User
 import discord4j.core.`object`.entity.channel.VoiceChannel
+import discord4j.discordjson.json.ApplicationCommandRequest
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Optional
@@ -34,6 +35,23 @@ object TestEventLibrary {
                     every { asLong() } returns 0L
                 }
             }
+        }
+    )
+
+    fun createHelpEvent(command: Optional<ApplicationCommandRequest> = Optional.empty()) = ChatInputInteractionEvent(
+        createGatewayDiscordClient(),
+        mockk(),
+        mockk {
+            every { commandInteraction } returns Optional.of(
+                mockk {
+                    every { user } returns mockk()
+                    every { data } returns mockk() {
+                        every { applicationId() } returns mockk() {
+                            every { asLong() } returns 0L
+                        }
+                    }
+                }
+            )
         }
     )
 
