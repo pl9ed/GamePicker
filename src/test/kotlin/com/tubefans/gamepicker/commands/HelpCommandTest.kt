@@ -4,6 +4,7 @@ import com.tubefans.gamepicker.commands.HelpCommand.Companion.GENERIC_HELP_HEADE
 import com.tubefans.gamepicker.utils.CommandStringFormatter.toRowString
 import discord4j.discordjson.json.ApplicationCommandOptionData
 import discord4j.discordjson.json.ApplicationCommandRequest
+import discord4j.discordjson.possible.Possible
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,18 +24,25 @@ class HelpCommandTest {
     private val cmd1: ApplicationCommandRequest = mockk {
         every { name() } returns "cmd1 name"
         every { description().get() } returns "cmd1 description"
-        every { options().get() } returns emptyList()
+        every { options() } returns Possible.absent()
     }
     private val cmd2: ApplicationCommandRequest = mockk {
         every { name() } returns "cmd1 name"
         every { description().get() } returns "cmd1 description"
-        every { options().get() } returns listOf(
-            option1,
-            option2
+        every { options() } returns Possible.of(
+            listOf(
+                option1,
+                option2
+            )
         )
     }
+    private val cmd3: ApplicationCommandRequest = mockk {
+        every { name() } returns "cmd1 name"
+        every { description().get() } returns "cmd1 description"
+        every { options() } returns Possible.of(emptyList())
+    }
 
-    private val commands: List<ApplicationCommandRequest> = listOf(cmd1, cmd2)
+    private val commands: List<ApplicationCommandRequest> = listOf(cmd1, cmd2, cmd3)
 
     private val command = HelpCommand(commands)
 
@@ -44,6 +52,7 @@ class HelpCommandTest {
             $GENERIC_HELP_HEADER
             ${cmd1.toRowString()}
             ${cmd2.toRowString()}
+            ${cmd3.toRowString()}
         """.trimIndent()
 
         assertEquals(

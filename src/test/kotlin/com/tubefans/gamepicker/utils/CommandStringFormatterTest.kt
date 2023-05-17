@@ -3,6 +3,7 @@ package com.tubefans.gamepicker.utils
 import com.tubefans.gamepicker.utils.CommandStringFormatter.toRowString
 import discord4j.discordjson.json.ApplicationCommandOptionData
 import discord4j.discordjson.json.ApplicationCommandRequest
+import discord4j.discordjson.possible.Possible
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,25 +21,25 @@ class CommandStringFormatterTest {
     private val cmd: ApplicationCommandRequest = mockk {
         every { name() } returns "name"
         every { description().get() } returns "description"
-        every { options().isAbsent } returns false
-        every { options().get() } returns listOf(
-            option1,
-            option2
+        every { options() } returns Possible.of(
+            listOf(
+                option1,
+                option2
+            )
         )
     }
 
     private val noOptionsCmd: ApplicationCommandRequest = mockk {
         every { name() } returns "name"
         every { description().get() } returns "description"
-        every { options().isAbsent } returns true
+        every { options() } returns Possible.absent()
     }
 
     private val emptyOptionsCmd: ApplicationCommandRequest = mockk {
         every { name() } returns "name"
         every { description().get() } returns "description"
-        every { options().isAbsent } returns true
+        every { options() } returns Possible.absent()
     }
-
 
     @Test
     fun `should format ApplicationCommandRequest to readable string`() {
