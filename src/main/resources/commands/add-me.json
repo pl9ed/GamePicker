@@ -1,0 +1,12 @@
+{
+  "name": "add-me",
+  "description": "Adds yourself to the list of bot users. Maps your ID to the name on the sheet",
+  "options": [
+    {
+      "name": "name",
+      "description": "Your name. Should match what's on the google sheet",
+      "type": 3,
+      "required": true
+    }
+  ]
+}
