@@ -16,11 +16,26 @@ import java.util.Optional
 
 object TestEventLibrary {
 
-    fun createAddMeEvent(id: String, name: String, username: String): ChatInputInteractionEvent = mockk {
-        every { interaction.user.id } returns Snowflake.of(id)
-        every { interaction.user.username } returns username
-        every { options } returns listOf(stringOptionOf("name", name))
-    }
+    fun createAddMeEvent(id: Long, name: String, username: String) = ChatInputInteractionEvent(
+        createGatewayDiscordClient(),
+        mockk(),
+        mockk {
+            every { commandInteraction } returns Optional.of(
+                mockk {
+                    every { options } returns listOf(stringOptionOf("name", name))
+                    every { getUser() } returns mockk {
+                        every { getId() } returns Snowflake.of(id)
+                        every { getUsername() } returns username
+                    }
+                }
+            )
+            every { data } returns mockk() {
+                every { applicationId() } returns mockk() {
+                    every { asLong() } returns 0L
+                }
+            }
+        }
+    )
 
     fun createRecommendEvent(mockVoiceChannel: VoiceChannel?): ChatInputInteractionEvent = mockk {
         every {
@@ -59,7 +74,9 @@ object TestEventLibrary {
     )
 
     private fun createGatewayDiscordClient(): GatewayDiscordClient = mockk {
-        every { rest() } returns mockk()
+        every { rest() } returns mockk() {
+            every { webhookService } returns mockk()
+        }
     }
 
     private fun stringOptionOf(name: String, value: String): ApplicationCommandInteractionOption = mockk {

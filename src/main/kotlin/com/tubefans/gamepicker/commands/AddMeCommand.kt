@@ -16,6 +16,7 @@ class AddMeCommand @Autowired constructor(
     companion object {
         const val NAME = "name"
         const val MESSAGE_TEMPLATE = "Updated name=%s, username=%s for user with id=%s"
+        const val NO_NAME_PARAM_RESPONSE = "No name found. Did you forget to pass in your name?"
     }
 
     override val name = "add-me"
@@ -39,7 +40,7 @@ class AddMeCommand @Autowired constructor(
                 id
             )
         } catch (e: NoSuchElementException) {
-            "No name found. Did you forget to pass in your name?"
+            NO_NAME_PARAM_RESPONSE
         }
         return event.reply()
             .withContent(content)

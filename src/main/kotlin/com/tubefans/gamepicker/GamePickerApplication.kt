@@ -9,7 +9,6 @@ val BOT_TOKEN = System.getenv()["BOT_TOKEN"] ?: ""
 val GOOGLE_API_KEY = System.getenv()["GOOGLE_API_KEY"] ?: ""
 val OAUTH_CLIENT_ID = System.getenv()["OAUTH_CLIENT_ID"] ?: ""
 val OAUTH_CLIENT_SECRET = System.getenv()["OAUTH_CLIENT_SECRET"] ?: ""
-val DEFAULT_CHANNEL = Snowflake.of(1106156959121547337) // discord-game-bot channel
 
 const val APP_NAME = "GamePicker"
 

@@ -1,45 +1,57 @@
 package com.tubefans.gamepicker.commands
 
-import com.tubefans.gamepicker.commands.AddMeCommand.Companion.MESSAGE_TEMPLATE
+import com.tubefans.gamepicker.commands.AddMeCommand.Companion.NO_NAME_PARAM_RESPONSE
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.services.BotUserService
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createAddMeEvent
+import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createMalformedAddMeEvent
 import discord4j.common.util.Snowflake
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.util.Optional
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class AddMeCommandTest {
 
-    private val id = Snowflake.of(123).toString()
-    private val missingId = Snowflake.of(111).toString()
+    private val numericId = 123L
+    private val missingNumericId = 111L
+    private val id = Snowflake.of(numericId).toString()
+    private val missingId = Snowflake.of(missingNumericId).toString()
     private val name = "name"
     private val username = "username"
     private val botUser = BotUser(id, username, name)
+    private val newUser = BotUser(missingId, username, name)
 
     private val botUserService: BotUserService = mockk() {
         every { findById(id) } returns Optional.of(botUser)
         every { findById(missingId) } returns Optional.empty()
+        every { save(botUser) } returns botUser
+        every { save(newUser) } returns newUser
     }
     private val command = AddMeCommand(botUserService)
 
     @Test
-    fun `should return correct message upon success`() {
-        val event = createAddMeEvent(id, name, username)
+    fun `should add user to database`() {
+        val event = createAddMeEvent(numericId, name, username)
 
         command.handle(event)
 
-        assertEquals(
-            event.reply.block()!!.content,
-            String.format(
-                MESSAGE_TEMPLATE,
-                name,
-                username,
-                id
-            )
-        )
+        verify {
+            botUserService.save(botUser)
+        }
+    }
+
+    @Test
+    fun `should add new user to database`() {
+        val event = createAddMeEvent(missingNumericId, name, username)
+
+        command.handle(event)
+
+        verify {
+            botUserService.save(newUser)
+        }
     }
 
 }
