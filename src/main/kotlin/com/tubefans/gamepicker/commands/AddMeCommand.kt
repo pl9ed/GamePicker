@@ -3,10 +3,10 @@ package com.tubefans.gamepicker.commands
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.services.BotUserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
-import kotlin.jvm.optionals.getOrElse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
+import kotlin.jvm.optionals.getOrElse
 
 @Component
 class AddMeCommand @Autowired constructor(
@@ -37,5 +37,4 @@ class AddMeCommand @Autowired constructor(
         return event.reply()
             .withContent(content)
     }
-
 }
