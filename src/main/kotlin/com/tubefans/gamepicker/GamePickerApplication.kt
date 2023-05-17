@@ -1,6 +1,5 @@
 package com.tubefans.gamepicker
 
-import discord4j.common.util.Snowflake
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories

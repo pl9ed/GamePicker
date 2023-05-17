@@ -21,7 +21,6 @@ class AddMeCommand @Autowired constructor(
 
     override val name = "add-me"
 
-
     @OptIn(ExperimentalStdlibApi::class)
     override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
         val content: String = try {

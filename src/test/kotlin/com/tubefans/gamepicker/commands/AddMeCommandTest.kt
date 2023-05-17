@@ -1,17 +1,14 @@
 package com.tubefans.gamepicker.commands
 
-import com.tubefans.gamepicker.commands.AddMeCommand.Companion.NO_NAME_PARAM_RESPONSE
 import com.tubefans.gamepicker.dto.BotUser
 import com.tubefans.gamepicker.services.BotUserService
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createAddMeEvent
-import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createMalformedAddMeEvent
 import discord4j.common.util.Snowflake
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.Optional
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.util.Optional
 
 class AddMeCommandTest {
 
@@ -53,5 +50,4 @@ class AddMeCommandTest {
             botUserService.save(newUser)
         }
     }
-
 }
