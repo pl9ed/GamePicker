@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 @Component
 class CreateEventCommand : SlashCommand {
 
-    override val name = "create_event"
+    override val name = "create-event"
 
     override fun handle(event: ChatInputInteractionEvent): InteractionApplicationCommandCallbackReplyMono {
         // TODO: implement
