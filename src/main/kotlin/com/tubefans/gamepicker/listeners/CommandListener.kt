@@ -17,6 +17,7 @@ final class CommandListener @Autowired constructor(
     private val logger = LogManager.getLogger(this::class.java)
 
     init {
+        logger.info("Subscring to commands: ${commands.joinToString { it.name }}")
         client.on(ChatInputInteractionEvent::class.java, this::handle)
             .subscribe()
     }
