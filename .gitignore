@@ -67,3 +67,6 @@ out/
 credentials.json
 **/service-key.json
 tokens/
+
+### firebase local files ###
+firebase*.exe
