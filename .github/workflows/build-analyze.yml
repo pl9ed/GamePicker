@@ -49,9 +49,8 @@ jobs:
         with:
           arguments: build
 
-      - name: Deploy
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GAMEPICKER_E32E9 }}'
-          projectId: gamepicker-e32e9
+            name: GamePicker
+            path: '*.jar'
