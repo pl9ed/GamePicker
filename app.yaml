@@ -1,0 +1,15 @@
+runtime: java17 # or another supported version
+
+instance_class: e2-micro
+
+env_variables:
+  BOT_TOKEN: ${BOT_TOKEN}
+
+handlers:
+  - url: /stylesheets
+    static_dir: stylesheets
+
+  - url: /.*
+    secure: always
+    redirect_http_response_code: 301
+    script: auto
