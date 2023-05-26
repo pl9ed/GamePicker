@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.commands
 
 import com.mongodb.internal.VisibleForTesting
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
@@ -67,8 +67,8 @@ class RecommendCommand @Autowired constructor(
     fun generateRow(
         game: String,
         score: Long,
-        fans: Collection<BotUser>,
-        excludes: Collection<BotUser>
+        fans: Collection<DiscordUser>,
+        excludes: Collection<DiscordUser>
     ): String = "$game | " +
         "$score | " +
         "Fans: ${fans.map { it.name ?: it.username }.joinToString()} | " +

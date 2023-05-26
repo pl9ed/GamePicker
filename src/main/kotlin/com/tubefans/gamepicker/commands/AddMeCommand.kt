@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.commands
 
-import com.tubefans.gamepicker.dto.BotUser
-import com.tubefans.gamepicker.services.BotUserService
+import com.tubefans.gamepicker.dto.DiscordUser
+import com.tubefans.gamepicker.services.DiscordUserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -10,7 +10,7 @@ import kotlin.jvm.optionals.getOrElse
 
 @Component
 class AddMeCommand @Autowired constructor(
-    private val botUserService: BotUserService
+    private val discordUserService: DiscordUserService
 ) : SlashCommand {
 
     companion object {
@@ -27,10 +27,10 @@ class AddMeCommand @Autowired constructor(
             val nameField = event.options.first { it.name == NAME }.value.get().asString()
             val username = event.interaction.user.username
             val id = event.interaction.user.id.toString()
-            val user = botUserService.findById(id).getOrElse {
-                BotUser(discordId = id, username = username, name = nameField)
+            val user = discordUserService.findById(id).getOrElse {
+                DiscordUser(discordId = id, username = username, name = nameField)
             }
-            botUserService.save(user)
+            discordUserService.save(user)
 
             String.format(
                 MESSAGE_TEMPLATE,

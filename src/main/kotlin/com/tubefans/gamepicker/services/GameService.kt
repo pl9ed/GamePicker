@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.services
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.models.GameScoreMap
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -14,6 +14,6 @@ class GameService @Autowired constructor() {
         const val GAME_SCORE_KEY = "score"
     }
 
-    fun getSortedGameMap(botUsers: Collection<BotUser>): GameScoreMap =
-        GameScoreMap(botUsers)
+    fun getSortedGameMap(discordUsers: Collection<DiscordUser>): GameScoreMap =
+        GameScoreMap(discordUsers)
 }

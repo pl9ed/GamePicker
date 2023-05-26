@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
-import com.tubefans.gamepicker.repositories.BotUserRepository
+import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Test
 
 class GoogleSheetsServiceTest {
 
-    private var botUserRepository: BotUserRepository = mockk()
+    private var discordUserRepository: DiscordUserRepository = mockk()
     private var sheets: Sheets = mockk()
 
-    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets, botUserRepository)
+    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets, discordUserRepository)
 
     private val sheetId = "sheet-id"
     private val range = "range"

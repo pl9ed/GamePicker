@@ -3,7 +3,7 @@ package com.tubefans.gamepicker.services
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.tubefans.gamepicker.commands.PullFromSheetCommand.Companion.DEFAULT_RANGE
-import com.tubefans.gamepicker.repositories.BotUserRepository
+import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -13,7 +13,7 @@ import toScore
 @Service
 class GoogleSheetsService @Autowired constructor(
     private val sheets: Sheets,
-    private val botUserRepository: BotUserRepository
+    private val discordUserRepository: DiscordUserRepository
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)

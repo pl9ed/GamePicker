@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.commands.RecommendCommand.Companion.NO_GAMES_RESPONSE
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
 import io.mockk.mockk
@@ -13,9 +13,9 @@ class RecommendCommandTest {
     private val eventService: EventService = mockk()
     private val command = RecommendCommand(eventService)
 
-    private val user1 = BotUser("a", "a", "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
-    private val user2 = BotUser("b", "b", "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
-    private val emptyUser = BotUser("empty", "empty", "empty")
+    private val user1 = DiscordUser("a", "a", "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
+    private val user2 = DiscordUser("b", "b", "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
+    private val emptyUser = DiscordUser("empty", "empty", "empty")
 
     private val gameScoreMap = GameScoreMap(setOf(user1, user2, emptyUser))
 
@@ -63,8 +63,8 @@ class RecommendCommandTest {
     fun `should fallback to username if name is null`() {
         val game = "game"
         val score = 100L
-        val fans = listOf(BotUser("a", "usernamea", null, mutableMapOf("a" to 10)))
-        val excludes = listOf(BotUser("b", "usernameb", null), emptyUser)
+        val fans = listOf(DiscordUser("a", "usernamea", null, mutableMapOf("a" to 10)))
+        val excludes = listOf(DiscordUser("b", "usernameb", null), emptyUser)
         val row = String.format(
             "%s | %d | Fans: %s | Excludes: %s",
             game,

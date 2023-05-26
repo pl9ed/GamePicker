@@ -1,13 +1,13 @@
 package com.tubefans.gamepicker.models
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class GameScoreMapTest {
 
-    private val user1 = BotUser(
+    private val user1 = DiscordUser(
         "1",
         "user1",
         "name1",
@@ -18,7 +18,7 @@ class GameScoreMapTest {
             "game4" to 0
         )
     )
-    private val user2 = BotUser(
+    private val user2 = DiscordUser(
         "2",
         "user2",
         "name2",
@@ -29,7 +29,7 @@ class GameScoreMapTest {
             "game4" to 0
         )
     )
-    private val user3 = BotUser(
+    private val user3 = DiscordUser(
         "3",
         "user3",
         "name3",
@@ -40,7 +40,7 @@ class GameScoreMapTest {
             "game4" to 0
         )
     )
-    private val user4 = BotUser(
+    private val user4 = DiscordUser(
         "4",
         "user4",
         "name4",
@@ -51,7 +51,7 @@ class GameScoreMapTest {
             "game4" to 10
         )
     )
-    private val blankUser = BotUser(
+    private val blankUser = DiscordUser(
         "blank",
         "blankuser",
         "blankname"
@@ -83,12 +83,12 @@ class GameScoreMapTest {
     @Test
     fun `should handle blank user maps`() {
         val emptyUsers = listOf(
-            BotUser(
+            DiscordUser(
                 "1",
                 "user1",
                 "name1"
             ),
-            BotUser(
+            DiscordUser(
                 "2",
                 "user2",
                 "name2"

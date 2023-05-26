@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.services
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.entity.channel.VoiceChannel
 import kotlinx.coroutines.async
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono
 
 @Service
 class EventService @Autowired constructor(
-    private val botUserService: BotUserService
+    private val discordUserService: DiscordUserService
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -26,13 +26,13 @@ class EventService @Autowired constructor(
             .voiceState.block()
             ?.channel?.block()
 
-    fun getUsersInChannel(voiceChannel: VoiceChannel): Mono<Set<BotUser>> = mono {
+    fun getUsersInChannel(voiceChannel: VoiceChannel): Mono<Set<DiscordUser>> = mono {
         voiceChannel.voiceStates.asFlow()
             .map {
                 it.userId
             }.map { snowflake ->
                 async {
-                    botUserService.findById(snowflake.toString()).also {
+                    discordUserService.findById(snowflake.toString()).also {
                         logger.info("Getting user with id {}", snowflake.toString())
                     }
                 }

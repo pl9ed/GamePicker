@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.commands
 
-import com.tubefans.gamepicker.dto.BotUser
-import com.tubefans.gamepicker.services.BotUserService
+import com.tubefans.gamepicker.dto.DiscordUser
+import com.tubefans.gamepicker.services.DiscordUserService
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createPullFromSheetEvent
 import io.mockk.called
@@ -35,10 +35,10 @@ class PullFromSheetCommandTest {
 
     private val templateResponse = "Updated DB with scores for %d users.%s"
 
-    private val botUserService: BotUserService = mockk {
+    private val discordUserService: DiscordUserService = mockk {
         every {
             updateGameForUserWithName(name, any(), any())
-        } returns BotUser("id", "username", "name", mutableMapOf())
+        } returns DiscordUser("id", "username", "name", mutableMapOf())
         every {
             updateGameForUserWithName(missingName, any(), any())
         } throws NoSuchElementException()
@@ -52,7 +52,7 @@ class PullFromSheetCommandTest {
         every { mapToScores(emptyList()) } returns emptyMap()
     }
 
-    private val command = PullFromSheetCommand(botUserService, googleSheetsService)
+    private val command = PullFromSheetCommand(discordUserService, googleSheetsService)
 
     @Test
     fun `should only update valid users`() {
@@ -70,7 +70,7 @@ class PullFromSheetCommandTest {
         val event = createPullFromSheetEvent(emptySheet, "range")
         val message = command.updateDbFromSheet(event).block()
 
-        verify { botUserService wasNot called }
+        verify { discordUserService wasNot called }
 
         assertEquals(
             String.format(templateResponse, 0, ""),
