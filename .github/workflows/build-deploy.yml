@@ -44,7 +44,7 @@ jobs:
       - name: Auth
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: "$GITHUB_WORKSPACE/service-key.json"
+          credentials_json: ${{ secrets.CREDENTIALS_JSON }}
 
       - name: Deploy
         uses: google-github-actions/deploy-appengine@v1
