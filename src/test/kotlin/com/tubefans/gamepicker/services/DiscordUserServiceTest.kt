@@ -27,10 +27,10 @@ class DiscordUserServiceTest {
     private val repository: DiscordUserRepository = mockk {
         every { insert(discordUser) } returns discordUser
         every { save(discordUser) } returns discordUser
-        every { findOneByName(name) } returns Optional.of(discordUser)
+        every { findByName(name) } returns Optional.of(discordUser)
         every { findById(id) } returns Optional.of(discordUser)
         every { findById(missing) } returns Optional.empty()
-        every { findOneByName(missing) } throws NoSuchElementException()
+        every { findByName(missing) } throws NoSuchElementException()
     }
 
     @BeforeEach
@@ -69,7 +69,7 @@ class DiscordUserServiceTest {
     fun `should map valid names to users`() {
         val names = listOf("a", "b", "c")
         every {
-            repository.findOneByName(any()).get()
+            repository.findByName(any()).get()
         } returnsMany listOf(
             DiscordUser("a", "username_a", "name_a"),
             DiscordUser("b", "username_b", "name_b"),
@@ -85,9 +85,9 @@ class DiscordUserServiceTest {
         val names = listOf("a", "b", "c")
         val userA = DiscordUser("a", "a", "a")
         val userC = DiscordUser("c", "c", "c")
-        every { repository.findOneByName("a").get() } returns userA
-        every { repository.findOneByName("b").get() } throws NoSuchElementException()
-        every { repository.findOneByName("c").get() } returns userC
+        every { repository.findByName("a").get() } returns userA
+        every { repository.findByName("b").get() } throws NoSuchElementException()
+        every { repository.findByName("c").get() } returns userC
 
         val (users, failed) = discordUserService.getUsersFromNames(names)
         assertEquals(setOf(userA, userC), users)

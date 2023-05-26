@@ -23,7 +23,7 @@ class DiscordUserService @Autowired constructor(
     fun save(user: DiscordUser): DiscordUser = discordUserRepository.save(user)
 
     fun updateGameForUserWithName(name: String, game: String, score: Long): DiscordUser =
-        save(discordUserRepository.findOneByName(name).get().updateGame(game, score))
+        save(discordUserRepository.findByName(name).get().updateGame(game, score))
 
     fun updateGameForUserWithId(id: String, game: String, score: Long): DiscordUser =
         save(discordUserRepository.findById(id).get().updateGame(game, score))
@@ -34,7 +34,7 @@ class DiscordUserService @Autowired constructor(
         names.map { name ->
             async {
                 try {
-                    userSet.add(discordUserRepository.findOneByName(name).get())
+                    userSet.add(discordUserRepository.findByName(name).get())
                 } catch (e: NoSuchElementException) {
                     failedSet.add(name)
                 }

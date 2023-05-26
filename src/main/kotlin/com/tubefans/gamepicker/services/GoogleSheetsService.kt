@@ -2,7 +2,6 @@ package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.tubefans.gamepicker.commands.PullFromSheetCommand.Companion.DEFAULT_RANGE
 import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +15,11 @@ class GoogleSheetsService @Autowired constructor(
     private val discordUserRepository: DiscordUserRepository
 ) {
 
+    companion object {
+        const val DEFAULT_SHEET_ID = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
+        const val DEFAULT_RANGE = "Data" // name of the 'sheet' tab on the web UI
+    }
+
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun getValueRange(id: String, range: String): ValueRange = sheets.spreadsheets().values()[id, range].execute()
@@ -25,7 +29,7 @@ class GoogleSheetsService @Autowired constructor(
      * @param range String representation of range, e.x. 'A1:A5'
      * @return 2D array of objects from the sheet
      */
-    fun getSheet(id: String, range: String = DEFAULT_RANGE): List<List<Any>> =
+    fun getSheet(id: String = DEFAULT_SHEET_ID, range: String = DEFAULT_RANGE): List<List<Any>> =
         sheets.spreadsheets().values()[id, range].execute().getValues()
 
     /**
