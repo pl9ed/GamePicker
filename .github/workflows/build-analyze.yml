@@ -41,16 +41,10 @@ jobs:
         run:
           echo "$CREDENTIALS_JSON" > "$GITHUB_WORKSPACE/service-key.json"
 
-      - name: Build
-        if: false # disabled until we decide how we want to host
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        uses: gradle/gradle-build-action@v2
+      - name: Auth
+        uses: google-github-actions/auth@v1
         with:
-          arguments: build
+          credentials_json: "$GITHUB_WORKSPACE/service-key.json"
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-            name: GamePicker
-            path: '*.jar'
+      - name: Deploy
+        uses: google-github-actions/deploy-appengine@v1
