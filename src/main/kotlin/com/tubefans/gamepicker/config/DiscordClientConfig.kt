@@ -16,9 +16,13 @@ class DiscordClientConfig @Autowired constructor(
     private val secretManagerServiceClient: SecretManagerServiceClient
 ) {
 
+    companion object {
+        const val BOT_TOKEN_KEY = "projects/891049573637/secrets/BOT_TOKEN/versions/latest"
+    }
+
     @Bean
     fun gatewayDiscordClient(): GatewayDiscordClient {
-        val token = secretManagerServiceClient.accessSecretVersion("projects/891049573637/secrets/BOT_TOKEN/versions/1")
+        val token = secretManagerServiceClient.accessSecretVersion(BOT_TOKEN_KEY)
             .payload
             .data
             .toStringUtf8()
