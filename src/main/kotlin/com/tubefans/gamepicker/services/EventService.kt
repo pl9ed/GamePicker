@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.services
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.entity.channel.VoiceChannel
 import kotlinx.coroutines.async
@@ -26,7 +26,7 @@ class EventService @Autowired constructor(
             .voiceState.block()
             ?.channel?.block()
 
-    fun getUsersInChannel(voiceChannel: VoiceChannel): Mono<Set<BotUser>> = mono {
+    fun getUsersInChannel(voiceChannel: VoiceChannel): Mono<Set<DiscordUser>> = mono {
         voiceChannel.voiceStates.asFlow()
             .map {
                 it.userId

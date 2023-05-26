@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.commands
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.services.BotUserService
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createUpdateGameEvent
 import discord4j.common.util.Snowflake
@@ -21,10 +21,10 @@ class UpdateGameCommandTest {
     private val game = "game"
     private val score = 10L
 
-    private val botUser = BotUser(id.toString(), username, "")
+    private val discordUser = DiscordUser(id.toString(), username, "")
 
     private val botUserService: BotUserService = mockk {
-        every { updateGameForUserWithId(id.toString(), any(), any()) } returns botUser
+        every { updateGameForUserWithId(id.toString(), any(), any()) } returns discordUser
         every { updateGameForUserWithId(missingId.toString(), any(), any()) } throws NoSuchElementException()
     }
 
@@ -71,16 +71,16 @@ class UpdateGameCommandTest {
                 every { username() } returns username
             }
         )
-        val botUser = BotUser(missingId.toString(), username, "", mutableMapOf(game to score))
+        val discordUser = DiscordUser(missingId.toString(), username, "", mutableMapOf(game to score))
 
-        every { botUserService.insert(any()) } returns botUser
+        every { botUserService.insert(any()) } returns discordUser
 
         val event = createUpdateGameEvent(user, game, score)
         val response = command.handle(event)
 
         verify {
             botUserService.updateGameForUserWithId(missingId.toString(), game, score)
-            botUserService.insert(botUser)
+            botUserService.insert(discordUser)
             event.reply()
         }
 

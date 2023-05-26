@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.commands
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.extensions.getGame
 import com.tubefans.gamepicker.extensions.getScore
 import com.tubefans.gamepicker.services.BotUserService
@@ -17,16 +17,16 @@ class UpdateGameCommand @Autowired constructor(
     override val name = "update"
 
     override fun handle(event: ChatInputInteractionEvent): InteractionApplicationCommandCallbackReplyMono {
-        var botUserResponse: BotUser
+        var discordUserResponse: DiscordUser
 
         val game = event.getGame()
         val score = event.getScore()
 
         event.interaction.user.let { user ->
-            botUserResponse = try {
+            discordUserResponse = try {
                 botUserService.updateGameForUserWithId(user.id.toString(), game, score)
             } catch (e: NoSuchElementException) {
-                val newUser = BotUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
+                val newUser = DiscordUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
                 botUserService.insert(newUser)
             }
         }
@@ -34,7 +34,7 @@ class UpdateGameCommand @Autowired constructor(
         return event.reply()
             .withEphemeral(true)
             .withContent(
-                "Updated $game with score: $score for ${botUserResponse.username}."
+                "Updated $game with score: $score for ${discordUserResponse.username}."
             )
     }
 }

@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.commands
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.services.BotUserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,7 +28,7 @@ class AddMeCommand @Autowired constructor(
             val username = event.interaction.user.username
             val id = event.interaction.user.id.toString()
             val user = botUserService.findById(id).getOrElse {
-                BotUser(discordId = id, username = username, name = nameField)
+                DiscordUser(discordId = id, username = username, name = nameField)
             }
             botUserService.save(user)
 

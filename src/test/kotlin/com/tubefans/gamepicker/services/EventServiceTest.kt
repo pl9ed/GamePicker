@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.services
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createRecommendEvent
 import discord4j.common.util.Snowflake
 import discord4j.core.`object`.VoiceState
@@ -21,8 +21,8 @@ class EventServiceTest {
     private val id1 = Snowflake.of(1)
     private val missing = Snowflake.of(999)
 
-    private val user0 = BotUser(id0.toString(), "", "")
-    private val user1 = BotUser(id1.toString(), "", "")
+    private val user0 = DiscordUser(id0.toString(), "", "")
+    private val user1 = DiscordUser(id1.toString(), "", "")
 
     private val validVoiceStates: Flux<VoiceState> = Flux.just(
         mockk {

@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.services
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.extensions.updateGame
 import com.tubefans.gamepicker.repositories.BotUserRepository
 import kotlinx.coroutines.async
@@ -18,18 +18,18 @@ class BotUserService @Autowired constructor(
 
     fun findById(id: String) = botUserRepository.findById(id)
 
-    fun insert(user: BotUser) = botUserRepository.insert(user)
+    fun insert(user: DiscordUser) = botUserRepository.insert(user)
 
-    fun save(user: BotUser): BotUser = botUserRepository.save(user)
+    fun save(user: DiscordUser): DiscordUser = botUserRepository.save(user)
 
-    fun updateGameForUserWithName(name: String, game: String, score: Long): BotUser =
+    fun updateGameForUserWithName(name: String, game: String, score: Long): DiscordUser =
         save(botUserRepository.findOneByName(name).get().updateGame(game, score))
 
-    fun updateGameForUserWithId(id: String, game: String, score: Long): BotUser =
+    fun updateGameForUserWithId(id: String, game: String, score: Long): DiscordUser =
         save(botUserRepository.findById(id).get().updateGame(game, score))
 
     fun getUsersFromNames(names: Collection<String>) = runBlocking {
-        val userSet = mutableSetOf<BotUser>()
+        val userSet = mutableSetOf<DiscordUser>()
         val failedSet = mutableSetOf<String>()
         names.map { name ->
             async {

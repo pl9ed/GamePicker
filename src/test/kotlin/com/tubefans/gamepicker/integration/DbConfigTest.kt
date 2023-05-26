@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.integration
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.repositories.BotUserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -17,7 +17,7 @@ class DbConfigTest {
     @Autowired
     private lateinit var botUserRepository: BotUserRepository
 
-    private val user = BotUser("id", "username", "name")
+    private val user = DiscordUser("id", "username", "name")
 
     @BeforeEach
     fun setup() {

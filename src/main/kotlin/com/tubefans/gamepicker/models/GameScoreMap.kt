@@ -1,10 +1,10 @@
 package com.tubefans.gamepicker.models
 
-import com.tubefans.gamepicker.dto.BotUser
+import com.tubefans.gamepicker.dto.DiscordUser
 import java.util.*
 
 class GameScoreMap(
-    val botUsers: Collection<BotUser>
+    val discordUsers: Collection<DiscordUser>
 ) {
 
     companion object {
@@ -12,10 +12,10 @@ class GameScoreMap(
         const val MIN_SCORE = 0L
     }
 
-    private val map = mutableMapOf<String, SortedSet<BotUser>>()
+    private val map = mutableMapOf<String, SortedSet<DiscordUser>>()
 
     init {
-        botUsers.forEach { user ->
+        discordUsers.forEach { user ->
             user.gameMap.forEach { (game, _) ->
                 map[game]?.add(user) ?: run {
                     map[game] = sortedSetOf(BotUserComparator(game), user)
@@ -36,14 +36,14 @@ class GameScoreMap(
                 it.second
             }.take(n)
 
-    fun getTopPlayersForGame(game: String, n: Int = 3): List<BotUser> =
+    fun getTopPlayersForGame(game: String, n: Int = 3): List<DiscordUser> =
         map[game]?.filter { it.gameMap[game] != 0L }
             ?.sortedByDescending {
                 it.gameMap[game]
             }?.take(n) ?: emptyList()
 
-    fun getNonPlayersForGame(game: String): List<BotUser> =
-        botUsers.filter {
+    fun getNonPlayersForGame(game: String): List<DiscordUser> =
+        discordUsers.filter {
             it.gameMap[game] == 0L || it.gameMap[game] == null
         }
 }
