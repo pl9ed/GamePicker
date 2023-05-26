@@ -10,5 +10,6 @@ interface DiscordUserRepository {
     fun findByName(name: String): Optional<DiscordUser>
     fun insert(user: DiscordUser): Optional<DiscordUser>
     fun save(user: DiscordUser): Optional<DiscordUser>
+    fun delete(user: DiscordUser): Optional<Boolean>
 
 }
