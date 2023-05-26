@@ -33,7 +33,6 @@ class DiscordClientConfig @Autowired constructor(
             .block()!!
     }
 
-
     @Bean
     fun discordRestClient(client: GatewayDiscordClient): RestClient =
         client.restClient

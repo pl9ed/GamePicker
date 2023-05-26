@@ -3,7 +3,6 @@ package com.tubefans.gamepicker.config
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.JsonFactory
-import com.google.api.gax.core.CredentialsProvider
 import com.google.api.services.sheets.v4.Sheets
 import com.google.auth.Credentials
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient
@@ -39,5 +38,4 @@ class GoogleApiConfig @Autowired constructor(
                     credentials
                 }.build()
         )
-
 }
