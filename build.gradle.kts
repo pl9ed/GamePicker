@@ -38,9 +38,10 @@ dependencies {
     implementation(discord4jLibs.kotlinXCoroutinesReactor)
     implementation(discord4jLibs.reactorKotlinExtensions)
 
-    implementation(gdriveLibs.apiClient)
-    implementation(gdriveLibs.oauthClient)
-    implementation(gdriveLibs.apiServicesSheets)
+    implementation(googleLibs.apiClient)
+    implementation(googleLibs.oauthClient)
+    implementation(googleLibs.apiServicesSheets)
+    implementation(googleLibs.secretsManager)
 
     developmentOnly(springLibs.devtools)
     testImplementation(libs.kotlinxCoroutinesTest)
