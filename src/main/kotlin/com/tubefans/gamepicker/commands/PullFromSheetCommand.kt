@@ -3,7 +3,7 @@ package com.tubefans.gamepicker.commands
 import com.mongodb.internal.VisibleForTesting
 import com.tubefans.gamepicker.extensions.getSheetId
 import com.tubefans.gamepicker.extensions.getSheetRange
-import com.tubefans.gamepicker.services.BotUserService
+import com.tubefans.gamepicker.services.DiscordUserService
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import kotlinx.coroutines.reactor.mono
@@ -15,7 +15,7 @@ import java.io.IOException
 
 @Component
 class PullFromSheetCommand @Autowired constructor(
-    private val botUserService: BotUserService,
+    private val discordUserService: DiscordUserService,
     private val googleSheetsService: GoogleSheetsService
 ) : SlashCommand {
 
@@ -59,7 +59,7 @@ class PullFromSheetCommand @Autowired constructor(
                 games.forEach { (unformattedGame, score) ->
                     val game = unformattedGame.uppercase()
                     try {
-                        botUserService.updateGameForUserWithName(name, game, score)
+                        discordUserService.updateGameForUserWithName(name, game, score)
                         usersUpdated.add(name)
                     } catch (e: NoSuchElementException) {
                         logger.error("Could not find user with name=$name", e)

@@ -49,12 +49,12 @@ class EventServiceTest {
         every { getVoiceStates() } returns missingIdVoiceState
     }
 
-    private val botUserService: BotUserService = mockk() {
+    private val discordUserService: DiscordUserService = mockk() {
         every { findById(id0.toString()) } returns Optional.of(user0)
         every { findById(id1.toString()) } returns Optional.of(user1)
         every { findById(missing.toString()) } returns Optional.empty()
     }
-    private val eventService = EventService(botUserService)
+    private val eventService = EventService(discordUserService)
 
     @Test
     fun `should get user's current voice channel`() {

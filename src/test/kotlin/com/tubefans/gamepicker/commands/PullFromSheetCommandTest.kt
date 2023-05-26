@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.dto.DiscordUser
-import com.tubefans.gamepicker.services.BotUserService
+import com.tubefans.gamepicker.services.DiscordUserService
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createPullFromSheetEvent
 import io.mockk.called
@@ -35,7 +35,7 @@ class PullFromSheetCommandTest {
 
     private val templateResponse = "Updated DB with scores for %d users.%s"
 
-    private val discordUserService: BotUserService = mockk {
+    private val discordUserService: DiscordUserService = mockk {
         every {
             updateGameForUserWithName(name, any(), any())
         } returns DiscordUser("id", "username", "name", mutableMapOf())

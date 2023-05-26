@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.dto.DiscordUser
-import com.tubefans.gamepicker.services.BotUserService
+import com.tubefans.gamepicker.services.DiscordUserService
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createUpdateGameEvent
 import discord4j.common.util.Snowflake
 import discord4j.core.`object`.entity.User
@@ -23,14 +23,14 @@ class UpdateGameCommandTest {
 
     private val discordUser = DiscordUser(id.toString(), username, "")
 
-    private val botUserService: BotUserService = mockk {
+    private val discordUserService: DiscordUserService = mockk {
         every { updateGameForUserWithId(id.toString(), any(), any()) } returns discordUser
         every { updateGameForUserWithId(missingId.toString(), any(), any()) } throws NoSuchElementException()
     }
 
     private val responseTemplate = "Updated %s with score: %d for %s."
 
-    private val command = UpdateGameCommand(botUserService)
+    private val command = UpdateGameCommand(discordUserService)
 
     @Test
     fun `should update user scores`() {
@@ -45,7 +45,7 @@ class UpdateGameCommandTest {
         val response = command.handle(event)
 
         verify {
-            botUserService.updateGameForUserWithId(id.toString(), game, score)
+            discordUserService.updateGameForUserWithId(id.toString(), game, score)
             event.reply()
         }
 
@@ -73,14 +73,14 @@ class UpdateGameCommandTest {
         )
         val discordUser = DiscordUser(missingId.toString(), username, "", mutableMapOf(game to score))
 
-        every { botUserService.insert(any()) } returns discordUser
+        every { discordUserService.insert(any()) } returns discordUser
 
         val event = createUpdateGameEvent(user, game, score)
         val response = command.handle(event)
 
         verify {
-            botUserService.updateGameForUserWithId(missingId.toString(), game, score)
-            botUserService.insert(discordUser)
+            discordUserService.updateGameForUserWithId(missingId.toString(), game, score)
+            discordUserService.insert(discordUser)
             event.reply()
         }
 

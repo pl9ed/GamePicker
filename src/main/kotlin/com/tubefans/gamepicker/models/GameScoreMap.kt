@@ -18,7 +18,7 @@ class GameScoreMap(
         discordUsers.forEach { user ->
             user.gameMap.forEach { (game, _) ->
                 map[game]?.add(user) ?: run {
-                    map[game] = sortedSetOf(BotUserComparator(game), user)
+                    map[game] = sortedSetOf(DiscordUserComparator(game), user)
                 }
             }
         }

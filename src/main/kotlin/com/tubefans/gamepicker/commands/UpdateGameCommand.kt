@@ -3,7 +3,7 @@ package com.tubefans.gamepicker.commands
 import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.extensions.getGame
 import com.tubefans.gamepicker.extensions.getScore
-import com.tubefans.gamepicker.services.BotUserService
+import com.tubefans.gamepicker.services.DiscordUserService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class UpdateGameCommand @Autowired constructor(
-    private val botUserService: BotUserService
+    private val discordUserService: DiscordUserService
 ) : SlashCommand {
 
     override val name = "update"
@@ -24,10 +24,10 @@ class UpdateGameCommand @Autowired constructor(
 
         event.interaction.user.let { user ->
             discordUserResponse = try {
-                botUserService.updateGameForUserWithId(user.id.toString(), game, score)
+                discordUserService.updateGameForUserWithId(user.id.toString(), game, score)
             } catch (e: NoSuchElementException) {
                 val newUser = DiscordUser(user.id.toString(), user.username, "", mutableMapOf(game to score))
-                botUserService.insert(newUser)
+                discordUserService.insert(newUser)
             }
         }
 

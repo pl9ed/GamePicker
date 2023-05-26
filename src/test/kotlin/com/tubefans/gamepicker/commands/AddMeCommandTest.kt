@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.dto.DiscordUser
-import com.tubefans.gamepicker.services.BotUserService
+import com.tubefans.gamepicker.services.DiscordUserService
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createAddMeEvent
 import discord4j.common.util.Snowflake
 import io.mockk.every
@@ -21,13 +21,13 @@ class AddMeCommandTest {
     private val discordUser = DiscordUser(id, username, name)
     private val newUser = DiscordUser(missingId, username, name)
 
-    private val botUserService: BotUserService = mockk() {
+    private val discordUserService: DiscordUserService = mockk() {
         every { findById(id) } returns Optional.of(discordUser)
         every { findById(missingId) } returns Optional.empty()
         every { save(discordUser) } returns discordUser
         every { save(newUser) } returns newUser
     }
-    private val command = AddMeCommand(botUserService)
+    private val command = AddMeCommand(discordUserService)
 
     @Test
     fun `should add user to database`() {
@@ -36,7 +36,7 @@ class AddMeCommandTest {
         command.handle(event)
 
         verify {
-            botUserService.save(discordUser)
+            discordUserService.save(discordUser)
         }
     }
 
@@ -47,7 +47,7 @@ class AddMeCommandTest {
         command.handle(event)
 
         verify {
-            botUserService.save(newUser)
+            discordUserService.save(newUser)
         }
     }
 }

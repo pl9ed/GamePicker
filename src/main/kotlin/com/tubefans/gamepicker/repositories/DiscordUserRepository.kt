@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository
 import java.util.Optional
 
 @Repository
-interface BotUserRepository : MongoRepository<DiscordUser, String> {
+interface DiscordUserRepository : MongoRepository<DiscordUser, String> {
     fun findOneByName(name: String): Optional<DiscordUser>
 }

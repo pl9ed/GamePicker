@@ -1,7 +1,7 @@
 package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.dto.DiscordUser
-import com.tubefans.gamepicker.repositories.BotUserRepository
+import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,7 +24,7 @@ class DiscordUserServiceTest {
 
     private var discordUser: DiscordUser = DiscordUser(id, username, name)
 
-    private val repository: BotUserRepository = mockk {
+    private val repository: DiscordUserRepository = mockk {
         every { insert(discordUser) } returns discordUser
         every { save(discordUser) } returns discordUser
         every { findOneByName(name) } returns Optional.of(discordUser)
@@ -38,18 +38,18 @@ class DiscordUserServiceTest {
         discordUser = DiscordUser(id, username, name)
     }
 
-    private val botUserService = BotUserService(repository)
+    private val discordUserService = DiscordUserService(repository)
 
     @Test
     fun `should update game for user by name`() {
-        val returnedUser = botUserService.updateGameForUserWithName(name, newGame, newScore)
+        val returnedUser = discordUserService.updateGameForUserWithName(name, newGame, newScore)
         assertTrue(returnedUser.gameMap.keys.contains(newGame))
         assertEquals(newScore, returnedUser.gameMap[newGame])
     }
 
     @Test
     fun `should update game for user by id`() {
-        val returnedUser = botUserService.updateGameForUserWithId(id, newGame, newScore)
+        val returnedUser = discordUserService.updateGameForUserWithId(id, newGame, newScore)
         assertTrue(returnedUser.gameMap.keys.contains(newGame))
         assertEquals(newScore, returnedUser.gameMap[newGame])
     }
@@ -57,11 +57,11 @@ class DiscordUserServiceTest {
     @Test
     fun `should throw when user doesn't exist`() {
         assertThrows(NoSuchElementException::class.java) {
-            botUserService.updateGameForUserWithName(missing, "", 0L)
+            discordUserService.updateGameForUserWithName(missing, "", 0L)
         }
 
         assertThrows(NoSuchElementException::class.java) {
-            botUserService.updateGameForUserWithId(missing, "", 0L)
+            discordUserService.updateGameForUserWithId(missing, "", 0L)
         }
     }
 
@@ -76,7 +76,7 @@ class DiscordUserServiceTest {
             DiscordUser("c", "username_c", "name_b")
         )
 
-        val (users, failed) = botUserService.getUsersFromNames(names)
+        val (users, failed) = discordUserService.getUsersFromNames(names)
         assertEquals(names.size, users.size)
     }
 
@@ -89,7 +89,7 @@ class DiscordUserServiceTest {
         every { repository.findOneByName("b").get() } throws NoSuchElementException()
         every { repository.findOneByName("c").get() } returns userC
 
-        val (users, failed) = botUserService.getUsersFromNames(names)
+        val (users, failed) = discordUserService.getUsersFromNames(names)
         assertEquals(setOf(userA, userC), users)
         assertEquals(setOf("b"), failed)
     }
