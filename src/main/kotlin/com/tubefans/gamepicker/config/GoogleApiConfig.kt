@@ -3,6 +3,7 @@ package com.tubefans.gamepicker.config
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.JsonFactory
+import com.google.api.services.drive.Drive
 import com.google.api.services.sheets.v4.Sheets
 import com.google.auth.Credentials
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient
@@ -22,12 +23,14 @@ class GoogleApiConfig @Autowired constructor(
 
     @Bean
     fun sheets(): Sheets =
-        Sheets
-            .Builder(
-                netHttpTransport,
-                jsonFactory,
-                credentialV2
-            ).setApplicationName(APP_NAME)
+        Sheets.Builder(netHttpTransport, jsonFactory, credentialV2)
+            .setApplicationName(APP_NAME)
+            .build()
+
+    @Bean
+    fun drive(): Drive =
+        Drive.Builder(netHttpTransport, jsonFactory, credentialV2)
+            .setApplicationName(APP_NAME)
             .build()
 
     @Bean

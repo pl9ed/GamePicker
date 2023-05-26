@@ -31,4 +31,8 @@ class DiscordUserRepositoryImpl : DiscordUserRepository {
         TODO("Not yet implemented")
     }
 
+    override fun delete(user: DiscordUser): Optional<Boolean> {
+        TODO("Not yet implemented")
+    }
+
 }

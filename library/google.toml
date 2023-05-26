@@ -3,9 +3,11 @@ apiClientVersion = "1.25.0"
 oauthClientVersion = "1.34.1"
 sheetsVersion = "v4-rev612-1.25.0"
 secretsManagerVersion = "2.17.0"
+driveVersion = "v3-rev197-1.25.0"
 
 [libraries]
 apiClient = { group = "com.google.api-client", name = "google-api-client" , version.ref = "apiClientVersion" }
 oauthClient = { group = "com.google.oauth-client", name = "google-oauth-client-jetty" , version.ref = "oauthClientVersion" }
 apiServicesSheets = { group = "com.google.apis", name = "google-api-services-sheets", version.ref = "sheetsVersion"}
+drive = { group = "com.google.apis", name = "google-api-services-drive", version.ref = "driveVersion" }
 secretsManager = { group = "com.google.cloud", name = "google-cloud-secretmanager", version.ref = "secretsManagerVersion"}

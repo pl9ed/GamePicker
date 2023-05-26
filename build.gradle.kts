@@ -39,8 +39,9 @@ dependencies {
     implementation(discord4jLibs.reactorKotlinExtensions)
 
     implementation(googleLibs.apiClient)
-    implementation(googleLibs.oauthClient)
     implementation(googleLibs.apiServicesSheets)
+    implementation(googleLibs.drive)
+    implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
 
     developmentOnly(springLibs.devtools)
