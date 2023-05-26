@@ -8,8 +8,8 @@ dependencyResolutionManagement {
         create("discord4jLibs") {
             from(files("library/discord4j.toml"))
         }
-        create("gdriveLibs") {
-            from(files("library/gdrive.toml"))
+        create("googleLibs") {
+            from(files("library/google.toml"))
         }
         create("libs") {
             from(files("library/general.toml"))
