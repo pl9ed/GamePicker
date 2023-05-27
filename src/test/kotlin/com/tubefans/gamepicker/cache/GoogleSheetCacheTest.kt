@@ -7,9 +7,7 @@ import com.tubefans.gamepicker.services.GoogleSheetsService.Companion.DEFAULT_SH
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import mapToString
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyString
 
 class GoogleSheetCacheTest {
 
@@ -20,7 +18,6 @@ class GoogleSheetCacheTest {
 
     private val later = System.currentTimeMillis()
     private val earlier = later - 1000L
-
 
     @Test
     fun `should update sheet when lastUpdate is greater than current value`() {
@@ -54,5 +51,4 @@ class GoogleSheetCacheTest {
             googleSheetsService.getSheet(DEFAULT_SHEET_ID)
         }
     }
-
 }
