@@ -13,8 +13,8 @@ class TestCache @Autowired constructor(
     private val users = mutableSetOf<DiscordUser>()
 
     init {
-        discordUserRepository.findOneByName("ANDREW").get().let {
-            users.add(it)
-        }
+//        discordUserRepository.findOneByName("ANDREW").get().let {
+//            users.add(it)
+//        }
     }
 }
