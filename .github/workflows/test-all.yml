@@ -55,7 +55,7 @@ jobs:
       - name: Run all tests
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: test jacocoTestReport sonarqube --info
+          arguments: unitTest jacocoTestReport sonarqube --info
 
       # Triggering SonarQube analysis as results of it are required by Quality Gate check.
       - name: SonarQube Scan

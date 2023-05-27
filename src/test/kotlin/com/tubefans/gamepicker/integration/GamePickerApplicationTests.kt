@@ -1,4 +1,4 @@
-package com.tubefans.gamepicker
+package com.tubefans.gamepicker.integration
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
