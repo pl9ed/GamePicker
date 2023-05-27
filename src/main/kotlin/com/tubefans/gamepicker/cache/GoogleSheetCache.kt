@@ -1,12 +1,8 @@
 package com.tubefans.gamepicker.cache
 
 import com.google.api.client.util.DateTime
-import com.google.common.annotations.VisibleForTesting
-import com.tubefans.gamepicker.dto.DiscordUser
-import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
-import com.tubefans.gamepicker.services.GoogleSheetsService.Companion.DEFAULT_RANGE
 import com.tubefans.gamepicker.services.GoogleSheetsService.Companion.DEFAULT_SHEET_ID
 import mapToString
 import org.apache.logging.log4j.LogManager
@@ -43,5 +39,4 @@ class GoogleSheetCache @Autowired constructor(
     }
 
     fun lastUpdateTime(): DateTime = lastUpdate
-
 }

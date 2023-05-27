@@ -2,15 +2,11 @@ package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
-import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.Optional
 
 class DiscordUserServiceTest {
 
@@ -26,7 +22,6 @@ class DiscordUserServiceTest {
     private var discordUser: DiscordUser = DiscordUser(id, username, name)
 
     private val userCache: UserCache = mockk {
-
     }
 
     @BeforeEach

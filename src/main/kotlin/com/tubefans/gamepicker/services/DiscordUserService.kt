@@ -2,8 +2,6 @@ package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
-import com.tubefans.gamepicker.extensions.updateGame
-import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking

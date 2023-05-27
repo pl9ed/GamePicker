@@ -16,7 +16,7 @@ class AddMeCommand @Autowired constructor(
         const val MESSAGE_TEMPLATE = "Updated name=%s, username=%s for user with id=%s"
         val noMatchingNameTemplate = """No name matching %s found. You need to add yourself to the sheet 
             first before updating your name or username.
-            """.trimIndent()
+        """.trimIndent()
     }
 
     override val name = "add-me"

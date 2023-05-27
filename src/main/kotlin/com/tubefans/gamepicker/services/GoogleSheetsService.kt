@@ -57,12 +57,12 @@ class GoogleSheetsService @Autowired constructor(
 
         for (row in 2 until sheet.size) {
             val cols = sheet[row].size
-            if (cols == maxCol) break
             if (cols == 0) continue
             val name = sheet[row][0].toName() ?: continue
             if (name == END_ROW_TITLE) break
 
             for (col in 1 until cols) {
+                if (col == maxCol) break
                 val game = gameIndexMap[col] ?: continue
                 val score = sheet[row][col].toScore() ?: continue
 

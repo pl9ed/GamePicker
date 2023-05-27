@@ -7,13 +7,12 @@ import discord4j.core.`object`.VoiceState
 import discord4j.core.`object`.entity.channel.VoiceChannel
 import io.mockk.every
 import io.mockk.mockk
-import java.util.NoSuchElementException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
-import java.util.Optional
+import java.util.NoSuchElementException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EventServiceTest {

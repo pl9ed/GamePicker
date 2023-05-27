@@ -17,7 +17,7 @@ class GoogleSheetsExtensionTests {
 
     @Test
     fun `should return name string`() {
-        val name = "name"
+        val name = "NAME"
         assertEquals(name, name.toName())
     }
 

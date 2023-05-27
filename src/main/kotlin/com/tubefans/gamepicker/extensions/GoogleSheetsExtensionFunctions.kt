@@ -3,7 +3,7 @@ import com.tubefans.gamepicker.models.GameScoreMap.Companion.MAX_SCORE
 fun Any?.toName(): String? =
     this?.toString()?.takeIf {
         it != "null" && it.isNotBlank()
-    }
+    }?.uppercase()
 
 fun Any?.toScore(): Long? {
     if (this.toString().isBlank()) return null
