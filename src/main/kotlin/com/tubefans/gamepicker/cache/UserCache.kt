@@ -5,6 +5,7 @@ import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
+import javax.annotation.PostConstruct
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -35,7 +36,8 @@ class UserCache @Autowired constructor(
             return field
         }
 
-    init {
+    @PostConstruct
+    fun initUsers() {
         updateUsers()
         logger.info(
             "Initialized user cache with users: {}",
