@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isKaptVerbose
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
