@@ -21,19 +21,28 @@ class UserCache @Autowired constructor(
     private var lastUpdate: DateTime = googleSheetCache.lastUpdateTime()
     private val logger = LogManager.getLogger()
 
-    var users: MutableSet<DiscordUser> = updateUsers()
+    final var users: MutableSet<DiscordUser> = mutableSetOf()
         get() {
             val lastUpdate = googleSheetCache.lastUpdateTime()
             if (lastUpdate.value > this.lastUpdate.value) {
                 this.lastUpdate = lastUpdate
-                field = updateUsers()
+                updateUsers()
             }
             return field
         }
 
-    private fun updateUsers(): MutableSet<DiscordUser> = runBlocking {
-        val userSet = mutableSetOf<DiscordUser>()
+    init {
+        updateUsers()
+        logger.info(
+            "Initialized user cache with users: {}",
+            users.joinToString {
+                it.name ?: it.username ?: it.discordId
+            }
+        )
+    }
 
+    private fun updateUsers() = runBlocking {
+        logger.info("Updating users from google sheets")
         googleSheetsService.mapToScores(googleSheetCache.getSheet())
             .map { (unformattedName, games) ->
                 val name = unformattedName.uppercase()
@@ -50,8 +59,8 @@ class UserCache @Autowired constructor(
                         discordUser.gameMap[game] = score
                     }
                 }.awaitAll()
+                logger.info("Adding {}", discordUser.name)
+                users.add(discordUser)
             }
-
-        return@runBlocking userSet
     }
 }
