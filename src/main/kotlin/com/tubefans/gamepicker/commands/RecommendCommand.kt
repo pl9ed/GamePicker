@@ -17,7 +17,7 @@ class RecommendCommand @Autowired constructor(
 
     companion object {
         const val DEFAULT_GAME_COUNT = 3
-
+        const val GAME_COUNT_NAME = "game-count"
         const val NO_GAMES_RESPONSE = "No games found. Are you in a voice channel?"
     }
 
@@ -36,7 +36,8 @@ class RecommendCommand @Autowired constructor(
                 GameScoreMap(it)
             }.map {
                 logger.info(it.toString())
-                getReplyString(it, DEFAULT_GAME_COUNT)
+                val gameCount = eventService.getNumericOption(event, GAME_COUNT_NAME) ?: DEFAULT_GAME_COUNT
+                getReplyString(it, maxOf(10, gameCount.toInt()))
             }.flatMap {
                 event.editReply(it)
             }.then()

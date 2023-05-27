@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 class EventService @Autowired constructor(
@@ -21,6 +22,13 @@ class EventService @Autowired constructor(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
+
+    fun getNumericOption(event: ChatInputInteractionEvent, optionName: String): Long? =
+        try {
+            event.options.first { it.name == optionName }.value.get().asLong()
+        } catch (e: NoSuchElementException) {
+            null
+        }
 
     fun getCurrentChannel(event: ChatInputInteractionEvent): VoiceChannel? =
         event.interaction.member.get()

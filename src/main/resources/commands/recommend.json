@@ -1,4 +1,12 @@
 {
   "name": "recommend",
-  "description": "Recommend top 3 games for users in the current voice channel"
+  "description": "Recommend top 3 games for users in the current voice channel",
+  "options": [
+    {
+      "name": "game-count",
+      "description": "Number of games to display. Defaults to 3.",
+      "type": 4,
+      "required": false
+    }
+  ]
 }
