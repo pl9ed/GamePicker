@@ -42,6 +42,6 @@ class DiscordUserService @Autowired constructor(
             }
         }.awaitAll()
 
-        return@runBlocking Pair(userSet, failedSet)
+        Pair(userSet, failedSet)
     }
 }

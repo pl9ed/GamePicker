@@ -41,12 +41,11 @@ class AddMeCommandTest {
     }
 
     @Test
-    fun `should add new user to database`() {
+    fun `should not add user if not present on sheet`() {
         val event = createAddMeEvent(missingNumericId, name, username)
 
         command.handle(event)
-
-        verify {
+        verify(exactly = 0) {
             discordUserService.save(newUser)
         }
     }

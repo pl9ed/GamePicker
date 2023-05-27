@@ -38,14 +38,14 @@ class DiscordUserServiceTest {
 
     @Test
     fun `should map valid names to users`() {
-        val names = listOf("a", "b", "c")
+        val names = listOf("name_a", "name_b", "name_c")
         every {
             userCache.users
         }.returnsMany(
             mutableSetOf(
                 DiscordUser("a", "username_a", "name_a"),
                 DiscordUser("b", "username_b", "name_b"),
-                DiscordUser("c", "username_c", "name_b")
+                DiscordUser("c", "username_c", "name_c")
             )
         )
 
