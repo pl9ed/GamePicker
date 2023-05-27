@@ -38,5 +38,5 @@ class GoogleSheetCache @Autowired constructor(
         return sheet
     }
 
-    fun lastUpdateTime(): DateTime = lastUpdate
+    fun lastUpdateTime(): DateTime =  driveService.getLastUpdatedTime(DEFAULT_SHEET_ID)
 }
