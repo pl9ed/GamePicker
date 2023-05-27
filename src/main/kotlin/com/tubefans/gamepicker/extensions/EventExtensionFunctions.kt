@@ -1,6 +1,5 @@
 package com.tubefans.gamepicker.extensions
 
-import com.tubefans.gamepicker.commands.PullFromSheetCommand
 import com.tubefans.gamepicker.services.GameService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 

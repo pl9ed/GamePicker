@@ -38,10 +38,8 @@ class EventService @Autowired constructor(
                 }
             }.map {
                 it.await()
-            }.filter {
-                it.isPresent
             }.map {
-                it.get().also { user ->
+                it.also { user ->
                     logger.info("Fetched user {}", user)
                 }
             }.toList().toSet()

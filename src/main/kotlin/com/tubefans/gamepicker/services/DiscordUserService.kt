@@ -29,12 +29,6 @@ class DiscordUserService @Autowired constructor(
         return user
     }
 
-    fun updateGameForUserWithName(name: String, game: String, score: Long): DiscordUser =
-        save(findOneByName(name).updateGame(game, score))
-
-    fun updateGameForUserWithId(id: String, game: String, score: Long) =
-        save(findById(id).updateGame(game, score))
-
     fun getUsersFromNames(names: Collection<String>) = runBlocking {
         val userSet = mutableSetOf<DiscordUser>()
         val failedSet = mutableSetOf<String>()

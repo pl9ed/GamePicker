@@ -39,7 +39,7 @@ class DbConfigTest {
 
     @Test
     fun `can find single entry by field`() {
-        val response = user.name?.let { discordUserRepository.findByName(it) }
+        val response = user.name?.let { discordUserRepository.findOneByName(it).get() }
         assertEquals(user, response)
     }
 }

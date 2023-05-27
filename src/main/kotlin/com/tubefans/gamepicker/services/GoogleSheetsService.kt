@@ -55,6 +55,7 @@ class GoogleSheetsService @Autowired constructor(
 
         for (row in 2 until sheet.size) {
             val cols = sheet[row].size
+            if (cols == 0) continue
             val name = sheet[row][0].toName() ?: continue
 
             for (col in 1 until cols) {

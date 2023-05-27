@@ -10,7 +10,7 @@ data class DiscordUser(
     var username: String?,
     var name: String?,
     @Transient
-    var gameMap: MutableMap<String, Long>
+    var gameMap: MutableMap<String, Long> = mutableMapOf()
 ) : Comparable<DiscordUser> {
     override fun compareTo(other: DiscordUser): Int {
         if (this.name != other.name) return compareValues(this.name, other.name)

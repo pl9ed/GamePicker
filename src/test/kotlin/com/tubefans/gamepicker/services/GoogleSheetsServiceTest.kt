@@ -14,7 +14,7 @@ class GoogleSheetsServiceTest {
     private var discordUserRepository: DiscordUserRepository = mockk()
     private var sheets: Sheets = mockk()
 
-    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets, discordUserRepository)
+    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets)
 
     private val sheetId = "sheet-id"
     private val range = "range"

@@ -22,8 +22,8 @@ class AddMeCommandTest {
     private val newUser = DiscordUser(missingId, username, name)
 
     private val discordUserService: DiscordUserService = mockk() {
-        every { findById(id) } returns Optional.of(discordUser)
-        every { findById(missingId) } returns Optional.empty()
+        every { findById(id) } returns discordUser
+        every { findById(missingId) } throws NoSuchElementException()
         every { save(discordUser) } returns discordUser
         every { save(newUser) } returns newUser
     }

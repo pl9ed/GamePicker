@@ -7,6 +7,7 @@ import discord4j.core.`object`.VoiceState
 import discord4j.core.`object`.entity.channel.VoiceChannel
 import io.mockk.every
 import io.mockk.mockk
+import java.util.NoSuchElementException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -50,9 +51,9 @@ class EventServiceTest {
     }
 
     private val discordUserService: DiscordUserService = mockk() {
-        every { findById(id0.toString()) } returns Optional.of(user0)
-        every { findById(id1.toString()) } returns Optional.of(user1)
-        every { findById(missing.toString()) } returns Optional.empty()
+        every { findById(id0.toString()) } returns user0
+        every { findById(id1.toString()) } returns user1
+        every { findById(missing.toString()) } throws NoSuchElementException()
     }
     private val eventService = EventService(discordUserService)
 
