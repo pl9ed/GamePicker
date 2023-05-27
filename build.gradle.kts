@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isKaptVerbose
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -58,18 +59,15 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.register<Test>("unitTest") {
+tasks.withType<Test> {
+    useJUnitPlatform()
     filter {
         excludeTestsMatching("*.integration.*")
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
 tasks.jacocoTestReport {
-    finalizedBy("unitTest")
+    dependsOn("test")
     reports {
         xml.required.set(true)
     }
