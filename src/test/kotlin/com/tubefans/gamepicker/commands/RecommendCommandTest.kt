@@ -39,6 +39,23 @@ class RecommendCommandTest {
     }
 
     @Test
+    fun `should get specific number of games when game-count is passed`() {
+        val singleRowTemplate = """
+            TOP %d GAMES:
+            1: %s | %d | Fans: %s | Excludes: %s
+        """.trimIndent()
+
+        assertEquals(
+            String.format(
+                singleRowTemplate,
+                1,
+                "a", 10, "a", "b, empty",
+            ).trim(),
+            command.getReplyString(gameScoreMap, 1)
+        )
+    }
+
+    @Test
     fun `should respond with separate string when no games are found`() {
         assertEquals(NO_GAMES_RESPONSE, command.getReplyString(GameScoreMap(emptyList()), 1))
     }
