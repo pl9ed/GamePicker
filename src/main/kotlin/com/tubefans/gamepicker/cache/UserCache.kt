@@ -50,9 +50,7 @@ class UserCache @Autowired constructor(
         googleSheetsService.mapToScores(googleSheetCache.getSheet())
             .map { (unformattedName, games) ->
                 val name = unformattedName.uppercase()
-                println("Calling findOneByname($name)")
                 val discordUser = discordUserRepository.findOneByName(name).get()
-                println(discordUser)
                 games.map { (unformattedGame, score) ->
                     async {
                         val game = unformattedGame.uppercase()
