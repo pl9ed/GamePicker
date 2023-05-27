@@ -49,7 +49,10 @@ class RecommendCommandTest {
             String.format(
                 singleRowTemplate,
                 1,
-                "a", 10, "a", "b, empty",
+                "a",
+                10,
+                "a",
+                "b, empty"
             ).trim(),
             command.getReplyString(gameScoreMap, 1)
         )
