@@ -21,7 +21,8 @@ class OAuthConfig {
         const val TOKENS_DIRECTORY_PATH = "tokens"
         val scopes: List<String> = listOf(
             SheetsScopes.SPREADSHEETS,
-            "https://www.googleapis.com/auth/cloud-platform"
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/drive"
         )
     }
 

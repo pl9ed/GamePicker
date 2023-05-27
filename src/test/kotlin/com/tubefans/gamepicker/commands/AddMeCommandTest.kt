@@ -8,7 +8,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import java.util.Optional
 
 class AddMeCommandTest {
 
@@ -22,8 +21,8 @@ class AddMeCommandTest {
     private val newUser = DiscordUser(missingId, username, name)
 
     private val discordUserService: DiscordUserService = mockk() {
-        every { findById(id) } returns Optional.of(discordUser)
-        every { findById(missingId) } returns Optional.empty()
+        every { findById(id) } returns discordUser
+        every { findById(missingId) } throws NoSuchElementException()
         every { save(discordUser) } returns discordUser
         every { save(newUser) } returns newUser
     }
@@ -41,12 +40,11 @@ class AddMeCommandTest {
     }
 
     @Test
-    fun `should add new user to database`() {
+    fun `should not add user if not present on sheet`() {
         val event = createAddMeEvent(missingNumericId, name, username)
 
         command.handle(event)
-
-        verify {
+        verify(exactly = 0) {
             discordUserService.save(newUser)
         }
     }

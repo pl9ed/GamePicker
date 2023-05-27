@@ -12,7 +12,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
-import java.util.Optional
+import java.util.NoSuchElementException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EventServiceTest {
@@ -50,9 +50,9 @@ class EventServiceTest {
     }
 
     private val discordUserService: DiscordUserService = mockk() {
-        every { findById(id0.toString()) } returns Optional.of(user0)
-        every { findById(id1.toString()) } returns Optional.of(user1)
-        every { findById(missing.toString()) } returns Optional.empty()
+        every { findById(id0.toString()) } returns user0
+        every { findById(id1.toString()) } returns user1
+        every { findById(missing.toString()) } throws NoSuchElementException()
     }
     private val eventService = EventService(discordUserService)
 

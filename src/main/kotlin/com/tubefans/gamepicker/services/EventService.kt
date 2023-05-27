@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import java.util.Optional
 
 @Service
 class EventService @Autowired constructor(
@@ -32,8 +33,14 @@ class EventService @Autowired constructor(
                 it.userId
             }.map { snowflake ->
                 async {
-                    discordUserService.findById(snowflake.toString()).also {
-                        logger.info("Getting user with id {}", snowflake.toString())
+                    try {
+                        Optional.of(
+                            discordUserService.findById(snowflake.toString()).also {
+                                logger.info("Getting user with id {}", snowflake.toString())
+                            }
+                        )
+                    } catch (e: NoSuchElementException) {
+                        Optional.empty()
                     }
                 }
             }.map {
@@ -41,7 +48,9 @@ class EventService @Autowired constructor(
             }.filter {
                 it.isPresent
             }.map {
-                it.get().also { user ->
+                it.get()
+            }.map {
+                it.also { user ->
                     logger.info("Fetched user {}", user)
                 }
             }.toList().toSet()

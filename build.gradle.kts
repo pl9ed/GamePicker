@@ -1,3 +1,4 @@
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -39,8 +40,9 @@ dependencies {
     implementation(discord4jLibs.reactorKotlinExtensions)
 
     implementation(googleLibs.apiClient)
-    implementation(googleLibs.oauthClient)
     implementation(googleLibs.apiServicesSheets)
+    implementation(googleLibs.drive)
+    implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
 
     developmentOnly(springLibs.devtools)
@@ -57,14 +59,11 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.register<Test>("unitTest") {
+tasks.withType<Test> {
+    useJUnitPlatform()
     filter {
         excludeTestsMatching("*.integration.*")
     }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
 
 tasks.jacocoTestReport {

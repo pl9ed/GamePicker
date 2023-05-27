@@ -1,7 +1,6 @@
 package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
-import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,10 +10,9 @@ import org.junit.jupiter.api.Test
 
 class GoogleSheetsServiceTest {
 
-    private var discordUserRepository: DiscordUserRepository = mockk()
     private var sheets: Sheets = mockk()
 
-    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets, discordUserRepository)
+    private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets)
 
     private val sheetId = "sheet-id"
     private val range = "range"
@@ -59,16 +57,16 @@ class GoogleSheetsServiceTest {
         val list = listOf(
             listOf("", "game1", "game2"),
             listOf("", "genre", "genre"),
-            listOf("user1", "x", "x"),
-            listOf("user2", "10", "0")
+            listOf("USER1", "x", "x"),
+            listOf("USER2", "10", "0")
         )
 
         val expectedMap = mapOf(
-            "user1" to listOf(
+            "USER1" to listOf(
                 Pair("game1", 10L),
                 Pair("game2", 10L)
             ),
-            "user2" to listOf(
+            "USER2" to listOf(
                 Pair("game1", 10L),
                 Pair("game2", 0L)
             )
@@ -82,12 +80,12 @@ class GoogleSheetsServiceTest {
         val list = listOf(
             listOf("", "game1", "game2"),
             listOf("", "genre", "genre"),
-            listOf("user1", "x", "x"),
-            listOf("user2", "", "")
+            listOf("USER1", "x", "x"),
+            listOf("USER2", "", "")
         )
 
         val expectedMap = mapOf(
-            "user1" to listOf(
+            "USER1" to listOf(
                 Pair("game1", 10L),
                 Pair("game2", 10L)
             )
@@ -101,16 +99,16 @@ class GoogleSheetsServiceTest {
         val list = listOf(
             listOf("", "game1", "", "game2"),
             listOf("", "genre", "genre", "genre"),
-            listOf("user1", "x", "", "x"),
-            listOf("user2", "10", "", "0")
+            listOf("USER1", "x", "", "x"),
+            listOf("USER2", "10", "", "0")
         )
 
         val expectedMap = mapOf(
-            "user1" to listOf(
+            "USER1" to listOf(
                 Pair("game1", 10L),
                 Pair("game2", 10L)
             ),
-            "user2" to listOf(
+            "USER2" to listOf(
                 Pair("game1", 10L),
                 Pair("game2", 0L)
             )

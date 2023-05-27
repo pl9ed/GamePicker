@@ -1,15 +1,12 @@
 package com.tubefans.gamepicker.services
 
+import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
-import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.Optional
 
 class DiscordUserServiceTest {
 
@@ -24,13 +21,7 @@ class DiscordUserServiceTest {
 
     private var discordUser: DiscordUser = DiscordUser(id, username, name)
 
-    private val repository: DiscordUserRepository = mockk {
-        every { insert(discordUser) } returns discordUser
-        every { save(discordUser) } returns discordUser
-        every { findOneByName(name) } returns Optional.of(discordUser)
-        every { findById(id) } returns Optional.of(discordUser)
-        every { findById(missing) } returns Optional.empty()
-        every { findOneByName(missing) } throws NoSuchElementException()
+    private val userCache: UserCache = mockk {
     }
 
     @BeforeEach
@@ -38,42 +29,19 @@ class DiscordUserServiceTest {
         discordUser = DiscordUser(id, username, name)
     }
 
-    private val discordUserService = DiscordUserService(repository)
-
-    @Test
-    fun `should update game for user by name`() {
-        val returnedUser = discordUserService.updateGameForUserWithName(name, newGame, newScore)
-        assertTrue(returnedUser.gameMap.keys.contains(newGame))
-        assertEquals(newScore, returnedUser.gameMap[newGame])
-    }
-
-    @Test
-    fun `should update game for user by id`() {
-        val returnedUser = discordUserService.updateGameForUserWithId(id, newGame, newScore)
-        assertTrue(returnedUser.gameMap.keys.contains(newGame))
-        assertEquals(newScore, returnedUser.gameMap[newGame])
-    }
-
-    @Test
-    fun `should throw when user doesn't exist`() {
-        assertThrows(NoSuchElementException::class.java) {
-            discordUserService.updateGameForUserWithName(missing, "", 0L)
-        }
-
-        assertThrows(NoSuchElementException::class.java) {
-            discordUserService.updateGameForUserWithId(missing, "", 0L)
-        }
-    }
+    private val discordUserService = DiscordUserService(userCache)
 
     @Test
     fun `should map valid names to users`() {
-        val names = listOf("a", "b", "c")
+        val names = listOf("name_a", "name_b", "name_c")
         every {
-            repository.findOneByName(any()).get()
-        } returnsMany listOf(
-            DiscordUser("a", "username_a", "name_a"),
-            DiscordUser("b", "username_b", "name_b"),
-            DiscordUser("c", "username_c", "name_b")
+            userCache.users
+        }.returnsMany(
+            mutableSetOf(
+                DiscordUser("a", "username_a", "name_a"),
+                DiscordUser("b", "username_b", "name_b"),
+                DiscordUser("c", "username_c", "name_c")
+            )
         )
 
         val (users, failed) = discordUserService.getUsersFromNames(names)
@@ -85,9 +53,14 @@ class DiscordUserServiceTest {
         val names = listOf("a", "b", "c")
         val userA = DiscordUser("a", "a", "a")
         val userC = DiscordUser("c", "c", "c")
-        every { repository.findOneByName("a").get() } returns userA
-        every { repository.findOneByName("b").get() } throws NoSuchElementException()
-        every { repository.findOneByName("c").get() } returns userC
+        every {
+            userCache.users
+        }.returnsMany(
+            mutableSetOf(
+                userA,
+                userC
+            )
+        )
 
         val (users, failed) = discordUserService.getUsersFromNames(names)
         assertEquals(setOf(userA, userC), users)
