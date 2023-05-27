@@ -2,6 +2,8 @@ package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -29,12 +31,14 @@ class DiscordUserService @Autowired constructor(
         val userSet = mutableSetOf<DiscordUser>()
         val failedSet = mutableSetOf<String>()
         names.map { name ->
-            try {
-                userSet.add(findOneByName(name))
-            } catch (e: NoSuchElementException) {
-                failedSet.add(name)
+            async {
+                try {
+                    userSet.add(findOneByName(name))
+                } catch (e: NoSuchElementException) {
+                    failedSet.add(name)
+                }
             }
-        }
+        }.awaitAll()
 
         Pair(userSet, failedSet)
     }

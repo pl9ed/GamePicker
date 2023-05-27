@@ -3,6 +3,7 @@ package com.tubefans.gamepicker.services
 import com.tubefans.gamepicker.dto.DiscordUser
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.`object`.entity.channel.VoiceChannel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -38,15 +39,19 @@ class EventService @Autowired constructor(
             .map {
                 it.userId
             }.map { snowflake ->
-                try {
-                    Optional.of(
-                        discordUserService.findById(snowflake.toString()).also {
-                            logger.info("Getting user with id {}", snowflake.toString())
-                        }
-                    )
-                } catch (e: NoSuchElementException) {
-                    Optional.empty()
+                async {
+                    try {
+                        Optional.of(
+                            discordUserService.findById(snowflake.toString()).also {
+                                logger.info("Getting user with id {}", snowflake.toString())
+                            }
+                        )
+                    } catch (e: NoSuchElementException) {
+                        Optional.empty()
+                    }
                 }
+            }.map {
+                it.await()
             }.filter {
                 it.isPresent
             }.map {
