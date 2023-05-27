@@ -2,7 +2,6 @@ package com.tubefans.gamepicker.services
 
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,6 +16,7 @@ class GoogleSheetsService @Autowired constructor(
     companion object {
         const val DEFAULT_SHEET_ID = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
         const val DEFAULT_RANGE = "Data" // name of the 'sheet' tab on the web UI
+        const val END_ROW_TITLE = "SUM"
     }
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -53,10 +53,14 @@ class GoogleSheetsService @Autowired constructor(
             }
         }
 
+        val maxCol = sheet[0].size
+
         for (row in 2 until sheet.size) {
             val cols = sheet[row].size
+            if (cols == maxCol) break
             if (cols == 0) continue
             val name = sheet[row][0].toName() ?: continue
+            if (name == END_ROW_TITLE) break
 
             for (col in 1 until cols) {
                 val game = gameIndexMap[col] ?: continue
