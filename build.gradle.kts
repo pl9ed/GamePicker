@@ -30,7 +30,6 @@ repositories {
 
 dependencies {
     implementation(springLibs.starterDataMongoDb)
-    implementation(springLibs.starterDataMongoDbReactive)
     implementation(springLibs.starterWeb)
     implementation(springLibs.jacksonModuleKotlin)
 
