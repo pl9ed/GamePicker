@@ -9,7 +9,8 @@ data class DiscordUser(
     val discordId: String,
     var username: String?,
     var name: String?,
-    val gameMap: MutableMap<String, Long> = mutableMapOf()
+    @Transient
+    var gameMap: MutableMap<String, Long>
 ) : Comparable<DiscordUser> {
     override fun compareTo(other: DiscordUser): Int {
         if (this.name != other.name) return compareValues(this.name, other.name)

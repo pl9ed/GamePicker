@@ -2,14 +2,11 @@ package com.tubefans.gamepicker.repositories
 
 import com.tubefans.gamepicker.dto.DiscordUser
 import java.util.Optional
+import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.stereotype.Repository
 
-interface DiscordUserRepository {
-    fun existsById(id: String): Optional<Boolean>
-    fun findAll(): Optional<Collection<DiscordUser>>
-    fun findById(id: String): Optional<DiscordUser>
-    fun findByName(name: String): Optional<DiscordUser>
-    fun insert(user: DiscordUser): Optional<DiscordUser>
-    fun save(user: DiscordUser): Optional<DiscordUser>
-    fun delete(user: DiscordUser): Optional<Boolean>
+@Repository
+interface DiscordUserRepository : MongoRepository<DiscordUser, String> {
+    fun findOneByName(name: String): Optional<DiscordUser>
 
 }

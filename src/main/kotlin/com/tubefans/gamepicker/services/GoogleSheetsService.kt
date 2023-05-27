@@ -11,8 +11,7 @@ import toScore
 
 @Service
 class GoogleSheetsService @Autowired constructor(
-    private val sheets: Sheets,
-    private val discordUserRepository: DiscordUserRepository
+    private val sheets: Sheets
 ) {
 
     companion object {

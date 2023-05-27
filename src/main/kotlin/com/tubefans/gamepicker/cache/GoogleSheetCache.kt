@@ -3,6 +3,7 @@ package com.tubefans.gamepicker.cache
 import com.google.api.client.util.DateTime
 import com.google.common.annotations.VisibleForTesting
 import com.tubefans.gamepicker.dto.DiscordUser
+import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import com.tubefans.gamepicker.services.GoogleSheetsService.Companion.DEFAULT_RANGE
@@ -24,14 +25,14 @@ class GoogleSheetCache @Autowired constructor(
     private var lastUpdate: DateTime = driveService.getLastUpdatedTime(DEFAULT_SHEET_ID)
     private var sheet = googleSheetsService.getSheet(id).mapToString()
 
-    fun shouldUpdate(lastUpdate: DateTime): Boolean =
+    private fun shouldUpdate(lastUpdate: DateTime): Boolean =
         lastUpdate.value > this.lastUpdate.value
 
     fun getSheet(): List<List<String>> {
         val lastUpdate = driveService.getLastUpdatedTime()
 
         if (shouldUpdate(lastUpdate)) {
-            logger.info("Updating sheet from Google")
+            logger.info("Updating sheet from Google for lastUpdate=$lastUpdate")
             sheet = googleSheetsService.getSheet(id).mapToString()
             this.lastUpdate = lastUpdate
         } else {
@@ -40,5 +41,7 @@ class GoogleSheetCache @Autowired constructor(
 
         return sheet
     }
+
+    fun lastUpdateTime(): DateTime = lastUpdate
 
 }

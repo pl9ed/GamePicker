@@ -1,5 +1,6 @@
 package com.tubefans.gamepicker.services
 
+import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.extensions.updateGame
 import com.tubefans.gamepicker.repositories.DiscordUserRepository
@@ -11,22 +12,28 @@ import org.springframework.stereotype.Service
 
 @Service
 class DiscordUserService @Autowired constructor(
-    private val discordUserRepository: DiscordUserRepository
+    private val userCache: UserCache
 ) {
 
-    fun existsById(id: String) = discordUserRepository.existsById(id)
+    fun existsById(id: String) = userCache.users.any { it.discordId == id }
 
-    fun findById(id: String) = discordUserRepository.findById(id)
+    fun findById(id: String) = userCache.users.first { it.discordId == id }
 
-    fun insert(user: DiscordUser) = discordUserRepository.insert(user)
+    fun findOneByName(name: String) = userCache.users.first { it.name == name }
 
-    fun save(user: DiscordUser): DiscordUser = discordUserRepository.save(user)
+    fun save(user: DiscordUser): DiscordUser {
+        userCache.users.apply {
+            removeIf { it.discordId == user.discordId }
+            add(user)
+        }
+        return user
+    }
 
     fun updateGameForUserWithName(name: String, game: String, score: Long): DiscordUser =
-        save(discordUserRepository.findByName(name).get().updateGame(game, score))
+        save(findOneByName(name).updateGame(game, score))
 
-    fun updateGameForUserWithId(id: String, game: String, score: Long): DiscordUser =
-        save(discordUserRepository.findById(id).get().updateGame(game, score))
+    fun updateGameForUserWithId(id: String, game: String, score: Long) =
+        save(findById(id).updateGame(game, score))
 
     fun getUsersFromNames(names: Collection<String>) = runBlocking {
         val userSet = mutableSetOf<DiscordUser>()
@@ -34,7 +41,7 @@ class DiscordUserService @Autowired constructor(
         names.map { name ->
             async {
                 try {
-                    userSet.add(discordUserRepository.findByName(name).get())
+                    userSet.add(findOneByName(name))
                 } catch (e: NoSuchElementException) {
                     failedSet.add(name)
                 }
