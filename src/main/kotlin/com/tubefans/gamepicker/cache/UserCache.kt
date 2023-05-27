@@ -5,8 +5,6 @@ import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,17 +50,15 @@ class UserCache @Autowired constructor(
                 val name = unformattedName.uppercase()
                 val discordUser = discordUserRepository.findOneByName(name).get()
                 games.map { (unformattedGame, score) ->
-                    async {
-                        val game = unformattedGame.uppercase()
-                        logger.info(
-                            "Updating {}[{}]={}",
-                            name,
-                            game,
-                            score
-                        )
-                        discordUser.gameMap[game] = score
-                    }
-                }.awaitAll()
+                    val game = unformattedGame.uppercase()
+                    logger.info(
+                        "Updating {}[{}]={}",
+                        name,
+                        game,
+                        score
+                    )
+                    discordUser.gameMap[game] = score
+                }
                 logger.info("Replacing {}", discordUser.name)
                 users.removeIf { it.discordId == discordUser.discordId }
                 users.add(discordUser)
