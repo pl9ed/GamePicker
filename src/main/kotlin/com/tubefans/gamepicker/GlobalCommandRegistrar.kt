@@ -28,8 +28,8 @@ class GlobalCommandRegistrar @Autowired constructor(
         /* Bulk overwrite commands. This is now idempotent, so it is safe to use this even when only 1 command
         is changed/added/removed
         */applicationService.bulkOverwriteGlobalApplicationCommand(applicationId, commands)
-            .doOnNext { it ->
-                val optionString = it.options()
+            .doOnNext { applicationCommandData ->
+                val optionString = applicationCommandData.options()
                     .toOptional()
                     .takeIf { options ->
                         options.isPresent
@@ -38,7 +38,7 @@ class GlobalCommandRegistrar @Autowired constructor(
                     }
                 logger.debug(
                     "Successfully registered command {} with options {}",
-                    it.name(),
+                    applicationCommandData.name(),
                     optionString
                 )
             }.doOnError { e: Throwable? -> logger.error("Failed to register global commands", e) }
