@@ -1,7 +1,9 @@
 package com.tubefans.gamepicker.dto
 
+import discord4j.common.util.Snowflake
+
 data class DiscordUser(
-    val discordId: String,
+    val discordId: Snowflake,
     var name: String?,
     @Transient
     var gameMap: MutableMap<String, Long> = mutableMapOf()

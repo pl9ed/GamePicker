@@ -4,6 +4,7 @@ import com.tubefans.gamepicker.commands.RecommendCommand.Companion.NO_GAMES_RESP
 import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
+import discord4j.common.util.Snowflake
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -13,9 +14,9 @@ class RecommendCommandTest {
     private val eventService: EventService = mockk()
     private val command = RecommendCommand(eventService)
 
-    private val user1 = DiscordUser("a", "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
-    private val user2 = DiscordUser("b", "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
-    private val emptyUser = DiscordUser("empty", "empty")
+    private val user1 = DiscordUser(Snowflake.of(1), "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
+    private val user2 = DiscordUser(Snowflake.of(2), "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
+    private val emptyUser = DiscordUser(Snowflake.of(0), "empty")
 
     private val gameScoreMap = GameScoreMap(setOf(user1, user2, emptyUser))
 
@@ -63,14 +64,14 @@ class RecommendCommandTest {
     fun `should fallback to discordId if name is null`() {
         val game = "game"
         val score = 100L
-        val fans = listOf(DiscordUser("a", null, mutableMapOf("a" to 10)))
-        val excludes = listOf(DiscordUser("b", null), emptyUser)
+        val fans = listOf(DiscordUser(Snowflake.of(1), null, mutableMapOf("a" to 10)))
+        val excludes = listOf(DiscordUser(Snowflake.of(2), null), emptyUser)
         val row = String.format(
             "%s | %d | Fans: %s | Excludes: %s",
             game,
             score,
-            fans.joinToString { it.name ?: it.discordId },
-            excludes.joinToString { it.name ?: it.discordId }
+            fans.joinToString { it.name ?: it.discordId.asString() },
+            excludes.joinToString { it.name ?: it.discordId.asString() }
         )
         assertEquals(row, command.generateRow(game, score, fans, excludes))
     }

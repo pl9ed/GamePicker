@@ -2,6 +2,7 @@ package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
+import discord4j.common.util.Snowflake
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class DiscordUserServiceTest {
 
-    private val id = "id"
+    private val id = Snowflake.of(10)
     private val username = "username"
     private val name = "name"
 
@@ -38,9 +39,9 @@ class DiscordUserServiceTest {
             userCache.users
         }.returnsMany(
             mutableSetOf(
-                DiscordUser("a", "name_a"),
-                DiscordUser("b", "name_b"),
-                DiscordUser("c", "name_c")
+                DiscordUser(Snowflake.of(1), "name_a"),
+                DiscordUser(Snowflake.of(2), "name_b"),
+                DiscordUser(Snowflake.of(3), "name_c")
             )
         )
 
@@ -51,8 +52,8 @@ class DiscordUserServiceTest {
     @Test
     fun `should add to failed set when it cannot find user by name`() {
         val names = listOf("a", "b", "c")
-        val userA = DiscordUser("a", "a")
-        val userC = DiscordUser("c", "c")
+        val userA = DiscordUser(Snowflake.of(1), "a")
+        val userC = DiscordUser(Snowflake.of(3), "c")
         every {
             userCache.users
         }.returnsMany(

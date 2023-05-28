@@ -21,8 +21,8 @@ class EventServiceTest {
     private val id1 = Snowflake.of(1)
     private val missing = Snowflake.of(999)
 
-    private val user0 = DiscordUser(id0.toString(), "")
-    private val user1 = DiscordUser(id1.toString(), "")
+    private val user0 = DiscordUser(id0, "")
+    private val user1 = DiscordUser(id1, "")
 
     private val validVoiceStates: Flux<VoiceState> = Flux.just(
         mockk {
@@ -50,9 +50,9 @@ class EventServiceTest {
     }
 
     private val discordUserService: DiscordUserService = mockk() {
-        every { findById(id0.toString()) } returns user0
-        every { findById(id1.toString()) } returns user1
-        every { findById(missing.toString()) } throws NoSuchElementException()
+        every { findById(id0) } returns user0
+        every { findById(id1) } returns user1
+        every { findById(missing) } throws NoSuchElementException()
     }
     private val eventService = EventService(discordUserService)
 

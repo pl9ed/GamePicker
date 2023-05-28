@@ -71,6 +71,6 @@ class RecommendCommand @Autowired constructor(
         excludes: Collection<DiscordUser>
     ): String = "$game | " +
         "$score | " +
-        "Fans: ${fans.joinToString { it.name ?: it.discordId }} | " +
-        "Excludes: ${excludes.joinToString { it.name ?: it.discordId }}"
+        "Fans: ${fans.joinToString { it.name ?: it.discordId.asString() }} | " +
+        "Excludes: ${excludes.joinToString { it.name ?: it.discordId.asString() }}"
 }

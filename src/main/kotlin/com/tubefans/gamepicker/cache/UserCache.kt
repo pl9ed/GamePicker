@@ -41,7 +41,7 @@ class UserCache @Autowired constructor(
         logger.info(
             "Initialized user cache with users: {}",
             users.joinToString {
-                it.name ?: it.discordId
+                it.name ?: it.discordId.asString()
             }
         )
     }
