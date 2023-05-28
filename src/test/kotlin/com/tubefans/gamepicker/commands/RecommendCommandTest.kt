@@ -3,8 +3,10 @@ package com.tubefans.gamepicker.commands
 import com.tubefans.gamepicker.commands.RecommendCommand.Companion.NO_GAMES_RESPONSE
 import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.models.GameScoreMap
+import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import com.tubefans.gamepicker.services.EventService
 import discord4j.common.util.Snowflake
+import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -12,7 +14,8 @@ import org.junit.jupiter.api.Test
 class RecommendCommandTest {
 
     private val eventService: EventService = mockk()
-    private val command = RecommendCommand(eventService)
+    private val repository: DiscordUserRepository = mockk()
+    private val command = RecommendCommand(eventService, repository)
 
     private val user1 = DiscordUser(Snowflake.of(1), "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
     private val user2 = DiscordUser(Snowflake.of(2), "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))

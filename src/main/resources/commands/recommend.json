@@ -1,4 +1,18 @@
 {
   "name": "recommend",
-  "description": "Recommend top 3 games for users in the current voice channel"
+  "description": "Recommend top 3 games for users in the current voice channel",
+  "options": [
+    {
+      "name": "include",
+      "description": "Comma delineated names of the users to include in addition to those currently in the channel",
+      "type": 3,
+      "required": false
+    },
+    {
+      "name": "exclude",
+      "description": "Comma delineated name of the users to exclude from recommendation.",
+      "type": 3,
+      "required": false
+    }
+  ]
 }

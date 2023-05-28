@@ -15,9 +15,9 @@ class SheetsDiscordUserRepository @Autowired constructor(
     override fun findOneByName(name: String): Optional<DiscordUser> = try {
         Optional.of(
             googleSheetCache.userSheet.first {
-                it[0].uppercase() == name.uppercase()
+                it[0].trim().uppercase() == name.trim().uppercase()
             }.let {
-                DiscordUser(discordId = Snowflake.of(it[1]), name = it[0])
+                DiscordUser(discordId = Snowflake.of(it[1]), name = it[0].trim().uppercase())
             }
         )
     } catch (e: RuntimeException) {
