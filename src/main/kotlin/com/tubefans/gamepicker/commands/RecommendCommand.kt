@@ -99,8 +99,7 @@ class RecommendCommand @Autowired constructor(
         "Fans: ${fans.joinToString { it.name ?: it.discordId.asString() }} | " +
         "Excludes: ${excludes.joinToString { it.name ?: it.discordId.asString() }}"
 
-    @VisibleForTesting
-    fun MutableCollection<DiscordUser>.removeExclusions(excludeNames: Collection<String>): MutableCollection<DiscordUser> {
+    private fun MutableCollection<DiscordUser>.removeExclusions(excludeNames: Collection<String>): MutableCollection<DiscordUser> {
         excludeNames.forEach { raw ->
             this.removeIf {
                 it.name?.trim()?.uppercase() == raw.trim().uppercase()
@@ -109,8 +108,7 @@ class RecommendCommand @Autowired constructor(
         return this
     }
 
-    @VisibleForTesting
-    fun MutableCollection<DiscordUser>.addInclusions(includeNames: Collection<String>): MutableCollection<DiscordUser> {
+    private fun MutableCollection<DiscordUser>.addInclusions(includeNames: Collection<String>): MutableCollection<DiscordUser> {
         includeNames.forEach { name ->
             userCache.users.first {
                 it.name?.trim()?.uppercase() == name.trim().uppercase()
