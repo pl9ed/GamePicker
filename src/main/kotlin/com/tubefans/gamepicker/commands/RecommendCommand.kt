@@ -5,7 +5,6 @@ import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.extensions.getStringOption
 import com.tubefans.gamepicker.models.GameScoreMap
-import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import com.tubefans.gamepicker.services.EventService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import org.slf4j.LoggerFactory
@@ -54,10 +53,12 @@ class RecommendCommand @Autowired constructor(
                     .addInclusions(include)
                     .toSet()
             }.map {
-                logger.info("Getting top games for {}",
+                logger.info(
+                    "Getting top games for {}",
                     it.joinToString { user ->
                         user.name ?: user.discordId.asString()
-                    })
+                    }
+                )
                 GameScoreMap(it)
             }.map {
                 getReplyString(it, DEFAULT_GAME_COUNT)
@@ -69,7 +70,7 @@ class RecommendCommand @Autowired constructor(
     fun getReplyString(gameScoreMap: GameScoreMap, gameCount: Int): String {
         gameScoreMap.apply {
             val topGames = getTopGames(gameCount)
-            logger.info("Top games: {}", topGames.joinToString { it.first } )
+            logger.info("Top games: {}", topGames.joinToString { it.first })
             if (topGames.isEmpty()) return NO_GAMES_RESPONSE
 
             val replyString = StringBuilder("TOP $gameCount GAMES:\n")
@@ -119,5 +120,4 @@ class RecommendCommand @Autowired constructor(
         }
         return this
     }
-
 }

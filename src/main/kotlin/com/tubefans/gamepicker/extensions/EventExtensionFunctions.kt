@@ -1,6 +1,5 @@
 package com.tubefans.gamepicker.extensions
 
-import com.tubefans.gamepicker.services.GameService
 import com.tubefans.gamepicker.services.GameService.Keys.GAME_NAME_KEY
 import com.tubefans.gamepicker.services.GameService.Keys.GAME_SCORE_KEY
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent

@@ -6,7 +6,6 @@ import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import com.tubefans.gamepicker.services.EventService
 import discord4j.common.util.Snowflake
-import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
