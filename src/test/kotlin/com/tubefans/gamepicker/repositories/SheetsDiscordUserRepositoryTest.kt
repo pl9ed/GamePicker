@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 class SheetsDiscordUserRepositoryTest {
 
     private val googleSheetCache: GoogleSheetCache = mockk()
-    private val user = DiscordUser(Snowflake.of(1), "name")
+    private val user = DiscordUser(Snowflake.of(1), "NAME")
 
     private val repository = SheetsDiscordUserRepository(googleSheetCache)
 
