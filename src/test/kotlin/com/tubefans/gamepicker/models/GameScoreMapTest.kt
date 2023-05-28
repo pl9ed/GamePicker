@@ -9,7 +9,6 @@ class GameScoreMapTest {
 
     private val user1 = DiscordUser(
         "1",
-        "user1",
         "name1",
         mutableMapOf(
             "game1" to 10,
@@ -20,7 +19,6 @@ class GameScoreMapTest {
     )
     private val user2 = DiscordUser(
         "2",
-        "user2",
         "name2",
         mutableMapOf(
             "game1" to 0,
@@ -31,7 +29,6 @@ class GameScoreMapTest {
     )
     private val user3 = DiscordUser(
         "3",
-        "user3",
         "name3",
         mutableMapOf(
             "game1" to 9,
@@ -42,7 +39,6 @@ class GameScoreMapTest {
     )
     private val user4 = DiscordUser(
         "4",
-        "user4",
         "name4",
         mutableMapOf(
             "game1" to 10,
@@ -53,7 +49,6 @@ class GameScoreMapTest {
     )
     private val blankUser = DiscordUser(
         "blank",
-        "blankuser",
         "blankname"
     )
 
@@ -85,12 +80,10 @@ class GameScoreMapTest {
         val emptyUsers = listOf(
             DiscordUser(
                 "1",
-                "user1",
                 "name1"
             ),
             DiscordUser(
                 "2",
-                "user2",
                 "name2"
             )
         )

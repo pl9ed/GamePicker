@@ -19,14 +19,14 @@ class DiscordUserServiceTest {
     private val newGame = "new game"
     private val newScore = 5L
 
-    private var discordUser: DiscordUser = DiscordUser(id, username, name)
+    private var discordUser: DiscordUser = DiscordUser(id, name)
 
     private val userCache: UserCache = mockk {
     }
 
     @BeforeEach
     fun setup() {
-        discordUser = DiscordUser(id, username, name)
+        discordUser = DiscordUser(id, name)
     }
 
     private val discordUserService = DiscordUserService(userCache)
@@ -38,9 +38,9 @@ class DiscordUserServiceTest {
             userCache.users
         }.returnsMany(
             mutableSetOf(
-                DiscordUser("a", "username_a", "name_a"),
-                DiscordUser("b", "username_b", "name_b"),
-                DiscordUser("c", "username_c", "name_c")
+                DiscordUser("a", "name_a"),
+                DiscordUser("b", "name_b"),
+                DiscordUser("c", "name_c")
             )
         )
 
@@ -51,8 +51,8 @@ class DiscordUserServiceTest {
     @Test
     fun `should add to failed set when it cannot find user by name`() {
         val names = listOf("a", "b", "c")
-        val userA = DiscordUser("a", "a", "a")
-        val userC = DiscordUser("c", "c", "c")
+        val userA = DiscordUser("a", "a")
+        val userC = DiscordUser("c", "c")
         every {
             userCache.users
         }.returnsMany(

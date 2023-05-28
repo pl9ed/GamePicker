@@ -21,8 +21,8 @@ class EventServiceTest {
     private val id1 = Snowflake.of(1)
     private val missing = Snowflake.of(999)
 
-    private val user0 = DiscordUser(id0.toString(), "", "")
-    private val user1 = DiscordUser(id1.toString(), "", "")
+    private val user0 = DiscordUser(id0.toString(), "")
+    private val user1 = DiscordUser(id1.toString(), "")
 
     private val validVoiceStates: Flux<VoiceState> = Flux.just(
         mockk {

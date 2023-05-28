@@ -29,7 +29,6 @@ class AddMeCommand @Autowired constructor(
             val id = event.interaction.user.id.toString()
             val user = discordUserService.findById(id)
             user.name = nameField.uppercase()
-            user.username = username
             discordUserService.save(user)
 
             String.format(

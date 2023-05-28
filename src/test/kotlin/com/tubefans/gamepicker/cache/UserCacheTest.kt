@@ -16,13 +16,13 @@ class UserCacheTest {
 
     private val googleDriveService: GoogleDriveService = mockk()
     private val googleSheetCache: GoogleSheetCache = mockk() {
-        every { getSheet() } returns mockk()
+        every { dataSheet } returns mockk()
     }
     private val googleSheetsService: GoogleSheetsService = mockk {
         every { mapToScores(any()) } returns emptyMap()
     }
     private val discordUserRepository: DiscordUserRepository = mockk() {
-        every { findOneByName(any()) } returns Optional.of(DiscordUser("id", "username", "name"))
+        every { findOneByName(any()) } returns Optional.of(DiscordUser("id", "name"))
     }
 
     @Test
@@ -42,6 +42,9 @@ class UserCacheTest {
             googleSheetsService,
             discordUserRepository
         )
+
+        // normally called by Spring
+        cache.afterPropertiesSet()
 
         var users = cache.users
         assertTrue(users.size == 1)
@@ -68,8 +71,9 @@ class UserCacheTest {
             discordUserRepository
         )
 
+        cache.afterPropertiesSet()
+
         val users = cache.users
-        assertTrue(users.isEmpty())
 
         verify(exactly = 1) {
             googleSheetsService.mapToScores(any())

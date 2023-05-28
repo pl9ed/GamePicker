@@ -5,7 +5,6 @@ import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
-import java.util.Optional
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -42,14 +41,14 @@ class UserCache @Autowired constructor(
         logger.info(
             "Initialized user cache with users: {}",
             users.joinToString {
-                it.name ?: it.username ?: it.discordId
+                it.name ?: it.discordId
             }
         )
     }
 
     private fun updateUsers() = runBlocking {
         logger.info("Updating users from google sheets")
-        googleSheetsService.mapToScores(googleSheetCache.getSheet())
+        googleSheetsService.mapToScores(googleSheetCache.dataSheet)
             .map { (unformattedName, games) ->
                 val name = unformattedName.uppercase()
                 val discordUser = discordUserRepository.findOneByName(name).get()

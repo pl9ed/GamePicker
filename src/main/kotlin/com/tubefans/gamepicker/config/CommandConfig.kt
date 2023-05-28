@@ -1,7 +1,6 @@
 package com.tubefans.gamepicker.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import discord4j.common.JacksonResources
 import discord4j.discordjson.json.ApplicationCommandRequest
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

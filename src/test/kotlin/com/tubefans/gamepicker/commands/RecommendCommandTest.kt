@@ -13,9 +13,9 @@ class RecommendCommandTest {
     private val eventService: EventService = mockk()
     private val command = RecommendCommand(eventService)
 
-    private val user1 = DiscordUser("a", "a", "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
-    private val user2 = DiscordUser("b", "b", "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
-    private val emptyUser = DiscordUser("empty", "empty", "empty")
+    private val user1 = DiscordUser("a", "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
+    private val user2 = DiscordUser("b", "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
+    private val emptyUser = DiscordUser("empty", "empty")
 
     private val gameScoreMap = GameScoreMap(setOf(user1, user2, emptyUser))
 
@@ -60,17 +60,17 @@ class RecommendCommandTest {
     }
 
     @Test
-    fun `should fallback to username if name is null`() {
+    fun `should fallback to discordId if name is null`() {
         val game = "game"
         val score = 100L
-        val fans = listOf(DiscordUser("a", "usernamea", null, mutableMapOf("a" to 10)))
-        val excludes = listOf(DiscordUser("b", "usernameb", null), emptyUser)
+        val fans = listOf(DiscordUser("a", null, mutableMapOf("a" to 10)))
+        val excludes = listOf(DiscordUser("b", null), emptyUser)
         val row = String.format(
             "%s | %d | Fans: %s | Excludes: %s",
             game,
             score,
-            fans.joinToString { it.username!! },
-            excludes.map { it.username }.joinToString()
+            fans.joinToString { it.name ?: it.discordId },
+            excludes.joinToString { it.name ?: it.discordId }
         )
         assertEquals(row, command.generateRow(game, score, fans, excludes))
     }
