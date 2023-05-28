@@ -1,9 +1,11 @@
 package com.tubefans.gamepicker.cache
 
 import com.google.api.client.util.DateTime
+import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.DATA_RANGE
+import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.SHEET_ID
+import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.USER_RANGE
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
-import com.tubefans.gamepicker.services.GoogleSheetsService.Companion.DEFAULT_SHEET_ID
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -12,7 +14,7 @@ import org.junit.jupiter.api.Test
 class GoogleSheetCacheTest {
 
     private val googleSheetsService: GoogleSheetsService = mockk {
-        every { getSheet(any()) } returns emptyList()
+        every { getSheet(any(), any()) } returns emptyList()
     }
     private val driveService: GoogleDriveService = mockk()
 
@@ -28,11 +30,14 @@ class GoogleSheetCacheTest {
 
         val cache = GoogleSheetCache(googleSheetsService, driveService)
 
-        cache.getSheet()
+        cache.dataSheet
 
-        // 1 during init, 1 during update
-        verify(exactly = 2) {
-            googleSheetsService.getSheet(DEFAULT_SHEET_ID)
+        verify {
+            // init
+            googleSheetsService.getSheet(SHEET_ID, DATA_RANGE)
+            googleSheetsService.getSheet(SHEET_ID, USER_RANGE)
+
+            googleSheetsService.getSheet(any(), any())
         }
     }
 
@@ -45,10 +50,11 @@ class GoogleSheetCacheTest {
 
         val cache = GoogleSheetCache(googleSheetsService, driveService)
 
-        cache.getSheet()
+        cache.dataSheet
 
-        verify(exactly = 1) {
-            googleSheetsService.getSheet(DEFAULT_SHEET_ID)
+        verify {
+            googleSheetsService.getSheet(SHEET_ID, DATA_RANGE)
+            googleSheetsService.getSheet(SHEET_ID, USER_RANGE)
         }
     }
 }

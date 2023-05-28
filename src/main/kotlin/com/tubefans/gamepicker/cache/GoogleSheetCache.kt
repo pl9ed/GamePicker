@@ -3,7 +3,6 @@ package com.tubefans.gamepicker.cache
 import com.google.api.client.util.DateTime
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
-import com.tubefans.gamepicker.services.GoogleSheetsService.Companion.DEFAULT_SHEET_ID
 import mapToString
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,28 +14,46 @@ class GoogleSheetCache @Autowired constructor(
     private val driveService: GoogleDriveService
 ) {
 
-    private val logger = LogManager.getLogger()
+    companion object {
+        const val SHEET_ID = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
+        const val DATA_RANGE = "Data"
+        const val USER_RANGE = "id-mapping"
+        const val END_ROW_TITLE = "SUM"
+    }
 
-    private var id = DEFAULT_SHEET_ID
-    private var lastUpdate: DateTime = driveService.getLastUpdatedTime(DEFAULT_SHEET_ID)
-    private var sheet = googleSheetsService.getSheet(id).mapToString()
+    private val logger = LogManager.getLogger()
+    private var lastUpdate: DateTime = driveService.getLastUpdatedTime(SHEET_ID)
+
+    var dataSheet = googleSheetsService.getSheet(SHEET_ID, DATA_RANGE).mapToString()
+        get() {
+            val lastUpdate = driveService.getLastUpdatedTime()
+
+            if (shouldUpdate(lastUpdate)) {
+                logger.info("Updating data sheet from Google for lastUpdate={}", lastUpdate)
+                field = googleSheetsService.getSheet(SHEET_ID, DATA_RANGE).mapToString()
+                this.lastUpdate = lastUpdate
+            } else {
+                logger.info("Pulling sheet from cache")
+            }
+
+            return field
+        }
+
+    var userSheet = googleSheetsService.getSheet(SHEET_ID, USER_RANGE).mapToString()
+        get() {
+            val lastUpdate = driveService.getLastUpdatedTime()
+
+            if (shouldUpdate(lastUpdate)) {
+                logger.info("Updating user sheet from Google for lastUpdate={}", lastUpdate)
+                field = googleSheetsService.getSheet(SHEET_ID, USER_RANGE).mapToString()
+                this.lastUpdate = lastUpdate
+            } else {
+                logger.info("Pulling sheet from cache")
+            }
+
+            return field
+        }
 
     private fun shouldUpdate(lastUpdate: DateTime): Boolean =
         lastUpdate.value > this.lastUpdate.value
-
-    fun getSheet(): List<List<String>> {
-        val lastUpdate = driveService.getLastUpdatedTime()
-
-        if (shouldUpdate(lastUpdate)) {
-            logger.info("Updating sheet from Google for lastUpdate=$lastUpdate")
-            sheet = googleSheetsService.getSheet(id).mapToString()
-            this.lastUpdate = lastUpdate
-        } else {
-            logger.info("Pulling sheet from cache")
-        }
-
-        return sheet
-    }
-
-    fun lastUpdateTime(): DateTime = driveService.getLastUpdatedTime(DEFAULT_SHEET_ID)
 }

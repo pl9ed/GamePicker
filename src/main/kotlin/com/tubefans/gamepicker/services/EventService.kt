@@ -35,7 +35,7 @@ class EventService @Autowired constructor(
                 async {
                     try {
                         Optional.of(
-                            discordUserService.findById(snowflake.toString()).also {
+                            discordUserService.findById(snowflake).also {
                                 logger.info("Getting user with id {}", snowflake.toString())
                             }
                         )

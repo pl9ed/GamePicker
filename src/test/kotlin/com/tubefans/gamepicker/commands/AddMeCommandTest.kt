@@ -13,12 +13,12 @@ class AddMeCommandTest {
 
     private val numericId = 123L
     private val missingNumericId = 111L
-    private val id = Snowflake.of(numericId).toString()
-    private val missingId = Snowflake.of(missingNumericId).toString()
+    private val id = Snowflake.of(numericId)
+    private val missingId = Snowflake.of(missingNumericId)
     private val name = "name"
     private val username = "username"
-    private val discordUser = DiscordUser(id, username, name)
-    private val newUser = DiscordUser(missingId, username, name)
+    private val discordUser = DiscordUser(id, name)
+    private val newUser = DiscordUser(missingId, name)
 
     private val discordUserService: DiscordUserService = mockk() {
         every { findById(id) } returns discordUser

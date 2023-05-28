@@ -2,6 +2,7 @@ package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
+import discord4j.common.util.Snowflake
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -13,9 +14,7 @@ class DiscordUserService @Autowired constructor(
     private val userCache: UserCache
 ) {
 
-    fun existsById(id: String) = userCache.users.any { it.discordId == id }
-
-    fun findById(id: String) = userCache.users.first { it.discordId == id }
+    fun findById(id: Snowflake) = userCache.users.first { it.discordId == id }
 
     fun findOneByName(name: String) = userCache.users.first { it.name == name }
 

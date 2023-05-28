@@ -1,6 +1,7 @@
 package com.tubefans.gamepicker.models
 
 import com.tubefans.gamepicker.dto.DiscordUser
+import discord4j.common.util.Snowflake
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -8,8 +9,7 @@ import org.junit.jupiter.api.Test
 class GameScoreMapTest {
 
     private val user1 = DiscordUser(
-        "1",
-        "user1",
+        Snowflake.of(1),
         "name1",
         mutableMapOf(
             "game1" to 10,
@@ -19,8 +19,7 @@ class GameScoreMapTest {
         )
     )
     private val user2 = DiscordUser(
-        "2",
-        "user2",
+        Snowflake.of(2),
         "name2",
         mutableMapOf(
             "game1" to 0,
@@ -30,8 +29,7 @@ class GameScoreMapTest {
         )
     )
     private val user3 = DiscordUser(
-        "3",
-        "user3",
+        Snowflake.of(3),
         "name3",
         mutableMapOf(
             "game1" to 9,
@@ -41,8 +39,7 @@ class GameScoreMapTest {
         )
     )
     private val user4 = DiscordUser(
-        "4",
-        "user4",
+        Snowflake.of(4),
         "name4",
         mutableMapOf(
             "game1" to 10,
@@ -52,8 +49,7 @@ class GameScoreMapTest {
         )
     )
     private val blankUser = DiscordUser(
-        "blank",
-        "blankuser",
+        Snowflake.of(0),
         "blankname"
     )
 
@@ -84,13 +80,11 @@ class GameScoreMapTest {
     fun `should handle blank user maps`() {
         val emptyUsers = listOf(
             DiscordUser(
-                "1",
-                "user1",
+                Snowflake.of(1),
                 "name1"
             ),
             DiscordUser(
-                "2",
-                "user2",
+                Snowflake.of(2),
                 "name2"
             )
         )

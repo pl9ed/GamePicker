@@ -5,6 +5,7 @@ import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
+import discord4j.common.util.Snowflake
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -16,13 +17,13 @@ class UserCacheTest {
 
     private val googleDriveService: GoogleDriveService = mockk()
     private val googleSheetCache: GoogleSheetCache = mockk() {
-        every { getSheet() } returns mockk()
+        every { dataSheet } returns mockk()
     }
     private val googleSheetsService: GoogleSheetsService = mockk {
         every { mapToScores(any()) } returns emptyMap()
     }
     private val discordUserRepository: DiscordUserRepository = mockk() {
-        every { findOneByName(any()) } returns Optional.of(DiscordUser("id", "username", "name"))
+        every { findOneByName(any()) } returns Optional.of(DiscordUser(Snowflake.of(1L), "name"))
     }
 
     @Test
@@ -42,6 +43,9 @@ class UserCacheTest {
             googleSheetsService,
             discordUserRepository
         )
+
+        // normally called by Spring
+        cache.afterPropertiesSet()
 
         var users = cache.users
         assertTrue(users.size == 1)
@@ -68,8 +72,9 @@ class UserCacheTest {
             discordUserRepository
         )
 
+        cache.afterPropertiesSet()
+
         val users = cache.users
-        assertTrue(users.isEmpty())
 
         verify(exactly = 1) {
             googleSheetsService.mapToScores(any())
