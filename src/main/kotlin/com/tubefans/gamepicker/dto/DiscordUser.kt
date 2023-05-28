@@ -1,11 +1,6 @@
 package com.tubefans.gamepicker.dto
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
-
-@Document("user")
 data class DiscordUser(
-    @Id
     val discordId: String,
     var username: String?,
     var name: String?,

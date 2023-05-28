@@ -5,10 +5,12 @@ import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.repositories.DiscordUserRepository
 import com.tubefans.gamepicker.services.GoogleDriveService
 import com.tubefans.gamepicker.services.GoogleSheetsService
+import java.util.Optional
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
+import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -18,7 +20,7 @@ class UserCache @Autowired constructor(
     private val googleSheetCache: GoogleSheetCache,
     private val googleSheetsService: GoogleSheetsService,
     private val discordUserRepository: DiscordUserRepository
-) {
+) : InitializingBean {
 
     private var lastUpdate: DateTime = googleDriveService.getLastUpdatedTime()
     private val logger = LogManager.getLogger()
@@ -35,7 +37,7 @@ class UserCache @Autowired constructor(
             return field
         }
 
-    init {
+    override fun afterPropertiesSet() {
         updateUsers()
         logger.info(
             "Initialized user cache with users: {}",

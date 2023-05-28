@@ -1,6 +1,6 @@
 package com.tubefans.gamepicker.commands
 
-import com.mongodb.internal.VisibleForTesting
+import com.google.common.annotations.VisibleForTesting
 import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
@@ -41,7 +41,7 @@ class RecommendCommand @Autowired constructor(
                 event.editReply(it)
             }.then()
 
-    @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
+    @VisibleForTesting
     fun getReplyString(gameScoreMap: GameScoreMap, gameCount: Int): String {
         gameScoreMap.apply {
             val topGames = getTopGames(gameCount)
@@ -63,7 +63,7 @@ class RecommendCommand @Autowired constructor(
         }
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.AccessModifier.PRIVATE)
+    @VisibleForTesting
     fun generateRow(
         game: String,
         score: Long,
