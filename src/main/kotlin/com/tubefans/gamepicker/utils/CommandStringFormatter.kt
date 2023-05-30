@@ -30,12 +30,8 @@ object CommandStringFormatter {
             this.options().get().forEach {
                 strBuilder.append("${it.name()}: ${it.description()}\n")
             }
-
-            strBuilder.trimEnd()
-        } else {
-            strBuilder.append(this.description())
         }
 
-        return strBuilder.toString()
+        return strBuilder.trim().toString()
     }
 }
