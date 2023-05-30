@@ -1,7 +1,9 @@
 package com.tubefans.gamepicker.commands
 
+import com.tubefans.gamepicker.commands.HelpCommand.Companion.COMMAND_NOT_FOUND_TEMPLATE
 import com.tubefans.gamepicker.commands.HelpCommand.Companion.GENERIC_HELP_HEADER
 import com.tubefans.gamepicker.testlibrary.event.TestEventLibrary.createHelpEvent
+import com.tubefans.gamepicker.utils.CommandStringFormatter.toHelpString
 import com.tubefans.gamepicker.utils.CommandStringFormatter.toRowString
 import discord4j.core.spec.InteractionApplicationCommandCallbackReplyMono
 import discord4j.discordjson.json.ApplicationCommandOptionData
@@ -25,12 +27,14 @@ class HelpCommandTest {
 
     private val cmd1: ApplicationCommandRequest = mockk {
         every { name() } returns "cmd1 name"
+        every { description().isAbsent } returns false
         every { description().get() } returns "cmd1 description"
         every { options() } returns Possible.absent()
     }
     private val cmd2: ApplicationCommandRequest = mockk {
-        every { name() } returns "cmd1 name"
-        every { description().get() } returns "cmd1 description"
+        every { name() } returns "cmd2 name"
+        every { description().isAbsent } returns false
+        every { description().get() } returns "cmd2 description"
         every { options() } returns Possible.of(
             listOf(
                 option1,
@@ -39,8 +43,8 @@ class HelpCommandTest {
         )
     }
     private val cmd3: ApplicationCommandRequest = mockk {
-        every { name() } returns "cmd1 name"
-        every { description().get() } returns "cmd1 description"
+        every { name() } returns "cmd3 name"
+        every { description().get() } returns "cmd3 description"
         every { options() } returns Possible.of(emptyList())
     }
 
@@ -73,6 +77,39 @@ class HelpCommandTest {
         assertEquals(
             command.getGenericHelpMessage(),
             response.content().get()
+        )
+    }
+
+    @Test
+    fun `should return command not found on invalid command`() {
+        val cmd = "not-found"
+
+        assertEquals(
+            String.format(
+                COMMAND_NOT_FOUND_TEMPLATE,
+                cmd
+            ),
+            command.getResponseString(cmd)
+        )
+    }
+
+    @Test
+    fun `should return command description and each option on separate lines`() {
+        val expectedString = cmd2.toHelpString()
+
+        assertEquals(
+            expectedString,
+            command.getResponseString(cmd2.name())
+        )
+    }
+
+    @Test
+    fun `should return only description for no option commands`() {
+        val expectedString = cmd1.toHelpString()
+
+        assertEquals(
+            expectedString,
+            command.getResponseString(cmd1.name())
         )
     }
 }

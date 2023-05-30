@@ -30,18 +30,7 @@ class HelpCommand @Autowired constructor(
                 .withContent(getGenericHelpMessage())
         }
 
-        val commandName = event.getStringOption(COMMAND_PARAM_KEY)
-
-        val response = try {
-            commands.first {
-                it.name().lowercase() == commandName.lowercase()
-            }.toHelpString()
-        } catch (e: NoSuchElementException) {
-            String.format(
-                COMMAND_NOT_FOUND_TEMPLATE,
-                commandName
-            )
-        }
+        val response = getResponseString(event.getStringOption(COMMAND_PARAM_KEY))
 
         return event.reply()
             .withEphemeral(true)
@@ -55,5 +44,17 @@ class HelpCommand @Autowired constructor(
             message.append("${it.toRowString()}\n")
         }
         return message.trim().toString()
+    }
+
+    @VisibleForTesting
+    fun getResponseString(commandName: String): String = try {
+        commands.first {
+            it.name().lowercase() == commandName.lowercase()
+        }.toHelpString()
+    } catch (e: NoSuchElementException) {
+        String.format(
+            COMMAND_NOT_FOUND_TEMPLATE,
+            commandName
+        )
     }
 }
