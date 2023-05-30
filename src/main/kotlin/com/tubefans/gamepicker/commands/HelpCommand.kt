@@ -1,6 +1,8 @@
 package com.tubefans.gamepicker.commands
 
 import com.google.common.annotations.VisibleForTesting
+import com.tubefans.gamepicker.extensions.getStringOption
+import com.tubefans.gamepicker.utils.CommandStringFormatter.toHelpString
 import com.tubefans.gamepicker.utils.CommandStringFormatter.toRowString
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.discordjson.json.ApplicationCommandRequest
@@ -15,16 +17,32 @@ class HelpCommand @Autowired constructor(
 
     companion object {
         const val GENERIC_HELP_HEADER = "Use /help {cmd} for more details"
+        const val COMMAND_PARAM_KEY = "command"
+        const val COMMAND_NOT_FOUND_TEMPLATE = "Command {} not found"
     }
 
     override val name: String = "help"
 
     override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
-        val response = if (event.options.isEmpty()) {
-            getGenericHelpMessage()
-        } else {
-            "NOT YET IMPLEMENTED"
+        if (event.options.isEmpty()) {
+            return event.reply()
+                .withEphemeral(true)
+                .withContent(getGenericHelpMessage())
         }
+
+        val commandName = event.getStringOption(COMMAND_PARAM_KEY)
+
+        val response = try {
+            commands.first {
+                it.name().lowercase() == commandName.lowercase()
+            }.toHelpString()
+        } catch (e: NoSuchElementException) {
+            String.format(
+                COMMAND_NOT_FOUND_TEMPLATE,
+                commandName
+            )
+        }
+
         return event.reply()
             .withEphemeral(true)
             .withContent(response)
