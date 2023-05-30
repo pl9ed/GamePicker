@@ -1,7 +1,5 @@
 package com.tubefans.gamepicker.utils
 
-import discord4j.core.`object`.command.ApplicationCommandOption
-import discord4j.discordjson.json.ApplicationCommandOptionData
 import discord4j.discordjson.json.ApplicationCommandRequest
 
 object CommandStringFormatter {
@@ -40,5 +38,4 @@ object CommandStringFormatter {
 
         return strBuilder.toString()
     }
-
 }
