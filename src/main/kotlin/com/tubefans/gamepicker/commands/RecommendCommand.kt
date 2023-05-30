@@ -77,8 +77,10 @@ class RecommendCommand @Autowired constructor(
             }.then()
 
     @VisibleForTesting
-    fun getReplyString(gameScoreMap: GameScoreMap, gameCount: Int): String {
+    fun getReplyString(gameScoreMap: GameScoreMap, rawGameCount: Int): String {
         gameScoreMap.apply {
+            // 1 < gamecount < 10
+            val gameCount = maxOf(minOf(10, rawGameCount), 1)
             val topGames = getTopGames(gameCount)
             logger.info("Top games: {}", topGames.joinToString { it.first })
             if (topGames.isEmpty()) return NO_GAMES_RESPONSE
