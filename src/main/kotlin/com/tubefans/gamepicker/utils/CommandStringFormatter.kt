@@ -21,7 +21,12 @@ object CommandStringFormatter {
     }
 
     fun ApplicationCommandRequest.toHelpString(): String {
-        val strBuilder = StringBuilder()
+        val description = if (!this.description().isAbsent) {
+            "${this.description().get()}\n"
+        } else {
+            ""
+        }
+        val strBuilder = StringBuilder(description)
 
         if (!this.options().isAbsent) {
             this.options().get().forEach {

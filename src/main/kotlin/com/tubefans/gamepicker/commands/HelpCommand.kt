@@ -18,7 +18,7 @@ class HelpCommand @Autowired constructor(
     companion object {
         const val GENERIC_HELP_HEADER = "Use /help {cmd} for more details"
         const val COMMAND_PARAM_KEY = "command"
-        const val COMMAND_NOT_FOUND_TEMPLATE = "Command {} not found"
+        const val COMMAND_NOT_FOUND_TEMPLATE = "Command '%s' not found"
     }
 
     override val name: String = "help"
