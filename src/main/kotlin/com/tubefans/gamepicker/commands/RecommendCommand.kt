@@ -3,6 +3,7 @@ package com.tubefans.gamepicker.commands
 import com.google.common.annotations.VisibleForTesting
 import com.tubefans.gamepicker.cache.UserCache
 import com.tubefans.gamepicker.dto.DiscordUser
+import com.tubefans.gamepicker.extensions.getLongOption
 import com.tubefans.gamepicker.extensions.getStringOption
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
@@ -23,6 +24,7 @@ class RecommendCommand @Autowired constructor(
 
         const val INCLUDE_KEY = "include"
         const val EXCLUDE_KEY = "exclude"
+        const val DISPLAY_COUNT_KEY = "display-count"
 
         const val NO_GAMES_RESPONSE = "No games found. Are you in a voice channel?"
     }
@@ -61,7 +63,15 @@ class RecommendCommand @Autowired constructor(
                 )
                 GameScoreMap(it)
             }.map {
-                getReplyString(it, DEFAULT_GAME_COUNT)
+                val count = try {
+                    event.getLongOption(DISPLAY_COUNT_KEY).toInt()
+                } catch (e: RuntimeException) {
+                    when (e) {
+                        is NumberFormatException, is NoSuchElementException -> DEFAULT_GAME_COUNT
+                        else -> throw e
+                    }
+                }
+                getReplyString(it, count)
             }.flatMap {
                 event.editReply(it)
             }.then()

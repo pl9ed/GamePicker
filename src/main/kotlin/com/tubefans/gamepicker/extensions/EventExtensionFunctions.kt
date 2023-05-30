@@ -11,3 +11,6 @@ fun ChatInputInteractionEvent.getScore(): Long =
 
 fun ChatInputInteractionEvent.getStringOption(name: String): String =
     this.options.first { it.name == name }.value.get().asString()
+
+fun ChatInputInteractionEvent.getLongOption(name: String): Long =
+    this.options.first { it.name == name }.value.get().asLong()
