@@ -1,5 +1,6 @@
 package com.tubefans.gamepicker.utils
 
+import com.tubefans.gamepicker.utils.CommandStringFormatter.toHelpString
 import com.tubefans.gamepicker.utils.CommandStringFormatter.toRowString
 import discord4j.discordjson.json.ApplicationCommandOptionData
 import discord4j.discordjson.json.ApplicationCommandRequest
@@ -21,6 +22,7 @@ class CommandStringFormatterTest {
     private val cmd: ApplicationCommandRequest = mockk {
         every { name() } returns "name"
         every { description().get() } returns "description"
+        every { description().isAbsent } returns false
         every { options() } returns Possible.of(
             listOf(
                 option1,
@@ -32,6 +34,7 @@ class CommandStringFormatterTest {
     private val noOptionsCmd: ApplicationCommandRequest = mockk {
         every { name() } returns "name"
         every { description().get() } returns "description"
+        every { description().isAbsent } returns false
         every { options() } returns Possible.absent()
     }
 
@@ -42,7 +45,7 @@ class CommandStringFormatterTest {
     }
 
     @Test
-    fun `should format ApplicationCommandRequest to readable string`() {
+    fun `row string should format ApplicationCommandRequest to readable string`() {
         val expectedString = "/${cmd.name()} " +
             "{${option1.name()}} {${option2.name()}} : " +
             cmd.description().get()
@@ -54,7 +57,7 @@ class CommandStringFormatterTest {
     }
 
     @Test
-    fun `should handle no option commands`() {
+    fun `row string should handle no option commands`() {
         val expectedString = "/${noOptionsCmd.name()} : ${noOptionsCmd.description().get()}"
 
         assertEquals(
@@ -64,12 +67,38 @@ class CommandStringFormatterTest {
     }
 
     @Test
-    fun `should handle empty options`() {
+    fun `row string should handle empty options`() {
         val expectedString = "/${emptyOptionsCmd.name()} : ${emptyOptionsCmd.description().get()}"
 
         assertEquals(
             expectedString,
             emptyOptionsCmd.toRowString()
+        )
+    }
+
+    @Test
+    fun `help string should list command description with options`() {
+        val expectedString = """
+            ${cmd.description().get()}
+            ${option1.name()}: ${option1.description()}
+            ${option2.name()}: ${option2.description()}
+        """.trimIndent()
+
+        assertEquals(
+            expectedString,
+            cmd.toHelpString()
+        )
+    }
+
+    @Test
+    fun `help string should handle no options`() {
+        val expectedString = """
+            ${noOptionsCmd.description().get()}
+        """.trimIndent()
+
+        assertEquals(
+            expectedString,
+            noOptionsCmd.toHelpString()
         )
     }
 }

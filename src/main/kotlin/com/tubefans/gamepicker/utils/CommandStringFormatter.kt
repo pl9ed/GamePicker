@@ -17,4 +17,21 @@ object CommandStringFormatter {
 
         return row.toString()
     }
+
+    fun ApplicationCommandRequest.toHelpString(): String {
+        val description = if (!this.description().isAbsent) {
+            "${this.description().get()}\n"
+        } else {
+            ""
+        }
+        val strBuilder = StringBuilder(description)
+
+        if (!this.options().isAbsent) {
+            this.options().get().forEach {
+                strBuilder.append("${it.name()}: ${it.description()}\n")
+            }
+        }
+
+        return strBuilder.trim().toString()
+    }
 }

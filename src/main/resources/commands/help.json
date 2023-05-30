@@ -1,4 +1,12 @@
 {
   "name": "help",
-  "description": "Gets the list of commands"
+  "description": "Gets the list of commands",
+  "options": [
+    {
+      "name": "command",
+      "description": "Command to get more details for",
+      "type": 3,
+      "required": false
+    }
+  ]
 }

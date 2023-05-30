@@ -22,10 +22,16 @@ class DiscordClientConfig @Autowired constructor(
 
     @Bean
     fun gatewayDiscordClient(): GatewayDiscordClient {
-        val token = secretManagerServiceClient.accessSecretVersion(BOT_TOKEN_KEY)
-            .payload
-            .data
-            .toStringUtf8()
+        // TODO: set up environment at some point
+        val localBuild = System.getenv("local").toBoolean()
+        val token = if (localBuild) {
+            System.getenv("BOT_TOKEN")
+        } else {
+            secretManagerServiceClient.accessSecretVersion(BOT_TOKEN_KEY)
+                .payload
+                .data
+                .toStringUtf8()
+        }
 
         return DiscordClient.create(token)
             .gateway()
