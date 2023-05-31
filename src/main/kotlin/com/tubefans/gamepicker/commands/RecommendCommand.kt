@@ -20,7 +20,7 @@ class RecommendCommand @Autowired constructor(
 ) : SlashCommand {
 
     companion object {
-        const val DEFAULT_GAME_COUNT = 3
+        const val DEFAULT_GAME_COUNT = 5
 
         const val INCLUDE_KEY = "include"
         const val EXCLUDE_KEY = "exclude"
