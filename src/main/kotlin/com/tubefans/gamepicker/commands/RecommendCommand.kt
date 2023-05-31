@@ -155,10 +155,14 @@ class RecommendCommand @Autowired constructor(
 
     private fun MutableCollection<DiscordUser>.addInclusions(includeNames: Collection<String>): MutableCollection<DiscordUser> {
         includeNames.forEach { name ->
-            userCache.users.first {
-                it.name?.trim()?.uppercase() == name.trim().uppercase()
-            }.let {
-                this.add(it)
+            try {
+                userCache.users.first {
+                    it.name?.trim()?.uppercase() == name.trim().uppercase()
+                }.let {
+                    this.add(it)
+                }
+            } catch (e: NoSuchElementException) {
+                logger.error("Could not find user with name $name", e)
             }
         }
         return this
