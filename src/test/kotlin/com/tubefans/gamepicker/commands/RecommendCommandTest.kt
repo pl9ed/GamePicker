@@ -6,8 +6,10 @@ import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.models.GameScoreMap
 import com.tubefans.gamepicker.services.EventService
 import discord4j.common.util.Snowflake
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class RecommendCommandTest {
@@ -76,5 +78,90 @@ class RecommendCommandTest {
             excludes.joinToString { it.name ?: it.discordId.asString() }
         )
         assertEquals(row, command.generateRow(game, score, fans, excludes))
+    }
+
+    @Test
+    fun `should be able to explicitly set game count`() {
+        val singleResponseTemplate = """
+        TOP %d GAMES:
+        1: %s | %d | Fans: %s | Excludes: %s
+        """.trimIndent()
+
+        assertEquals(
+            String.format(
+                singleResponseTemplate,
+                1,
+                "a",
+                10,
+                "a",
+                "b, empty"
+            ).trim(),
+            command.getReplyString(gameScoreMap, 1)
+        )
+    }
+
+    @Test
+    fun `should display no games string when score map is empty`() {
+        val gameScoreMap: GameScoreMap = mockk {
+            every { getTopGames(any()) } returns emptyList()
+        }
+        assertEquals(
+            NO_GAMES_RESPONSE,
+            command.getReplyString(gameScoreMap, 0)
+        )
+    }
+
+    @Test
+    fun `should display max 10 games`() {
+        val scores = mutableListOf(Pair("1", 1L))
+        val topTen = mutableListOf<Pair<String, Long>>()
+
+        for (i in 2..11) {
+            val pair = Pair("$i", i.toLong())
+            scores.add(pair)
+            topTen.add(pair)
+        }
+
+        val gameScoreMap: GameScoreMap = mockk {
+            every { getTopGames(10) } returns topTen
+            every { getTopPlayersForGame(any(), any()) } returns listOf(user1)
+            every { getNonPlayersForGame(any()) } returns listOf(user2)
+        }
+
+        val replyString = command.getReplyString(gameScoreMap, 50)
+
+        assertTrue(!replyString.contains(": 1 | 1"))
+
+        for (i in 2..11) {
+            assertTrue(
+                replyString.contains("$i | $i")
+            )
+        }
+    }
+
+    @Test
+    fun `should display min 1 game`() {
+        val scores = mutableListOf<Pair<String, Long>>()
+
+        for (i in 1..3) {
+            val pair = Pair("$i", i.toLong())
+            scores.add(pair)
+        }
+
+        val gameScoreMap: GameScoreMap = mockk {
+            every { getTopGames(1) } returns listOf(scores.first())
+            every { getTopPlayersForGame(any(), any()) } returns listOf(user1)
+            every { getNonPlayersForGame(any()) } returns listOf(user2)
+        }
+
+        val replyString = command.getReplyString(gameScoreMap, -10)
+
+        assertTrue(replyString.contains("1 | 1"))
+
+        for (i in 2..3) {
+            assertTrue(
+                !replyString.contains("$i | $i")
+            )
+        }
     }
 }

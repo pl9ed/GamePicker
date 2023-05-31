@@ -13,6 +13,12 @@
       "description": "Comma delineated name of the users to exclude from recommendation.",
       "type": 3,
       "required": false
+    },
+    {
+      "name": "display-count",
+      "description": "Number of top games to display. Defaults to 3",
+      "type": 4,
+      "required": false
     }
   ]
 }
