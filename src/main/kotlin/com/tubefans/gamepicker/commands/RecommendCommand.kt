@@ -78,38 +78,71 @@ class RecommendCommand @Autowired constructor(
 
     @VisibleForTesting
     fun getReplyString(gameScoreMap: GameScoreMap, rawGameCount: Int): String {
+        val (table, maxWidth) = generateTable(gameScoreMap, rawGameCount)
+        if (table.isEmpty()) return NO_GAMES_RESPONSE
+
+        val replyString = StringBuilder(
+            "```\n" +
+                "TOP ${table.size} GAMES:\n"
+        )
+
+        table.forEach { row ->
+            val rank = row[0].padEnd(maxWidth[0], ' ')
+            val game = row[1].padEnd(maxWidth[1], ' ')
+            val score = row[2].padEnd(maxWidth[2], ' ')
+            val fans = row[3].padEnd(maxWidth[3], ' ')
+            val excludes = row[4].padEnd(maxWidth[4], ' ')
+
+            replyString.append("| $rank | $game | $score | $fans | $excludes |\n")
+        }
+
+        replyString.append("```")
+
+        return replyString.toString()
+    }
+
+    @VisibleForTesting
+    fun generateTable(gameScoreMap: GameScoreMap, rawGameCount: Int): Pair<List<List<String>>, Array<Int>> {
+        val maxWidth = Array(5) { 0 }
+        val table = mutableListOf<List<String>>()
+
         gameScoreMap.apply {
             // 1 < gamecount < 10
             val gameCount = maxOf(minOf(10, rawGameCount), 1)
             val topGames = getTopGames(gameCount)
             logger.info("Top games: {}", topGames.joinToString { it.first })
-            if (topGames.isEmpty()) return NO_GAMES_RESPONSE
-
-            val replyString = StringBuilder("TOP $gameCount GAMES:\n")
 
             topGames.forEachIndexed { i, gameScore ->
+                val rank = i + 1
                 val game = gameScore.first
                 val score = gameScore.second
 
-                replyString.append(
-                    "${i + 1}: ${generateRow(game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))}\n"
-                )
+                val rowData = generateRowData(rank, game, score, getTopPlayersForGame(game), getNonPlayersForGame(game))
+                table.add(rowData)
+
+                for (j in maxWidth.indices) {
+                    maxWidth[j] = maxOf(maxWidth[j], rowData[j].length)
+                }
             }
 
-            return replyString.toString().trim()
+            return Pair(table, maxWidth)
         }
     }
 
     @VisibleForTesting
-    fun generateRow(
+    fun generateRowData(
+        rank: Int,
         game: String,
         score: Long,
         fans: Collection<DiscordUser>,
         excludes: Collection<DiscordUser>
-    ): String = "$game | " +
-        "$score | " +
-        "Fans: ${fans.joinToString { it.name ?: it.discordId.asString() }} | " +
+    ): List<String> = listOf(
+        "$rank.",
+        game,
+        score.toString(),
+        "Fans: ${fans.joinToString { it.name ?: it.discordId.asString() }}",
         "Excludes: ${excludes.joinToString { it.name ?: it.discordId.asString() }}"
+    )
 
     private fun MutableCollection<DiscordUser>.removeExclusions(excludeNames: Collection<String>): MutableCollection<DiscordUser> {
         excludeNames.forEach { raw ->

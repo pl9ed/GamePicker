@@ -18,16 +18,18 @@ class RecommendCommandTest {
     private val userCache: UserCache = mockk()
     private val command = RecommendCommand(eventService, userCache)
 
-    private val user1 = DiscordUser(Snowflake.of(1), "a", mutableMapOf("a" to 10, "b" to 5, "c" to 3))
+    private val user1 = DiscordUser(Snowflake.of(1), "a", mutableMapOf("a" to 9, "b" to 5, "c" to 3))
     private val user2 = DiscordUser(Snowflake.of(2), "b", mutableMapOf("a" to 0, "b" to 0, "c" to 0))
     private val emptyUser = DiscordUser(Snowflake.of(0), "empty")
 
     private val gameScoreMap = GameScoreMap(setOf(user1, user2, emptyUser))
 
     private val responseTemplate = """
+        ```
         TOP %d GAMES:
-        1: %s | %d | Fans: %s | Excludes: %s
-        2: %s | %d | Fans: %s | Excludes: %s
+        | 1. | %s | %d | Fans: %s | Excludes: %s |
+        | 2. | %s | %d | Fans: %s | Excludes: %s |
+        ```
     """.trimIndent()
 
     @Test
@@ -36,9 +38,9 @@ class RecommendCommandTest {
             String.format(
                 responseTemplate,
                 2,
-                "a", 10, "a", "b, empty",
+                "a", 9, "a", "b, empty",
                 "b", 5, "a", "b, empty"
-            ).trim(),
+            ),
             command.getReplyString(gameScoreMap, 2)
         )
     }
@@ -50,41 +52,43 @@ class RecommendCommandTest {
 
     @Test
     fun `should generate properly validated row`() {
+        val rank = 1
         val game = "game"
         val score = 100L
         val fans = listOf(user1)
         val excludes = listOf(user2, emptyUser)
-        val row = String.format(
-            "%s | %d | Fans: %s | Excludes: %s",
+        val expected = listOf(
+            "1.",
             game,
             score,
-            fans.joinToString { it.name!! },
-            excludes.map { it.name }.joinToString()
+            "Fans: " + fans.joinToString { it.name!! },
+            "Excludes: " + excludes.map { it.name }.joinToString()
         )
-        assertEquals(row, command.generateRow(game, score, fans, excludes))
+
+        val actual = command.generateRowData(rank, game, score, fans, excludes)
+        for (i in expected.indices) {
+            assertEquals(expected[i].toString(), actual[i])
+        }
     }
 
     @Test
     fun `should fallback to discordId if name is null`() {
+        val rank = 1
         val game = "game"
         val score = 100L
         val fans = listOf(DiscordUser(Snowflake.of(1), null, mutableMapOf("a" to 10)))
         val excludes = listOf(DiscordUser(Snowflake.of(2), null), emptyUser)
-        val row = String.format(
-            "%s | %d | Fans: %s | Excludes: %s",
-            game,
-            score,
-            fans.joinToString { it.name ?: it.discordId.asString() },
-            excludes.joinToString { it.name ?: it.discordId.asString() }
-        )
-        assertEquals(row, command.generateRow(game, score, fans, excludes))
+        assertEquals("Fans: 1", command.generateRowData(rank, game, score, fans, excludes)[3])
+        assertEquals("Excludes: 2, empty", command.generateRowData(rank, game, score, fans, excludes)[4])
     }
 
     @Test
     fun `should be able to explicitly set game count`() {
         val singleResponseTemplate = """
-        TOP %d GAMES:
-        1: %s | %d | Fans: %s | Excludes: %s
+            ```
+            TOP %d GAMES:
+            | 1. | %s | %d | Fans: %s | Excludes: %s |
+            ```
         """.trimIndent()
 
         assertEquals(
@@ -92,10 +96,10 @@ class RecommendCommandTest {
                 singleResponseTemplate,
                 1,
                 "a",
-                10,
+                9,
                 "a",
                 "b, empty"
-            ).trim(),
+            ).trimIndent(),
             command.getReplyString(gameScoreMap, 1)
         )
     }
@@ -116,10 +120,12 @@ class RecommendCommandTest {
         val scores = mutableListOf(Pair("1", 1L))
         val topTen = mutableListOf<Pair<String, Long>>()
 
-        for (i in 2..11) {
+        for (i in 2..15) {
             val pair = Pair("$i", i.toLong())
             scores.add(pair)
-            topTen.add(pair)
+            if (topTen.size < 10) {
+                topTen.add(pair)
+            }
         }
 
         val gameScoreMap: GameScoreMap = mockk {
@@ -129,14 +135,8 @@ class RecommendCommandTest {
         }
 
         val replyString = command.getReplyString(gameScoreMap, 50)
-
-        assertTrue(!replyString.contains(": 1 | 1"))
-
-        for (i in 2..11) {
-            assertTrue(
-                replyString.contains("$i | $i")
-            )
-        }
+        // 10 + header + 2 ``` rows
+        assertEquals(13, replyString.split("\n").size)
     }
 
     @Test
