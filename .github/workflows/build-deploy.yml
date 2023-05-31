@@ -2,7 +2,7 @@ name: Build and deploy
 on:
   push:
     branches:
-      - main
+      - release
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref }}
