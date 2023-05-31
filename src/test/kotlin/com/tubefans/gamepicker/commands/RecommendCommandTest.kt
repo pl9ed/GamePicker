@@ -101,9 +101,12 @@ class RecommendCommandTest {
     }
 
     @Test
-    fun `should display only header when gameCount = 0`() {
+    fun `should display no games string when score map is empty`() {
+        val gameScoreMap: GameScoreMap = mockk {
+            every { getTopGames(any()) } returns emptyList()
+        }
         assertEquals(
-            "TOP 0 GAMES:",
+            NO_GAMES_RESPONSE,
             command.getReplyString(gameScoreMap, 0)
         )
     }
