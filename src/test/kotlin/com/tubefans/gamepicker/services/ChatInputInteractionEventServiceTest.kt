@@ -15,7 +15,7 @@ import reactor.core.publisher.Flux
 import java.util.NoSuchElementException
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class EventServiceTest {
+class ChatInputInteractionEventServiceTest {
 
     private val id0 = Snowflake.of(0)
     private val id1 = Snowflake.of(1)
@@ -54,25 +54,25 @@ class EventServiceTest {
         every { findById(id1) } returns user1
         every { findById(missing) } throws NoSuchElementException()
     }
-    private val eventService = EventService(discordUserService)
+    private val chatInputInteractionEventService = ChatInputInteractionEventService(discordUserService)
 
     @Test
     fun `should get user's current voice channel`() {
         val event = createRecommendEvent(voiceChannel)
 
-        assertEquals(voiceChannel, eventService.getCurrentChannel(event))
+        assertEquals(voiceChannel, chatInputInteractionEventService.getCurrentChannel(event))
     }
 
     @Test
     fun `should return Null on missing voice state`() {
         val event = createRecommendEvent(null)
 
-        assertEquals(null, eventService.getCurrentChannel(event))
+        assertEquals(null, chatInputInteractionEventService.getCurrentChannel(event))
     }
 
     @Test
     fun `should get users in a voice channel`() = runTest {
-        val users = eventService.getUsersInChannel(voiceChannel).block()
+        val users = chatInputInteractionEventService.getUsersInChannel(voiceChannel).block()
 
         assertEquals(
             setOf(user0, user1),
@@ -82,7 +82,7 @@ class EventServiceTest {
 
     @Test
     fun `should exclude entries when findById fails`() = runTest {
-        val users = eventService.getUsersInChannel(missingIdVoiceChannel).block()
+        val users = chatInputInteractionEventService.getUsersInChannel(missingIdVoiceChannel).block()
 
         assertEquals(
             setOf(user0),
