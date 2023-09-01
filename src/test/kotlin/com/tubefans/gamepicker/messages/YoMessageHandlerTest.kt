@@ -18,9 +18,7 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import java.util.Optional
 import kotlin.random.Random
-import org.junit.jupiter.api.Disabled
 
-@Disabled("Troubleshooting test load issues on CI")
 class YoMessageHandlerTest {
 
     private var client: GatewayDiscordClient = mockk {
@@ -151,7 +149,7 @@ class YoMessageHandlerTest {
             }
         }
 
-        every { yoCountRepository.findCount() } returns (yoCountRepository.getThreshold() * Random.nextInt(10)) + Random.nextInt(1,49)
+        every { yoCountRepository.findCount() } returns (yoCountRepository.getThreshold() * Random.nextInt(10)) + Random.nextInt(1, 49)
 
         assertFalse(handler.shouldRespond(message))
     }
