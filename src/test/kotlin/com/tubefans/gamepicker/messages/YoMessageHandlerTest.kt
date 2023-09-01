@@ -18,7 +18,9 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Flux
 import java.util.Optional
 import kotlin.random.Random
+import org.junit.jupiter.api.Disabled
 
+@Disabled("Troubleshooting test load issues on CI")
 class YoMessageHandlerTest {
 
     private var client: GatewayDiscordClient = mockk {
