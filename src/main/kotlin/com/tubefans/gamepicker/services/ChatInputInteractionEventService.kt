@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono
 import java.util.Optional
 
 @Service
-class EventService @Autowired constructor(
+class ChatInputInteractionEventService @Autowired constructor(
     private val discordUserService: DiscordUserService
 ) {
 

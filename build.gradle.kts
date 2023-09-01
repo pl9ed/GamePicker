@@ -70,3 +70,21 @@ tasks.jacocoTestReport {
         xml.required.set(true)
     }
 }
+
+tasks.withType<JacocoReport> {
+    afterEvaluate {
+        classDirectories.setFrom(
+            files(
+                classDirectories.files.map {
+                    fileTree(it).apply {
+                        exclude(
+                            "**/com/tubefans/gamepicker/repositories/**/*",
+                            "**/com/tubefans/gamepicker/commands/RecommendCommand.kt"
+
+                        )
+                    }
+                }
+            )
+        )
+    }
+}

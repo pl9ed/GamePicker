@@ -12,6 +12,7 @@ env:
   DB_PASS: ${{ secrets.DB_PASS }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
   CREDENTIALS_JSON: ${{ secrets.CREDENTIALS_JSON }}
+  YO_THRESHOLD: ${{ secrets.YO_THRESHOLD }}
 
 jobs:
   build:
