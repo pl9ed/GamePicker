@@ -10,7 +10,7 @@ class InMemoryYoCountRepository : YoCountRepository {
     private var count = 0
     private val threshold = try {
         System.getenv("YO_THRESHOLD").toInt()
-    } catch (e: NumberFormatException) {
+    } catch (e: Exception) {
         logger.error("Failed to get YO_THRESHOLD. Falling back to default", e)
         DEFAULT_THRESHOLD
     }
