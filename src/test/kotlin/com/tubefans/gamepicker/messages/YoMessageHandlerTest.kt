@@ -161,7 +161,7 @@ class YoMessageHandlerTest {
 
         every { yoCountRepository.findCount() } returns
             (yoCountRepository.getThreshold() * Random.nextInt(10)) +
-            Random.nextInt(1, 49)
+            Random.nextInt(1, yoCountRepository.getThreshold())
 
         assertFalse(handler.shouldRespond(message))
     }
