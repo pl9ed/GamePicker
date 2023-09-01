@@ -1,10 +1,13 @@
 package com.tubefans.gamepicker.messages
 
 import com.tubefans.gamepicker.messages.YoMessageHandler.Companion.MESSAGE_STRING
+import com.tubefans.gamepicker.messages.YoMessageHandler.Companion.RESPONSE_TEMPLATE
 import com.tubefans.gamepicker.repositories.YoCountRepository
 import discord4j.core.GatewayDiscordClient
 import discord4j.core.event.domain.message.MessageCreateEvent
 import discord4j.core.`object`.entity.Member
+import discord4j.core.`object`.entity.channel.MessageChannel
+import discord4j.core.spec.MessageCreateMono
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -15,7 +18,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Optional
 import kotlin.random.Random
 
@@ -149,8 +159,40 @@ class YoMessageHandlerTest {
             }
         }
 
-        every { yoCountRepository.findCount() } returns (yoCountRepository.getThreshold() * Random.nextInt(10)) + Random.nextInt(1, 49)
+        every { yoCountRepository.findCount() } returns
+            (yoCountRepository.getThreshold() * Random.nextInt(10)) +
+            Random.nextInt(1, 49)
 
         assertFalse(handler.shouldRespond(message))
+    }
+
+    @Test
+    @DisplayName("handle should call createMessage()")
+    fun shouldCallCreateMessage() {
+        val count = 5
+
+        // mockk can't mock this class for some reason
+        val mockChannel = Mockito.mock(MessageChannel::class.java)
+        `when`(mockChannel.createMessage(anyString())).thenReturn(MessageCreateMono.of(mockChannel))
+
+        every { yoMessage.message } returns mockk {
+            every { channel } returns Mono.just(mockChannel)
+        }
+        every { yoCountRepository.findCount() } returns count
+
+        val expectedMessage = String.format(
+            RESPONSE_TEMPLATE,
+            5,
+            5.00,
+            LocalDate.now().format(
+                DateTimeFormatter.ofLocalizedDate(
+                    FormatStyle.MEDIUM
+                )
+            )
+        )
+
+        handler.handle(yoMessage)
+
+        Mockito.verify(mockChannel).createMessage(expectedMessage)
     }
 }
