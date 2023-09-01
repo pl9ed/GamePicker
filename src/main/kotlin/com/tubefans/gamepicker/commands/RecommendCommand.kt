@@ -6,7 +6,7 @@ import com.tubefans.gamepicker.dto.DiscordUser
 import com.tubefans.gamepicker.extensions.getLongOption
 import com.tubefans.gamepicker.extensions.getStringOption
 import com.tubefans.gamepicker.models.GameScoreMap
-import com.tubefans.gamepicker.services.EventService
+import com.tubefans.gamepicker.services.ChatInputInteractionEventService
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 
 @Component
 class RecommendCommand @Autowired constructor(
-    private val eventService: EventService,
+    private val chatInputInteractionEventService: ChatInputInteractionEventService,
     private val userCache: UserCache
 ) : SlashCommand {
 
@@ -36,8 +36,8 @@ class RecommendCommand @Autowired constructor(
     override fun handle(event: ChatInputInteractionEvent) =
         event.deferReply()
             .then(
-                eventService.getCurrentChannel(event)?.let {
-                    eventService.getUsersInChannel(it)
+                chatInputInteractionEventService.getCurrentChannel(event)?.let {
+                    chatInputInteractionEventService.getUsersInChannel(it)
                 } ?: Mono.just(emptySet())
             ).map { users ->
                 val exclude = try {
