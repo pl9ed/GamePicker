@@ -78,8 +78,8 @@ tasks.withType<JacocoReport> {
                 classDirectories.files.map {
                     fileTree(it).apply {
                         exclude(
-                            "com/tubefans/gamepicker/repositories/**/*",
-                            "com/tubefans/gamepicker/commands/RecommendCommand.kt"
+                            "**/com/tubefans/gamepicker/repositories/**/*",
+                            "**/com/tubefans/gamepicker/commands/RecommendCommand.kt"
 
                         )
                     }
