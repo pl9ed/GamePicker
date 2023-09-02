@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeParseException
 
 @Component
 class GoogleSheetYoCountRepository @Autowired constructor(
@@ -28,7 +27,7 @@ class GoogleSheetYoCountRepository @Autowired constructor(
     private var initDate: LocalDate? = null
     private var threshold: Int? = null
 
-    private val serviceInitDate: LocalDate = try {
+    override var serviceInitDate: LocalDate = try {
         initDate!!
     } catch (e: NullPointerException) {
         LocalDate.ofInstant(remoteDateFormat.parse(googleSheetCache.yoSheet[1][1]).toInstant(), ZoneId.systemDefault())
@@ -49,16 +48,6 @@ class GoogleSheetYoCountRepository @Autowired constructor(
     } catch (e: RuntimeException) {
         logger.error("Failed to get threshold. Falling back to default of $DEFAULT_THRESHOLD", e)
         DEFAULT_THRESHOLD
-    }
-
-    override fun getStartDate(): LocalDate = try {
-        LocalDate.parse(googleSheetCache.yoSheet[1][1])
-    } catch (e: DateTimeParseException) {
-        logger.error("Failed to LocalDate from google sheet", e)
-        serviceInitDate
-    } catch (e: IndexOutOfBoundsException) {
-        logger.error("Failed to find count at position (1,1)", e)
-        serviceInitDate
     }
 
     override fun findCount(): Int = try {
