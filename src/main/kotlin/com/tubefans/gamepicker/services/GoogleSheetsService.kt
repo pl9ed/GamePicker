@@ -1,5 +1,6 @@
 package com.tubefans.gamepicker.services
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.END_ROW_TITLE
@@ -70,5 +71,17 @@ class GoogleSheetsService @Autowired constructor(
         }
 
         return scoreMap
+    }
+
+    fun writeRange(id: String, range: String, values: List<List<String>>) {
+        logger.info("Attempting to write to sheet at range {} for values {}", range, values.joinToString { it.joinToString() })
+        val body = ValueRange().setValues(values)
+        try {
+            sheets.spreadsheets().values().update(id, range, body)
+                .setValueInputOption("USER_ENTERED")
+                .execute()
+        } catch (e: GoogleJsonResponseException) {
+            logger.error("Failed to write to google sheet", e)
+        }
     }
 }

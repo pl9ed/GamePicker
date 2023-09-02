@@ -9,9 +9,7 @@ import discord4j.core.`object`.entity.Member
 import discord4j.core.`object`.entity.channel.MessageChannel
 import discord4j.core.spec.MessageCreateMono
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -63,7 +61,6 @@ class YoMessageHandlerTest {
     @BeforeEach
     fun setup() {
         yoCountRepository = mockk {
-            every { increment() } just (runs)
             every { getThreshold() } returns 5
         }
         handler = YoMessageHandler(client, yoCountRepository)
@@ -73,7 +70,7 @@ class YoMessageHandlerTest {
     @DisplayName("should increment count when message string matches")
     fun shouldIncrementOnMatch() {
         every { yoMessage.member } returns Optional.of(user)
-        every { yoCountRepository.findCount() } returns 0
+        every { yoCountRepository.increment() } returns 0
 
         handler.shouldRespond(yoMessage)
 
@@ -83,7 +80,7 @@ class YoMessageHandlerTest {
     @Test
     @DisplayName("should use case insensitive string matching")
     fun shouldMatchAnyCase() {
-        every { yoCountRepository.findCount() } returns 0
+        every { yoCountRepository.increment() } returns 0
 
         val message: MessageCreateEvent = mockk {
             every { message } returns mockk {
@@ -100,7 +97,7 @@ class YoMessageHandlerTest {
     @Test
     @DisplayName("should disregard whitespace for matching")
     fun shouldNotCheckWhitespace() {
-        every { yoCountRepository.findCount() } returns 0
+        every { yoCountRepository.increment() } returns 0
 
         val message: MessageCreateEvent = mockk {
             every { message } returns mockk {
@@ -144,7 +141,7 @@ class YoMessageHandlerTest {
             }
         }
 
-        every { yoCountRepository.findCount() } returns yoCountRepository.getThreshold() * Random.nextInt(10)
+        every { yoCountRepository.increment() } returns yoCountRepository.getThreshold() * Random.nextInt(10)
 
         assertTrue(handler.shouldRespond(message))
     }
@@ -159,7 +156,7 @@ class YoMessageHandlerTest {
             }
         }
 
-        every { yoCountRepository.findCount() } returns
+        every { yoCountRepository.increment() } returns
             (yoCountRepository.getThreshold() * Random.nextInt(10)) +
             Random.nextInt(1, yoCountRepository.getThreshold())
 
@@ -178,6 +175,7 @@ class YoMessageHandlerTest {
         every { yoMessage.message } returns mockk {
             every { channel } returns Mono.just(mockChannel)
         }
+        every { yoCountRepository.increment() } returns count
         every { yoCountRepository.findCount() } returns count
 
         val expectedMessage = String.format(

@@ -24,8 +24,8 @@ final class YoMessageHandler @Autowired constructor(
     }
 
     private val logger = LogManager.getLogger()
-
     private var initDate: LocalDate = LocalDate.now()
+    private var count = 0
 
     init {
         logger.info("Subscribing to message events ${this::class.simpleName}")
@@ -42,10 +42,10 @@ final class YoMessageHandler @Autowired constructor(
         if (message.member.get().isBot) return false
         logger.info("Sender was real user, incrementing count")
 
-        yoCountRepository.increment()
-        logger.info("Count currently at: ${yoCountRepository.findCount()}")
+        count = yoCountRepository.increment()
+        logger.info("Count currently at: $count")
 
-        return yoCountRepository.findCount() % yoCountRepository.getThreshold() == 0
+        return count != 0 && count % yoCountRepository.getThreshold() == 0
     }
 
     override fun handle(event: MessageCreateEvent): Mono<Void> {
