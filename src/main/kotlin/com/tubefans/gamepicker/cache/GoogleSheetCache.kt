@@ -18,6 +18,7 @@ class GoogleSheetCache @Autowired constructor(
         const val SHEET_ID = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
         const val DATA_RANGE = "Data"
         const val USER_RANGE = "id-mapping"
+        const val YO_RANGE = "yo-count"
         const val END_ROW_TITLE = "SUM"
     }
 
@@ -52,6 +53,13 @@ class GoogleSheetCache @Autowired constructor(
             }
 
             return field
+        }
+
+    // there's some delay in update timestamp, which matter for sequential yo counts
+    val yoSheet: List<List<String>>
+        get() {
+            logger.info("Getting data from yo sheet")
+            return googleSheetsService.getSheet(SHEET_ID, YO_RANGE).mapToString()
         }
 
     private fun shouldUpdate(lastUpdate: DateTime): Boolean =
