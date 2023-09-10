@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.END_ROW_TITLE
+import org.apache.http.client.HttpResponseException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,7 +18,12 @@ class GoogleSheetsService @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun getValueRange(id: String, range: String): ValueRange = sheets.spreadsheets().values()[id, range].execute()
+    fun getValueRange(id: String, range: String): ValueRange = try {
+        sheets.spreadsheets().values()[id, range].execute()
+    } catch (e: HttpResponseException) {
+        logger.error("Failed to get value range from Google API", e)
+        ValueRange()
+    }
 
     /**
      * @param id Google Sheet id
@@ -25,7 +31,12 @@ class GoogleSheetsService @Autowired constructor(
      * @return 2D array of objects from the sheet
      */
     fun getSheet(id: String, range: String): List<List<Any>> =
-        sheets.spreadsheets().values()[id, range].execute().getValues()
+        try {
+            sheets.spreadsheets().values()[id, range].execute().getValues()
+        } catch (e: HttpResponseException) {
+            logger.error("Failed to get sheet from Google API", e)
+            emptyList()
+        }
 
     /**
      * Helper function to process data from Google sheets
