@@ -24,7 +24,7 @@ final class YoMessageHandler @Autowired constructor(
     }
 
     private val logger = LogManager.getLogger()
-    private var initDate: LocalDate = yoCountRepository.serviceInitDate;
+    private var initDate: LocalDate = yoCountRepository.serviceInitDate
     private var count = 0
 
     init {
