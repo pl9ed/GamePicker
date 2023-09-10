@@ -62,6 +62,7 @@ class YoMessageHandlerTest {
     fun setup() {
         yoCountRepository = mockk {
             every { getThreshold() } returns 5
+            every { serviceInitDate } returns LocalDate.now()
         }
         handler = YoMessageHandler(client, yoCountRepository)
     }
