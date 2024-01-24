@@ -1,0 +1,4 @@
+ec2:
+  instance-map:
+    name1: id1
+    name2: id2

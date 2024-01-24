@@ -19,7 +19,7 @@ constructor(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val instanceMap: Map<String, String> = HashMap()
+    val instanceMap: MutableMap<String, String> = HashMap()
 
     fun startInstance(name: String): String {
         val instanceId = instanceMap[name.lowercase()] ?: throw NoSuchElementException("No instance found with name $name")
@@ -52,7 +52,7 @@ constructor(
     }
 
     fun stopInstance(name: String) {
-        val instanceId = instanceMap[name]
+        val instanceId = instanceMap[name.lowercase()] ?: throw NoSuchElementException("No instance found with name $name")
 
         val stopRequest = StopInstancesRequest.builder().instanceIds(instanceId).build()
         val stoppingInstances = ec2Client.stopInstances(stopRequest).stoppingInstances().map { it.instanceId() }
