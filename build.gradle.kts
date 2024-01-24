@@ -43,6 +43,11 @@ dependencies {
     implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
 
+    // TODO: move to library
+    implementation(platform("software.amazon.awssdk:bom:2.21.1"))
+    implementation("software.amazon.awssdk:aws-core")
+    implementation("software.amazon.awssdk:ec2")
+
     developmentOnly(springLibs.devtools)
     testImplementation(libs.kotlinxCoroutinesTest)
     testImplementation(springLibs.mockK)
