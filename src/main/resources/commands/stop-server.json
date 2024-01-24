@@ -1,0 +1,12 @@
+{
+  "name": "stop-server",
+  "description": "Stops an EC2 instance",
+  "options": [
+    {
+      "name": "name",
+      "description": "Name of the instance to stop. Valid options are palworld and dsc",
+      "type": 3,
+      "required": true
+    }
+  ]
+}
