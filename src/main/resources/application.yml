@@ -1,0 +1,4 @@
+ec2:
+  instance-map:
+    palworld: i-050f4fe2b9ad18c9c
+    dsc: i-085706dda5cd3ee43
