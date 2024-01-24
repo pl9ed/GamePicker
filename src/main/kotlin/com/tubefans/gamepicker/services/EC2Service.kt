@@ -18,10 +18,10 @@ class EC2Service @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    val instanceMap: Map<String, String> = HashMap();
+    val instanceMap: Map<String, String> = HashMap()
 
     fun startInstance(name: String): String {
-        val instanceId = instanceMap[name] ?: throw NoSuchElementException("No instance found with name $name")
+        val instanceId = instanceMap[name.lowercase()] ?: throw NoSuchElementException("No instance found with name $name")
 
         val startRequest = StartInstancesRequest.builder().instanceIds(instanceId).build()
 
@@ -35,16 +35,18 @@ class EC2Service @Autowired constructor(
             throwEc2Exception("Failed to start instance with name $name and id $instanceId")
         }
 
-        val describeRequest = DescribeInstancesRequest.builder().instanceIds(instanceId).build();
+        val describeRequest = DescribeInstancesRequest.builder().instanceIds(instanceId).build()
         val describeResponse = ec2Client.describeInstances(describeRequest)
 
         if (describeResponse.reservations().isEmpty() ||
-        !describeResponse.reservations()[0].hasInstances()) {
+            !describeResponse.reservations()[0].hasInstances()
+        ) {
             logger.warn("reservations: ${describeResponse.reservations().joinToString(",")}")
             throwEc2Exception("Failed to get starting instances")
         }
-
-        return describeResponse.reservations()[0].instances()[0].publicIpAddress()
+        val ip = describeResponse.reservations()[0].instances()[0].publicIpAddress()
+        logger.debug("Starting instance at $ip")
+        return ip
     }
 
     fun stopInstance(name: String) {

@@ -4,9 +4,9 @@
   "options": [
     {
       "name": "name",
-      "description": "Name of the instance to start. Valid options are PALWORLD and DSC",
+      "description": "Name of the instance to start. Valid options are palworld and dsc",
       "type": 3,
-      "required": false
+      "required": true
     }
   ]
 }
