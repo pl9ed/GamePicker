@@ -1,5 +1,6 @@
 package com.tubefans.gamepicker.commands
 
+import com.google.common.annotations.VisibleForTesting
 import com.tubefans.gamepicker.extensions.getStringOption
 import com.tubefans.gamepicker.services.EC2Service
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
@@ -30,7 +31,8 @@ constructor(
                 event.editReply(message)
             }.then()
 
-    private fun startServer(serverName: String): String {
+    @VisibleForTesting
+    fun startServer(serverName: String): String {
         return try {
             val ip = ec2Service.startInstance(serverName)
             getReplyString(ip)
@@ -42,8 +44,7 @@ constructor(
             "Failed to find EC2 instance associated with $serverName. Valid values are: ${
             ec2Service.instanceMap.keys.joinToString(
                 ", "
-            )
-            }"
+            )}"
         }
     }
 
