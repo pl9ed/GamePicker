@@ -49,5 +49,3 @@ jobs:
 
       - name: Deploy
         uses: google-github-actions/deploy-appengine@v2
-        with:
-          flags: '--no-cache'
