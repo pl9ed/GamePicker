@@ -18,7 +18,7 @@ class EC2Service @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private val instanceMap: Map<String, String> = HashMap();
+    val instanceMap: Map<String, String> = HashMap();
 
     fun startInstance(name: String): String {
         val instanceId = instanceMap[name] ?: throw NoSuchElementException("No instance found with name $name")
