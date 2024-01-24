@@ -11,41 +11,41 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException
 
 @Component
 class StartServerCommand
-    @Autowired
-    constructor(
-        private val ec2Service: EC2Service,
-    ) : SlashCommand {
-        companion object {
-            const val NAME_KEY = "name"
-        }
-
-        private val logger = LoggerFactory.getLogger(this::class.java)
-
-        override val name = "start-server"
-
-        override fun handle(event: ChatInputInteractionEvent): Mono<Void> =
-            event.deferReply()
-                .then(Mono.just(startServer(event.getStringOption(NAME_KEY))))
-                .flatMap { message ->
-                    event.editReply(message)
-                }.then()
-
-        private fun startServer(serverName: String): String {
-            return try {
-                val ip = ec2Service.startInstance(serverName)
-                getReplyString(ip)
-            } catch (e: AwsServiceException) {
-                logger.error("Failed to start instance", e)
-                "Failed to start instance: ${e.message}"
-            } catch (e: NoSuchElementException) {
-                logger.error("Failed to find EC2 instance associated with $serverName")
-                "Failed to find EC2 instance associated with $serverName. Valid values are: ${
-                    ec2Service.instanceMap.keys.joinToString(
-                        ", ",
-                    )
-                }"
-            }
-        }
-
-        private fun getReplyString(ip: String) = "Starting instance at ip address: $ip"
+@Autowired
+constructor(
+    private val ec2Service: EC2Service
+) : SlashCommand {
+    companion object {
+        const val NAME_KEY = "name"
     }
+
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    override val name = "start-server"
+
+    override fun handle(event: ChatInputInteractionEvent): Mono<Void> =
+        event.deferReply()
+            .then(Mono.just(startServer(event.getStringOption(NAME_KEY))))
+            .flatMap { message ->
+                event.editReply(message)
+            }.then()
+
+    private fun startServer(serverName: String): String {
+        return try {
+            val ip = ec2Service.startInstance(serverName)
+            getReplyString(ip)
+        } catch (e: AwsServiceException) {
+            logger.error("Failed to start instance", e)
+            "Failed to start instance: ${e.message}"
+        } catch (e: NoSuchElementException) {
+            logger.error("Failed to find EC2 instance associated with $serverName")
+            "Failed to find EC2 instance associated with $serverName. Valid values are: ${
+            ec2Service.instanceMap.keys.joinToString(
+                ", "
+            )
+            }"
+        }
+    }
+
+    private fun getReplyString(ip: String) = "Starting instance at ip address: $ip"
+}
