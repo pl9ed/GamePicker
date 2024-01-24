@@ -10,39 +10,42 @@ import reactor.core.publisher.Mono
 import software.amazon.awssdk.awscore.exception.AwsServiceException
 
 @Component
-class StartServerCommand @Autowired constructor(
-    private val ec2Service: EC2Service
-) : SlashCommand {
+class StartServerCommand
+    @Autowired
+    constructor(
+        private val ec2Service: EC2Service,
+    ) : SlashCommand {
+        companion object {
+            const val NAME_KEY = "name"
+        }
 
-    companion object {
-        const val NAME_KEY = "name"
-    }
+        private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+        override val name = "start-server"
 
-    override val name = "start-server"
+        override fun handle(event: ChatInputInteractionEvent): Mono<Void> =
+            event.deferReply()
+                .then(Mono.just(startServer(event.getStringOption(NAME_KEY))))
+                .flatMap { message ->
+                    event.editReply(message)
+                }.then()
 
-    override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
-        val serverName: String = event.getStringOption(NAME_KEY)
-        val message = try {
-            val ip = ec2Service.startInstance(serverName)
-            Mono.just(getReplyString(ip))
-        } catch (e: AwsServiceException) {
-            logger.error("Failed to start instance", e)
-            Mono.just("Failed to start instance: ${e.message}")
-        } catch (e: NoSuchElementException) {
-            logger.error("Failed to find EC2 instance associated with $serverName")
-            Mono.just(
+        private fun startServer(serverName: String): String {
+            return try {
+                val ip = ec2Service.startInstance(serverName)
+                getReplyString(ip)
+            } catch (e: AwsServiceException) {
+                logger.error("Failed to start instance", e)
+                "Failed to start instance: ${e.message}"
+            } catch (e: NoSuchElementException) {
+                logger.error("Failed to find EC2 instance associated with $serverName")
                 "Failed to find EC2 instance associated with $serverName. Valid values are: ${
-                ec2Service.instanceMap.keys.joinToString(
-                    ", "
-                )
+                    ec2Service.instanceMap.keys.joinToString(
+                        ", ",
+                    )
                 }"
-            )
-        }.block()!!
-        return event.reply()
-            .withContent(message)
-    }
+            }
+        }
 
-    private fun getReplyString(ip: String) = "Starting instance at ip address: $ip"
-}
+        private fun getReplyString(ip: String) = "Starting instance at ip address: $ip"
+    }
