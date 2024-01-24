@@ -1,0 +1,12 @@
+{
+  "name": "start-server",
+  "description": "Starts an EC2 instance",
+  "options": [
+    {
+      "name": "name",
+      "description": "Name of the instance to start. Valid options are PALWORLD and DSC",
+      "type": 3,
+      "required": false
+    }
+  ]
+}
