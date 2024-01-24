@@ -48,4 +48,4 @@ jobs:
           credentials_json: ${{ secrets.CREDENTIALS_JSON }}
 
       - name: Deploy
-        uses: google-github-actions/deploy-appengine@v1
+        uses: google-github-actions/deploy-appengine@v2
