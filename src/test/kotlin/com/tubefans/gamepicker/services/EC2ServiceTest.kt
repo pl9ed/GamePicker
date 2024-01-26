@@ -58,7 +58,7 @@ class EC2ServiceTest {
                 every { reservations() } returns listOf(mockReservation)
             }
 
-        assertEquals(ip, service.startInstance(serverName))
+        assertEquals(ip, service.startInstance(serverName).block())
     }
 
     @Test
@@ -89,7 +89,7 @@ class EC2ServiceTest {
                 every { reservations() } returns listOf(mockReservation)
             }
 
-        assertEquals(ip, service.startInstance(serverName.uppercase()))
+        assertEquals(ip, service.startInstance(serverName.uppercase()).block())
     }
 
     @Test
@@ -116,7 +116,7 @@ class EC2ServiceTest {
             }
 
         assertThrows(Ec2Exception::class.java) {
-            service.startInstance(serverName)
+            service.startInstance(serverName).block()
         }
     }
 
@@ -133,7 +133,7 @@ class EC2ServiceTest {
             }
 
         assertThrows(Ec2Exception::class.java) {
-            service.startInstance(serverName)
+            service.startInstance(serverName).block()
         }
     }
 
@@ -143,14 +143,14 @@ class EC2ServiceTest {
             .build()
 
         assertThrows(AwsServiceException::class.java) {
-            service.startInstance(serverName)
+            service.startInstance(serverName).block()
         }
     }
 
     @Test
     fun `should throw NoSuchElementException when calling startInstance() if map doesn't contain name`() {
         assertThrows(NoSuchElementException::class.java) {
-            service.startInstance("aaa")
+            service.startInstance("aaa").block()
         }
     }
 
@@ -166,7 +166,7 @@ class EC2ServiceTest {
             every { stoppingInstances() } returns listOf(mockInstance)
         }
 
-        assertDoesNotThrow { service.stopInstance(serverName) }
+        assertDoesNotThrow { service.stopInstance(serverName).block() }
     }
 
     @Test
@@ -181,7 +181,7 @@ class EC2ServiceTest {
             every { stoppingInstances() } returns listOf(mockInstance)
         }
 
-        assertDoesNotThrow { service.stopInstance(serverName.uppercase()) }
+        assertDoesNotThrow { service.stopInstance(serverName.uppercase()).block() }
     }
 
     @Test
@@ -191,14 +191,14 @@ class EC2ServiceTest {
         }
 
         assertThrows(Ec2Exception::class.java) {
-            service.stopInstance(serverName)
+            service.stopInstance(serverName).block()
         }
     }
 
     @Test
     fun `should throw NoSuchElementException when calling stopInstance() if map doesn't contain name`() {
         assertThrows(NoSuchElementException::class.java) {
-            service.stopInstance("aaa")
+            service.stopInstance("aaa").block()
         }
     }
 }

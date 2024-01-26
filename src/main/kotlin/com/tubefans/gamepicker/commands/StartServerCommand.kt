@@ -1,6 +1,5 @@
 package com.tubefans.gamepicker.commands
 
-import com.google.common.annotations.VisibleForTesting
 import com.tubefans.gamepicker.extensions.getStringOption
 import com.tubefans.gamepicker.services.EC2Service
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
@@ -24,29 +23,32 @@ constructor(
 
     override val name = "start-server"
 
-    override fun handle(event: ChatInputInteractionEvent): Mono<Void> =
-        event.deferReply()
-            .then(Mono.just(startServer(event.getStringOption(NAME_KEY))))
-            .flatMap { message ->
+    override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
+        val serverName = event.getStringOption(NAME_KEY)
+        return event.deferReply()
+            .then(ec2Service.startInstance(serverName))
+            .map { ip ->
+                getReplyString(ip)
+            }.onErrorResume { e ->
+                logger.error("Failed to start instance for $serverName")
+                Mono.just(getErrorMessage(serverName, e))
+            }.flatMap { message ->
                 event.editReply(message)
             }.then()
-
-    @VisibleForTesting
-    fun startServer(serverName: String): String {
-        return try {
-            val ip = ec2Service.startInstance(serverName)
-            getReplyString(ip)
-        } catch (e: AwsServiceException) {
-            logger.error("Failed to start instance", e)
-            "Failed to start instance: ${e.message}"
-        } catch (e: NoSuchElementException) {
-            logger.error("Failed to find EC2 instance associated with $serverName")
-            "Failed to find EC2 instance associated with $serverName. Valid values are: ${
-            ec2Service.instanceMap.keys.joinToString(
-                ", "
-            )}"
-        }
     }
+
+    private fun getErrorMessage(serverName: String, e: Throwable): String =
+        when (e) {
+            is AwsServiceException -> "Failed to start instance: ${e.message}"
+            is NoSuchElementException ->
+                "Failed to find EC2 instance associated with $serverName. Valid values are: ${
+                ec2Service.instanceMap.keys.joinToString(
+                    ", "
+                )
+                }"
+
+            else -> "Unhandled exception ${e::class.simpleName}: ${e.message}"
+        }
 
     private fun getReplyString(ip: String) = "Starting instance at ip address: $ip"
 }

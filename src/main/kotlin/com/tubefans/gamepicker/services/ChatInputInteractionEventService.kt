@@ -2,6 +2,7 @@ package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.dto.DiscordUser
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
+import discord4j.core.`object`.entity.channel.MessageChannel
 import discord4j.core.`object`.entity.channel.VoiceChannel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.filter
@@ -21,6 +22,9 @@ class ChatInputInteractionEventService @Autowired constructor(
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
+
+    fun getCommandMessageChannel(event: ChatInputInteractionEvent): Mono<MessageChannel> =
+        event.interaction.channel
 
     fun getCurrentChannel(event: ChatInputInteractionEvent): VoiceChannel? =
         event.interaction.member.get()

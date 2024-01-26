@@ -6,7 +6,6 @@ import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Mono
 
 @Component
 final class CommandListener @Autowired constructor(
@@ -19,11 +18,12 @@ final class CommandListener @Autowired constructor(
     init {
         logger.info("Subscribing to commands: ${commands.joinToString { it.name }}")
         client.on(ChatInputInteractionEvent::class.java, this::handle)
+            .doOnEach {
+                System.gc() // ¯\_(ツ)_/¯ blame Connor
+            }
             .subscribe()
     }
 
-    private fun handle(event: ChatInputInteractionEvent): Mono<Void> {
-        logger.info("Handling event {}", event.commandName)
-        return commands.first { it.name == event.commandName }.handle(event)
-    }
+    private fun handle(event: ChatInputInteractionEvent) =
+        commands.first { it.name == event.commandName }.handle(event)
 }
