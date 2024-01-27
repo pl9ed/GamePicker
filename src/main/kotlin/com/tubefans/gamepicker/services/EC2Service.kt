@@ -1,18 +1,23 @@
 package com.tubefans.gamepicker.services
 
+import com.tubefans.gamepicker.exceptions.AwsTransitionException
+import discord4j.core.`object`.entity.channel.MessageChannel
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import reactor.util.retry.RetrySpec
 import software.amazon.awssdk.awscore.exception.AwsServiceException
 import software.amazon.awssdk.services.ec2.Ec2Client
 import software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusRequest
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest
 import software.amazon.awssdk.services.ec2.model.Ec2Exception
+import software.amazon.awssdk.services.ec2.model.InstanceStateName
 import software.amazon.awssdk.services.ec2.model.InstanceStatus
 import software.amazon.awssdk.services.ec2.model.StartInstancesRequest
 import software.amazon.awssdk.services.ec2.model.StopInstancesRequest
+import java.time.Duration
 
 @ConfigurationProperties(prefix = "ec2")
 @Service
@@ -90,6 +95,44 @@ constructor(
             logger.debug("state: {}", describeResponse.instanceStatuses()[0].instanceState())
             describeResponse.instanceStatuses()[0]
         }
+
+    fun sendConfirmationMessage(serverName: String, channelMono: Mono<MessageChannel>, desiredState: InstanceStateName) =
+        getInstanceStatus(serverName)
+            .map { it.instanceState() }
+            .handle { status, sink ->
+                if (status.name() == desiredState) {
+                    sink.next(status)
+                } else {
+                    sink.error(
+                        AwsTransitionException(
+                            serverName,
+                            desiredState.name,
+                            status.name().name
+                        )
+                    )
+                }
+            }.retryWhen(
+                RetrySpec
+                    .backoff(5, Duration.ofSeconds(10))
+                    .doBeforeRetry { signal ->
+                        logger.warn(
+                            "Retrying attempt ${signal.totalRetries()} for $serverName to be $desiredState",
+                            signal.failure()
+                        )
+                    }.onRetryExhaustedThrow { _, signal ->
+                        AwsTransitionException("$serverName still not $desiredState after ${signal.totalRetries()} attempts")
+                    }
+            ).map { state ->
+                "$serverName server now ${state.name()}"
+            }.onErrorResume { e ->
+                logger.warn("Server $serverName still not $desiredState after max retries", e)
+                Mono.just(e.message ?: "Unhandled exception fetching $serverName status: $e")
+            }.zipWith(channelMono)
+            .flatMap { params ->
+                val confirmationMessage = params.t1
+                val channel = params.t2
+                channel.createMessage(confirmationMessage)
+            }
 
     private fun ec2Exception(message: String): AwsServiceException =
         Ec2Exception.builder()

@@ -1,7 +1,5 @@
 package com.tubefans.gamepicker.exceptions
 
-import software.amazon.awssdk.awscore.exception.AwsServiceException
-
 /**
  * Exception thrown when resource state does not match desired state
  */
