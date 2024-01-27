@@ -1,19 +1,24 @@
 package com.tubefans.gamepicker.services
 
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.mockito.ArgumentMatchers.eq
 import org.springframework.test.context.TestPropertySource
 import software.amazon.awssdk.awscore.exception.AwsServiceException
 import software.amazon.awssdk.services.ec2.Ec2Client
+import software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusRequest
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest
 import software.amazon.awssdk.services.ec2.model.Ec2Exception
 import software.amazon.awssdk.services.ec2.model.InstanceStateChange
+import software.amazon.awssdk.services.ec2.model.InstanceStatus
 import software.amazon.awssdk.services.ec2.model.Reservation
 import software.amazon.awssdk.services.ec2.model.StartInstancesRequest
 import software.amazon.awssdk.services.ec2.model.StopInstancesRequest
@@ -58,7 +63,7 @@ class EC2ServiceTest {
                 every { reservations() } returns listOf(mockReservation)
             }
 
-        assertEquals(ip, service.startInstance(serverName))
+        assertEquals(ip, service.startInstance(serverName).block())
     }
 
     @Test
@@ -89,7 +94,7 @@ class EC2ServiceTest {
                 every { reservations() } returns listOf(mockReservation)
             }
 
-        assertEquals(ip, service.startInstance(serverName.uppercase()))
+        assertEquals(ip, service.startInstance(serverName.uppercase()).block())
     }
 
     @Test
@@ -116,7 +121,7 @@ class EC2ServiceTest {
             }
 
         assertThrows(Ec2Exception::class.java) {
-            service.startInstance(serverName)
+            service.startInstance(serverName).block()
         }
     }
 
@@ -133,7 +138,7 @@ class EC2ServiceTest {
             }
 
         assertThrows(Ec2Exception::class.java) {
-            service.startInstance(serverName)
+            service.startInstance(serverName).block()
         }
     }
 
@@ -143,14 +148,14 @@ class EC2ServiceTest {
             .build()
 
         assertThrows(AwsServiceException::class.java) {
-            service.startInstance(serverName)
+            service.startInstance(serverName).block()
         }
     }
 
     @Test
     fun `should throw NoSuchElementException when calling startInstance() if map doesn't contain name`() {
         assertThrows(NoSuchElementException::class.java) {
-            service.startInstance("aaa")
+            service.startInstance("aaa").block()
         }
     }
 
@@ -166,7 +171,7 @@ class EC2ServiceTest {
             every { stoppingInstances() } returns listOf(mockInstance)
         }
 
-        assertDoesNotThrow { service.stopInstance(serverName) }
+        assertDoesNotThrow { service.stopInstance(serverName).block() }
     }
 
     @Test
@@ -181,7 +186,7 @@ class EC2ServiceTest {
             every { stoppingInstances() } returns listOf(mockInstance)
         }
 
-        assertDoesNotThrow { service.stopInstance(serverName.uppercase()) }
+        assertDoesNotThrow { service.stopInstance(serverName.uppercase()).block() }
     }
 
     @Test
@@ -191,14 +196,98 @@ class EC2ServiceTest {
         }
 
         assertThrows(Ec2Exception::class.java) {
-            service.stopInstance(serverName)
+            service.stopInstance(serverName).block()
         }
     }
 
     @Test
     fun `should throw NoSuchElementException when calling stopInstance() if map doesn't contain name`() {
         assertThrows(NoSuchElementException::class.java) {
-            service.stopInstance("aaa")
+            service.stopInstance("aaa").block()
         }
+    }
+
+    @Test
+    fun `should get instance status for matching servers`() {
+        val mockInstanceStatus: InstanceStatus = mockk {
+            every { instanceState() } returns mockk {
+                every { this@mockk.toString() } returns "state"
+            }
+        }
+
+        val expectedRequest = DescribeInstanceStatusRequest.builder()
+            .instanceIds(serverId)
+            .includeAllInstances(true)
+            .build()
+
+        every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returns mockk {
+            every { hasInstanceStatuses() } returns true
+            every { instanceStatuses() } returns listOf(mockInstanceStatus)
+        }
+
+        assertEquals(mockInstanceStatus, service.getInstanceStatus(serverName).block())
+    }
+
+    @Test
+    fun `should throw NoSuchElementException if serverName doesn't match any known servers`() {
+        assertThrows(NoSuchElementException::class.java) {
+            service.getInstanceStatus("not a server").block()
+        }
+
+        verify { mockEc2Client wasNot Called }
+    }
+
+    @Test
+    fun `should propagate exception if describeInstanceStatus() fails`() {
+        val expectedRequest = DescribeInstanceStatusRequest.builder()
+            .instanceIds(serverId)
+            .includeAllInstances(true)
+            .build()
+
+        every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } throws
+            AwsServiceException.builder().build()
+
+        assertThrows(AwsServiceException::class.java) {
+            service.getInstanceStatus(serverName).block()
+        }
+
+        verify(exactly = 1) { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) }
+    }
+
+    @Test
+    fun `should throw AwsServiceException if response does not contain instance status when getting server status`() {
+        val expectedRequest = DescribeInstanceStatusRequest.builder()
+            .instanceIds(serverId)
+            .includeAllInstances(true)
+            .build()
+
+        every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returns mockk {
+            every { hasInstanceStatuses() } returns false
+        }
+
+        assertThrows(AwsServiceException::class.java) {
+            service.getInstanceStatus(serverName).block()
+        }
+
+        verify(exactly = 1) { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) }
+    }
+
+    @Test
+    fun `should throw AwsServiceException if response list is empty when getting server status`() {
+        val expectedRequest = DescribeInstanceStatusRequest.builder()
+            .instanceIds(serverId)
+            .includeAllInstances(true)
+            .build()
+
+        every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returns mockk {
+            every { hasInstanceStatuses() } returns true
+            every { instanceStatuses() } returns emptyList()
+        }
+
+        assertThrows(AwsServiceException::class.java) {
+            service.getInstanceStatus(serverName).block()
+        }
+
+        verify(exactly = 1) { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) }
     }
 }

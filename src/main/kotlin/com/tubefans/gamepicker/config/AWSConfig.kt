@@ -1,10 +1,13 @@
 package com.tubefans.gamepicker.config
 
+import com.google.api.gax.rpc.ApiException
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.AwsCredentials
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.ec2.Ec2Client
 
@@ -23,22 +26,27 @@ constructor(
     fun ec2Client(): Ec2Client =
         Ec2Client.builder()
             .region(Region.US_EAST_1)
-            .credentialsProvider {
-                val accessId =
-                    googleSecretsManager.accessSecretVersion(ACCESS_ID_KEY)
-                        .payload
-                        .data
-                        .toStringUtf8()
-                val secret =
-                    googleSecretsManager.accessSecretVersion(SECRET_KEY)
-                        .payload
-                        .data
-                        .toStringUtf8()
-
-                AwsBasicCredentials.create(
-                    accessId,
-                    secret
-                )
-            }
+            .credentialsProvider { basicCredentials() }
             .build()
+
+    @Bean
+    fun basicCredentials(): AwsCredentials =
+        try {
+            val accessId =
+                googleSecretsManager.accessSecretVersion(ACCESS_ID_KEY)
+                    .payload
+                    .data
+                    .toStringUtf8()
+            val secret =
+                googleSecretsManager.accessSecretVersion(SECRET_KEY)
+                    .payload
+                    .data
+                    .toStringUtf8()
+            AwsBasicCredentials.create(
+                accessId,
+                secret
+            )
+        } catch (e: ApiException) {
+            DefaultCredentialsProvider.create().resolveCredentials()
+        }
 }
