@@ -228,14 +228,14 @@ class EC2ServiceTest {
         assertEquals(mockInstanceStatus, service.getInstanceStatus(serverName).block())
     }
 
-   @Test
-   fun `should throw NoSuchElementException if serverName doesn't match any known servers`() {
-       assertThrows(NoSuchElementException::class.java) {
-           service.getInstanceStatus("not a server").block()
-       }
+    @Test
+    fun `should throw NoSuchElementException if serverName doesn't match any known servers`() {
+        assertThrows(NoSuchElementException::class.java) {
+            service.getInstanceStatus("not a server").block()
+        }
 
-       verify { mockEc2Client wasNot Called }
-   }
+        verify { mockEc2Client wasNot Called }
+    }
 
     @Test
     fun `should propagate exception if describeInstanceStatus() fails`() {
@@ -245,7 +245,7 @@ class EC2ServiceTest {
             .build()
 
         every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } throws
-                AwsServiceException.builder().build()
+            AwsServiceException.builder().build()
 
         assertThrows(AwsServiceException::class.java) {
             service.getInstanceStatus(serverName).block()

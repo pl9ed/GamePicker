@@ -1,7 +1,6 @@
 package com.tubefans.gamepicker.commands
 
 import com.tubefans.gamepicker.extensions.getStringOption
-import com.tubefans.gamepicker.services.ChatInputInteractionEventService
 import com.tubefans.gamepicker.services.EC2Service
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import org.slf4j.LoggerFactory
@@ -14,11 +13,14 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException
 class StopServerCommand
 @Autowired
 constructor(
-    private val chatInputInteractionEventService: ChatInputInteractionEventService,
     private val ec2Service: EC2Service
 ) : SlashCommand {
     companion object {
         const val NAME_KEY = "name"
+
+        const val AWS_ERROR_TEMPLATE = "Failed to stop instance %s, %s: %s"
+        const val SERVER_NOT_FOUND_TEMPLATE = "Failed to find EC2 instance associated with %s. Valid values are: %s"
+        const val UNHANDLED_ERROR_TEMPLATE = "Uncaught exception when stopping instance %s, %s: %s"
     }
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -42,21 +44,17 @@ constructor(
         when (e) {
             is AwsServiceException -> {
                 logger.error("Failed to stop instance", e)
-                "Failed to stop instance: ${e.message}"
+                String.format(AWS_ERROR_TEMPLATE, serverName, e::class.simpleName, e.message)
             }
 
             is NoSuchElementException -> {
                 logger.error("Failed to find EC2 instance associated with $serverName", e)
-                "Failed to find EC2 instance associated with $serverName. Valid values are: ${
-                ec2Service.instanceMap.keys.joinToString(
-                    ", "
-                )
-                }"
+                String.format(SERVER_NOT_FOUND_TEMPLATE, serverName, ec2Service.instanceMap.keys.joinToString(","))
             }
 
             else -> {
                 logger.error("Uncaught exception for server $serverName", e)
-                "Uncaught exception when stopping instance $serverName: ${e.message}"
+                String.format(UNHANDLED_ERROR_TEMPLATE, serverName, e::class.simpleName, e.message)
             }
         }
 }

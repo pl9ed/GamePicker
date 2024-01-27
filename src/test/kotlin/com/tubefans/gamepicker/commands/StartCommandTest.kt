@@ -16,7 +16,7 @@ import org.mockito.Mockito.`when`
 import reactor.core.publisher.Mono
 import software.amazon.awssdk.awscore.exception.AwsServiceException
 
-class StartServiceTest : Discord4JEventTest() {
+class StartCommandTest : Discord4JEventTest() {
     private val serverName = "name1"
 
     private val mockMap = mutableMapOf(Pair(serverName, "id1"))
