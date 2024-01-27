@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import software.amazon.awssdk.awscore.exception.AwsServiceException
+import software.amazon.awssdk.services.ec2.model.InstanceStateName
 
 @Component
 class StartServerCommand
@@ -34,6 +35,8 @@ constructor(
                 Mono.just(getErrorMessage(serverName, e))
             }.flatMap { message ->
                 event.editReply(message)
+            }.flatMap { message ->
+                ec2Service.sendConfirmationMessage(serverName, message.channel, InstanceStateName.RUNNING)
             }.then()
     }
 
