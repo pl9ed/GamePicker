@@ -10,6 +10,7 @@ import discord4j.core.spec.InteractionReplyEditMono
 import discord4j.core.spec.InteractionReplyEditSpec
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
@@ -38,10 +39,11 @@ abstract class Discord4JEventTest {
         Mockito.`when`(inputEvent.deferReply()).thenReturn(InteractionCallbackSpecDeferReplyMono.of(outputEvent))
         Mockito.`when`(inputEvent.editReply(ArgumentMatchers.any(InteractionReplyEditSpec::class.java)))
             .thenReturn(Mono.empty())
-        Mockito.`when`(inputEvent.editReply(ArgumentMatchers.anyString())).thenReturn(InteractionReplyEditMono.of(outputEvent))
+        Mockito.`when`(inputEvent.editReply(anyString())).thenReturn(InteractionReplyEditMono.of(outputEvent))
         Mockito.`when`(inputEvent.deferReply(ArgumentMatchers.any(InteractionCallbackSpec::class.java)))
             .thenReturn(Mono.empty())
 
+        Mockito.`when`(outputEvent.editReply(anyString())).thenReturn(InteractionReplyEditMono.of(outputEvent))
         Mockito.`when`(outputEvent.editReply(ArgumentMatchers.any(InteractionReplyEditSpec::class.java)))
             .thenReturn(Mono.empty())
         Mockito.`when`(outputEvent.deferReply(ArgumentMatchers.any(InteractionCallbackSpec::class.java)))

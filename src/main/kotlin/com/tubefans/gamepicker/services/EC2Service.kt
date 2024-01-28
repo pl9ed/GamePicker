@@ -1,18 +1,23 @@
 package com.tubefans.gamepicker.services
 
+import com.tubefans.gamepicker.exceptions.AwsTransitionException
+import discord4j.core.`object`.entity.channel.MessageChannel
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import reactor.util.retry.RetrySpec
 import software.amazon.awssdk.awscore.exception.AwsServiceException
 import software.amazon.awssdk.services.ec2.Ec2Client
 import software.amazon.awssdk.services.ec2.model.DescribeInstanceStatusRequest
 import software.amazon.awssdk.services.ec2.model.DescribeInstancesRequest
 import software.amazon.awssdk.services.ec2.model.Ec2Exception
+import software.amazon.awssdk.services.ec2.model.InstanceStateName
 import software.amazon.awssdk.services.ec2.model.InstanceStatus
 import software.amazon.awssdk.services.ec2.model.StartInstancesRequest
 import software.amazon.awssdk.services.ec2.model.StopInstancesRequest
+import java.time.Duration
 
 @ConfigurationProperties(prefix = "ec2")
 @Service
@@ -21,6 +26,16 @@ class EC2Service
 constructor(
     private val ec2Client: Ec2Client
 ) {
+
+    companion object {
+        const val CONFIRMATION_MESSAGE_TEMPLATE = "%s server now %s"
+        const val RETRIES_EXHAUSTED_TEMPLATE = "%s still not %s after %d seconds"
+
+        const val MAX_RETRY_ATTEMPTS: Long = 9
+        val RETRY_INTERVAL: Duration = Duration.ofSeconds(10)
+        val TOTAL_RETRY_DURATION = RETRY_INTERVAL.seconds * MAX_RETRY_ATTEMPTS
+    }
+
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val instanceMap: MutableMap<String, String> = HashMap()
@@ -90,6 +105,51 @@ constructor(
             logger.debug("state: {}", describeResponse.instanceStatuses()[0].instanceState())
             describeResponse.instanceStatuses()[0]
         }
+
+    fun sendConfirmationMessage(
+        serverName: String,
+        channelMono: Mono<MessageChannel>,
+        desiredState: InstanceStateName
+    ) =
+        getInstanceStatus(serverName)
+            .map { it.instanceState() }
+            .handle { status, sink ->
+                if (status.name() == desiredState) {
+                    sink.next(String.format(CONFIRMATION_MESSAGE_TEMPLATE, serverName, status.name()))
+                } else {
+                    sink.error(
+                        AwsTransitionException(
+                            serverName,
+                            desiredState.toString(),
+                            status.name().toString()
+                        )
+                    )
+                }
+            }.retryWhen(
+                RetrySpec
+                    .fixedDelay(MAX_RETRY_ATTEMPTS, RETRY_INTERVAL)
+                    .filter {
+                        it is AwsServiceException || it is AwsTransitionException
+                    }.doBeforeRetry { signal ->
+                        logger.warn("Retrying attempt ${signal.totalRetries()} for $serverName to be $desiredState")
+                    }.onRetryExhaustedThrow { _, signal ->
+                        AwsTransitionException(
+                            String.format(
+                                RETRIES_EXHAUSTED_TEMPLATE,
+                                serverName,
+                                desiredState,
+                                RETRY_INTERVAL.seconds * signal.totalRetries()
+                            )
+                        )
+                    }
+            ).onErrorResume { e ->
+                Mono.just(e.message ?: "Unhandled exception fetching $serverName status: $e")
+            }.zipWith(channelMono)
+            .flatMap { params ->
+                val confirmationMessage = params.t1
+                val channel = params.t2
+                channel.createMessage(confirmationMessage)
+            }.then()
 
     private fun ec2Exception(message: String): AwsServiceException =
         Ec2Exception.builder()
