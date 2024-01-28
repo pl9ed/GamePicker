@@ -47,7 +47,7 @@ class StartCommandTest : Discord4JEventTest() {
     }
 
     @Test
-    fun `should return relevant error message when instance fails to start`() {
+    fun `should return relevant error message when instance fails to start due to aws exception`() {
         val errorMessage = "error message"
         val expectedMessage = "Failed to start instance: $errorMessage"
         every { mockService.startInstance(serverName) }.returns(
@@ -57,6 +57,30 @@ class StartCommandTest : Discord4JEventTest() {
                     .build()
             )
         )
+
+        `when`(inputEvent.options).thenReturn(listOf(option))
+        `when`(inputEvent.deferReply()).thenReturn(InteractionCallbackSpecDeferReplyMono.of(inputEvent))
+        `when`(inputEvent.editReply(expectedMessage)).thenReturn(InteractionReplyEditMono.of(inputEvent))
+
+        command.handle(inputEvent).block()
+
+        verify(exactly = 1) { mockService.startInstance(serverName) }
+        Mockito.verify(inputEvent, times(1)).options
+        Mockito.verify(inputEvent, atMostOnce()).deferReply()
+        Mockito.verify(inputEvent, atMostOnce()).editReply(expectedMessage)
+    }
+
+    @Test
+    fun `should return relevant error message when no instances are found`() {
+        val errorMessage = "error message"
+        val expectedMessage = String.format(
+            StartServerCommand.NO_ELEMENT_MESSAGE_TEMPLATE,
+            serverName,
+            mockMap.keys.joinToString(
+                ", "
+            )
+        )
+        every { mockService.startInstance(serverName) } returns Mono.error(NoSuchElementException(errorMessage))
 
         `when`(inputEvent.options).thenReturn(listOf(option))
         `when`(inputEvent.deferReply()).thenReturn(InteractionCallbackSpecDeferReplyMono.of(inputEvent))
