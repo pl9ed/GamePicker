@@ -52,6 +52,7 @@ dependencies {
     testImplementation(libs.kotlinxCoroutinesTest)
     testImplementation(springLibs.mockK)
     testImplementation(springLibs.starterTest)
+    testImplementation("org.mockito:mockito-inline:3.11.2")
     testImplementation(discord4jLibs.reactorTest)
 }
 
