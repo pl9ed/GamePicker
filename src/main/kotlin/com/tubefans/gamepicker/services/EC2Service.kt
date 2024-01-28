@@ -26,6 +26,15 @@ class EC2Service
 constructor(
     private val ec2Client: Ec2Client
 ) {
+
+    companion object {
+        const val CONFIRMATION_MESSAGE_TEMPLATE = "%s server now %s"
+        const val RETRIES_EXHAUSTED_TEMPLATE = "%s still not %s after %d seconds"
+
+        const val MAX_RETRY_ATTEMPTS: Long = 9
+        val RETRY_INTERVAL: Duration = Duration.ofSeconds(10)
+    }
+
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     val instanceMap: MutableMap<String, String> = HashMap()
@@ -96,12 +105,16 @@ constructor(
             describeResponse.instanceStatuses()[0]
         }
 
-    fun sendConfirmationMessage(serverName: String, channelMono: Mono<MessageChannel>, desiredState: InstanceStateName) =
+    fun sendConfirmationMessage(
+        serverName: String,
+        channelMono: Mono<MessageChannel>,
+        desiredState: InstanceStateName
+    ) =
         getInstanceStatus(serverName)
             .map { it.instanceState() }
             .handle { status, sink ->
                 if (status.name() == desiredState) {
-                    sink.next(status)
+                    sink.next(String.format(CONFIRMATION_MESSAGE_TEMPLATE, serverName, status.name()))
                 } else {
                     sink.error(
                         AwsTransitionException(
@@ -113,26 +126,32 @@ constructor(
                 }
             }.retryWhen(
                 RetrySpec
-                    .backoff(5, Duration.ofSeconds(10))
-                    .doBeforeRetry { signal ->
+                    .fixedDelay(MAX_RETRY_ATTEMPTS, RETRY_INTERVAL)
+                    .filter {
+                        it is AwsServiceException
+                    }.doBeforeRetry { signal ->
                         logger.warn(
                             "Retrying attempt ${signal.totalRetries()} for $serverName to be $desiredState",
                             signal.failure()
                         )
                     }.onRetryExhaustedThrow { _, signal ->
-                        AwsTransitionException("$serverName still not $desiredState after ${signal.totalRetries()} attempts")
+                        AwsTransitionException(
+                            String.format(
+                                RETRIES_EXHAUSTED_TEMPLATE,
+                                serverName,
+                                desiredState,
+                                RETRY_INTERVAL.seconds * MAX_RETRY_ATTEMPTS
+                            )
+                        )
                     }
-            ).map { state ->
-                "$serverName server now ${state.name()}"
-            }.onErrorResume { e ->
-                logger.warn("Server $serverName still not $desiredState after max retries", e)
+            ).onErrorResume { e ->
                 Mono.just(e.message ?: "Unhandled exception fetching $serverName status: $e")
             }.zipWith(channelMono)
             .flatMap { params ->
                 val confirmationMessage = params.t1
                 val channel = params.t2
                 channel.createMessage(confirmationMessage)
-            }
+            }.then()
 
     private fun ec2Exception(message: String): AwsServiceException =
         Ec2Exception.builder()
