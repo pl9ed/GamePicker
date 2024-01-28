@@ -417,6 +417,22 @@ class EC2ServiceTest {
         }
 
         @Test
+        fun `should not send follow up if getInstanceStatus() fails due no matching server name`() {
+            every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } throws NoSuchElementException()
+
+            StepVerifier.create(
+                service.sendConfirmationMessage(
+                    serverName,
+                    Mono.just(channel),
+                    InstanceStateName.STOPPED
+                )
+            ).verifyComplete()
+
+            verify(exactly = 1) { mockEc2Client.describeInstanceStatus(expectedRequest) }
+            Mockito.verifyNoInteractions(channel)
+        }
+
+        @Test
         fun `should propagate original exception if getInstanceStatus() fails`() {
             val exceptionMessage = "test exception"
             every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } throws RuntimeException(exceptionMessage)
