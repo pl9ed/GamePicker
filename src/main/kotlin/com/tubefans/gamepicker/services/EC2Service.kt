@@ -33,6 +33,7 @@ constructor(
 
         const val MAX_RETRY_ATTEMPTS: Long = 9
         val RETRY_INTERVAL: Duration = Duration.ofSeconds(10)
+        val TOTAL_RETRY_DURATION = RETRY_INTERVAL.seconds * MAX_RETRY_ATTEMPTS
     }
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -119,8 +120,8 @@ constructor(
                     sink.error(
                         AwsTransitionException(
                             serverName,
-                            desiredState.name,
-                            status.name().name
+                            desiredState.toString(),
+                            status.name().toString()
                         )
                     )
                 }
@@ -128,19 +129,16 @@ constructor(
                 RetrySpec
                     .fixedDelay(MAX_RETRY_ATTEMPTS, RETRY_INTERVAL)
                     .filter {
-                        it is AwsServiceException
+                        it is AwsServiceException || it is AwsTransitionException
                     }.doBeforeRetry { signal ->
-                        logger.warn(
-                            "Retrying attempt ${signal.totalRetries()} for $serverName to be $desiredState",
-                            signal.failure()
-                        )
+                        logger.warn("Retrying attempt ${signal.totalRetries()} for $serverName to be $desiredState")
                     }.onRetryExhaustedThrow { _, signal ->
                         AwsTransitionException(
                             String.format(
                                 RETRIES_EXHAUSTED_TEMPLATE,
                                 serverName,
                                 desiredState,
-                                RETRY_INTERVAL.seconds * MAX_RETRY_ATTEMPTS
+                                RETRY_INTERVAL.seconds * signal.totalRetries()
                             )
                         )
                     }

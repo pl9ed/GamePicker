@@ -4,6 +4,7 @@ import com.tubefans.gamepicker.services.EC2Service.Companion.CONFIRMATION_MESSAG
 import com.tubefans.gamepicker.services.EC2Service.Companion.MAX_RETRY_ATTEMPTS
 import com.tubefans.gamepicker.services.EC2Service.Companion.RETRIES_EXHAUSTED_TEMPLATE
 import com.tubefans.gamepicker.services.EC2Service.Companion.RETRY_INTERVAL
+import com.tubefans.gamepicker.services.EC2Service.Companion.TOTAL_RETRY_DURATION
 import discord4j.core.`object`.entity.channel.MessageChannel
 import discord4j.core.spec.MessageCreateMono
 import discord4j.core.spec.MessageCreateSpec
@@ -423,9 +424,8 @@ class EC2ServiceTest {
 
         @Test
         fun `should propagate AwsServiceException once retries are exhausted`() {
-            val retryDuration = RETRY_INTERVAL.seconds * MAX_RETRY_ATTEMPTS
             val expectedMessage =
-                String.format(RETRIES_EXHAUSTED_TEMPLATE, serverName, desiredState, retryDuration)
+                String.format(RETRIES_EXHAUSTED_TEMPLATE, serverName, desiredState, TOTAL_RETRY_DURATION)
 
             every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returns failureResponse
 
@@ -436,7 +436,7 @@ class EC2ServiceTest {
                     InstanceStateName.STOPPED
                 )
             }.expectSubscription()
-                .expectNoEvent(Duration.ofSeconds(retryDuration))
+                .expectNoEvent(Duration.ofSeconds(TOTAL_RETRY_DURATION))
                 .expectNext()
                 .verifyComplete()
 
