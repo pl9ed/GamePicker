@@ -143,7 +143,11 @@ constructor(
                         )
                     }
             ).onErrorResume { e ->
-                Mono.just(e.message ?: "Unhandled exception fetching $serverName status: $e")
+                if (e is NoSuchElementException) {
+                    Mono.empty()
+                } else {
+                    Mono.just(e.message ?: "Unhandled exception fetching $serverName status: $e")
+                }
             }.zipWith(channelMono)
             .flatMap { params ->
                 val confirmationMessage = params.t1
