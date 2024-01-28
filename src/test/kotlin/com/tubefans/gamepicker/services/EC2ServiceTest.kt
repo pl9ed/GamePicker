@@ -322,8 +322,16 @@ class EC2ServiceTest {
     inner class SendConfirmationMessage {
 
         private val desiredState = InstanceStateName.STOPPED
+        private val otherState = InstanceStateName.RUNNING
 
-        private val mockInstanceStatus: InstanceStatus = mockk {
+        private val mockNonMatchingInstanceStatus: InstanceStatus = mockk {
+            every { instanceState() } returns mockk {
+                every { name() } returns otherState
+                every { this@mockk.toString() } returns "other-state"
+            }
+        }
+
+        private val mockMatchingInstanceStatus: InstanceStatus = mockk {
             every { instanceState() } returns mockk {
                 every { name() } returns desiredState
                 every { this@mockk.toString() } returns "state"
@@ -341,7 +349,7 @@ class EC2ServiceTest {
         }
         private val successResponse: DescribeInstanceStatusResponse = mockk {
             every { hasInstanceStatuses() } returns true
-            every { instanceStatuses() } returns listOf(mockInstanceStatus)
+            every { instanceStatuses() } returns listOf(mockMatchingInstanceStatus)
         }
 
         private val channel: MessageChannel = mock(MessageChannel::class.java)
@@ -369,6 +377,42 @@ class EC2ServiceTest {
             ).verifyComplete()
 
             verify(exactly = 1) { mockEc2Client.describeInstanceStatus(expectedRequest) }
+            Mockito.verify(channel, times(1)).createMessage(expectedMessage)
+        }
+
+        @Test
+        fun `should retry if state does not match`() {
+            val expectedMessage = String.format(CONFIRMATION_MESSAGE_TEMPLATE, serverName, desiredState)
+            val notMatchingResponse: DescribeInstanceStatusResponse = mockk {
+                every { hasInstanceStatuses() } returns true
+                every { instanceStatuses() } returns listOf(mockNonMatchingInstanceStatus)
+            }
+            val responses = generateSequence { notMatchingResponse }
+                .take(MAX_RETRY_ATTEMPTS.toInt() - 1)
+                .toMutableList()
+
+            responses.add(successResponse)
+
+            every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returnsMany responses
+
+            val stepVerifier = StepVerifier.withVirtualTime {
+                service.sendConfirmationMessage(
+                    serverName,
+                    Mono.just(channel),
+                    InstanceStateName.STOPPED
+                )
+            }.expectSubscription()
+
+            var attempts = 0
+
+            while (attempts < MAX_RETRY_ATTEMPTS - 1) {
+                stepVerifier.expectNoEvent(RETRY_INTERVAL)
+                attempts++
+            }
+
+            stepVerifier.expectNext().verifyComplete()
+
+            verify(exactly = MAX_RETRY_ATTEMPTS.toInt()) { mockEc2Client.describeInstanceStatus(expectedRequest) }
             Mockito.verify(channel, times(1)).createMessage(expectedMessage)
         }
 
