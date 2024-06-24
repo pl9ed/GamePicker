@@ -3,7 +3,6 @@ package com.tubefans.gamepicker.utils
 import discord4j.discordjson.json.ApplicationCommandRequest
 
 object CommandStringFormatter {
-
     fun ApplicationCommandRequest.toRowString(): String {
         val row = StringBuilder("/${this.name()} ")
 
@@ -19,11 +18,12 @@ object CommandStringFormatter {
     }
 
     fun ApplicationCommandRequest.toHelpString(): String {
-        val description = if (!this.description().isAbsent) {
-            "${this.description().get()}\n"
-        } else {
-            ""
-        }
+        val description =
+            if (!this.description().isAbsent) {
+                "${this.description().get()}\n"
+            } else {
+                ""
+            }
         val strBuilder = StringBuilder(description)
 
         if (!this.options().isAbsent) {

@@ -15,10 +15,9 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import reactor.core.publisher.Mono
-import java.util.*
+import java.util.Optional
 
 abstract class Discord4JEventTest {
-
     @Mock
     protected lateinit var inputEvent: ChatInputInteractionEvent
 
@@ -37,16 +36,20 @@ abstract class Discord4JEventTest {
         Mockito.`when`(option.value).thenReturn(Optional.of(optionValue))
         Mockito.`when`(inputEvent.options).thenReturn(listOf(option))
         Mockito.`when`(inputEvent.deferReply()).thenReturn(InteractionCallbackSpecDeferReplyMono.of(outputEvent))
-        Mockito.`when`(inputEvent.editReply(ArgumentMatchers.any(InteractionReplyEditSpec::class.java)))
+        Mockito
+            .`when`(inputEvent.editReply(ArgumentMatchers.any(InteractionReplyEditSpec::class.java)))
             .thenReturn(Mono.empty())
         Mockito.`when`(inputEvent.editReply(anyString())).thenReturn(InteractionReplyEditMono.of(outputEvent))
-        Mockito.`when`(inputEvent.deferReply(ArgumentMatchers.any(InteractionCallbackSpec::class.java)))
+        Mockito
+            .`when`(inputEvent.deferReply(ArgumentMatchers.any(InteractionCallbackSpec::class.java)))
             .thenReturn(Mono.empty())
 
         Mockito.`when`(outputEvent.editReply(anyString())).thenReturn(InteractionReplyEditMono.of(outputEvent))
-        Mockito.`when`(outputEvent.editReply(ArgumentMatchers.any(InteractionReplyEditSpec::class.java)))
+        Mockito
+            .`when`(outputEvent.editReply(ArgumentMatchers.any(InteractionReplyEditSpec::class.java)))
             .thenReturn(Mono.empty())
-        Mockito.`when`(outputEvent.deferReply(ArgumentMatchers.any(InteractionCallbackSpec::class.java)))
+        Mockito
+            .`when`(outputEvent.deferReply(ArgumentMatchers.any(InteractionCallbackSpec::class.java)))
             .thenReturn(Mono.empty())
     }
 }

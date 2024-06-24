@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GoogleSheetsServiceTest {
-
     private var sheets: Sheets = mockk()
 
     private var googleSheetsService: GoogleSheetsService = GoogleSheetsService(sheets)
@@ -24,10 +23,11 @@ class GoogleSheetsServiceTest {
     init {
         val text = String(javaClass.getResourceAsStream(testSheetPath)!!.readBytes())
         text.split("\n").forEach { line ->
-            val row = line.replace("\r", "")
-                .replace("\n", "")
-                .split(",")
-                .toMutableList()
+            val row =
+                line.replace("\r", "")
+                    .replace("\n", "")
+                    .split(",")
+                    .toMutableList()
             mockSheet.add(row)
         }
     }
@@ -54,65 +54,76 @@ class GoogleSheetsServiceTest {
 
     @Test
     fun `should map 2d array to k=user, v=game scores`() {
-        val list = listOf(
-            listOf("", "game1", "game2"),
-            listOf("", "genre", "genre"),
-            listOf("USER1", "x", "x"),
-            listOf("USER2", "10", "0")
-        )
-
-        val expectedMap = mapOf(
-            "USER1" to listOf(
-                Pair("game1", 10L),
-                Pair("game2", 10L)
-            ),
-            "USER2" to listOf(
-                Pair("game1", 10L),
-                Pair("game2", 0L)
+        val list =
+            listOf(
+                listOf("", "game1", "game2"),
+                listOf("", "genre", "genre"),
+                listOf("USER1", "x", "x"),
+                listOf("USER2", "10", "0"),
             )
-        )
+
+        val expectedMap =
+            mapOf(
+                "USER1" to
+                    listOf(
+                        Pair("game1", 10L),
+                        Pair("game2", 10L),
+                    ),
+                "USER2" to
+                    listOf(
+                        Pair("game1", 10L),
+                        Pair("game2", 0L),
+                    ),
+            )
 
         assertEquals(expectedMap, googleSheetsService.mapToScores(list))
     }
 
     @Test
     fun `should skip users with no score entries`() {
-        val list = listOf(
-            listOf("", "game1", "game2"),
-            listOf("", "genre", "genre"),
-            listOf("USER1", "x", "x"),
-            listOf("USER2", "", "")
-        )
-
-        val expectedMap = mapOf(
-            "USER1" to listOf(
-                Pair("game1", 10L),
-                Pair("game2", 10L)
+        val list =
+            listOf(
+                listOf("", "game1", "game2"),
+                listOf("", "genre", "genre"),
+                listOf("USER1", "x", "x"),
+                listOf("USER2", "", ""),
             )
-        )
+
+        val expectedMap =
+            mapOf(
+                "USER1" to
+                    listOf(
+                        Pair("game1", 10L),
+                        Pair("game2", 10L),
+                    ),
+            )
 
         assertEquals(expectedMap, googleSheetsService.mapToScores(list))
     }
 
     @Test
     fun `should handle blank game cells`() {
-        val list = listOf(
-            listOf("", "game1", "", "game2"),
-            listOf("", "genre", "genre", "genre"),
-            listOf("USER1", "x", "", "x"),
-            listOf("USER2", "10", "", "0")
-        )
-
-        val expectedMap = mapOf(
-            "USER1" to listOf(
-                Pair("game1", 10L),
-                Pair("game2", 10L)
-            ),
-            "USER2" to listOf(
-                Pair("game1", 10L),
-                Pair("game2", 0L)
+        val list =
+            listOf(
+                listOf("", "game1", "", "game2"),
+                listOf("", "genre", "genre", "genre"),
+                listOf("USER1", "x", "", "x"),
+                listOf("USER2", "10", "", "0"),
             )
-        )
+
+        val expectedMap =
+            mapOf(
+                "USER1" to
+                    listOf(
+                        Pair("game1", 10L),
+                        Pair("game2", 10L),
+                    ),
+                "USER2" to
+                    listOf(
+                        Pair("game1", 10L),
+                        Pair("game2", 0L),
+                    ),
+            )
 
         assertEquals(expectedMap, googleSheetsService.mapToScores(list))
     }

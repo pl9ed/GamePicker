@@ -12,38 +12,39 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class DiscordClientConfig @Autowired constructor(
-    private val secretManagerServiceClient: SecretManagerServiceClient
-) {
-
-    companion object {
-        const val BOT_TOKEN_KEY = "projects/891049573637/secrets/BOT_TOKEN/versions/latest"
-    }
-
-    @Bean
-    fun gatewayDiscordClient(): GatewayDiscordClient {
-        // TODO: set up environment at some point
-        val localBuild = System.getenv("local").toBoolean()
-        val token = if (localBuild) {
-            System.getenv("BOT_TOKEN")
-        } else {
-            secretManagerServiceClient.accessSecretVersion(BOT_TOKEN_KEY)
-                .payload
-                .data
-                .toStringUtf8()
+class DiscordClientConfig
+    @Autowired
+    constructor(
+        private val secretManagerServiceClient: SecretManagerServiceClient,
+    ) {
+        companion object {
+            const val BOT_TOKEN_KEY = "projects/891049573637/secrets/BOT_TOKEN/versions/latest"
         }
 
-        return DiscordClient.create(token)
-            .gateway()
-            .setInitialPresence {
-                ClientPresence.online(ClientActivity.listening("to /commands"))
-            }
-            .setEnabledIntents(IntentSet.all())
-            .login()
-            .block()!!
-    }
+        @Bean
+        fun gatewayDiscordClient(): GatewayDiscordClient {
+            // TODO: set up environment at some point
+            val localBuild = System.getenv("local").toBoolean()
+            val token =
+                if (localBuild) {
+                    System.getenv("BOT_TOKEN")
+                } else {
+                    secretManagerServiceClient.accessSecretVersion(BOT_TOKEN_KEY)
+                        .payload
+                        .data
+                        .toStringUtf8()
+                }
 
-    @Bean
-    fun discordRestClient(client: GatewayDiscordClient): RestClient =
-        client.restClient
-}
+            return DiscordClient.create(token)
+                .gateway()
+                .setInitialPresence {
+                    ClientPresence.online(ClientActivity.listening("to /commands"))
+                }
+                .setEnabledIntents(IntentSet.all())
+                .login()
+                .block()!!
+        }
+
+        @Bean
+        fun discordRestClient(client: GatewayDiscordClient): RestClient = client.restClient
+    }

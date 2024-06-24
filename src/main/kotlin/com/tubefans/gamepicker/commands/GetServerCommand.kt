@@ -10,28 +10,30 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
 @Component
-class GetServerCommand @Autowired constructor(
-    private val ec2Service: EC2Service
-) : SlashCommand {
-    companion object {
-        const val NAME_KEY = "name"
-        const val ERROR_TEMPLATE = "Failed to get instance status for %s: %s, %s"
-    }
+class GetServerCommand
+    @Autowired
+    constructor(
+        private val ec2Service: EC2Service,
+    ) : SlashCommand {
+        companion object {
+            const val NAME_KEY = "name"
+            const val ERROR_TEMPLATE = "Failed to get instance status for %s: %s, %s"
+        }
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
-    override val name = "get-server"
+        private val logger = LoggerFactory.getLogger(this::class.java)
+        override val name = "get-server"
 
-    override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
-        val serverName = event.getStringOption(NAME_KEY)
-        return event.deferReply()
-            .then(ec2Service.getInstanceStatus(serverName))
-            .map { status ->
-                status.toDisplayString(serverName)
-            }.onErrorResume { e ->
-                logger.error("Uncaught exception getting instance status", e)
-                Mono.just(String.format(ERROR_TEMPLATE, serverName, e::class.simpleName, e.message))
-            }.flatMap { message ->
-                event.editReply(message)
-            }.then()
+        override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
+            val serverName = event.getStringOption(NAME_KEY)
+            return event.deferReply()
+                .then(ec2Service.getInstanceStatus(serverName))
+                .map { status ->
+                    status.toDisplayString(serverName)
+                }.onErrorResume { e ->
+                    logger.error("Uncaught exception getting instance status", e)
+                    Mono.just(String.format(ERROR_TEMPLATE, serverName, e::class.simpleName, e.message))
+                }.flatMap { message ->
+                    event.editReply(message)
+                }.then()
+        }
     }
-}

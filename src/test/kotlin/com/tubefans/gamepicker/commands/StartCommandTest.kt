@@ -20,9 +20,10 @@ class StartCommandTest : Discord4JEventTest() {
     private val serverName = "name1"
 
     private val mockMap = mutableMapOf(Pair(serverName, "id1"))
-    private val mockService: EC2Service = mockk() {
-        every { instanceMap } returns mockMap
-    }
+    private val mockService: EC2Service =
+        mockk {
+            every { instanceMap } returns mockMap
+        }
     private val command = StartServerCommand(mockService)
 
     private val ip = "ip address"
@@ -54,8 +55,8 @@ class StartCommandTest : Discord4JEventTest() {
             Mono.error(
                 AwsServiceException.builder()
                     .message(errorMessage)
-                    .build()
-            )
+                    .build(),
+            ),
         )
 
         `when`(inputEvent.options).thenReturn(listOf(option))
@@ -73,13 +74,14 @@ class StartCommandTest : Discord4JEventTest() {
     @Test
     fun `should return relevant error message when no instances are found`() {
         val errorMessage = "error message"
-        val expectedMessage = String.format(
-            StartServerCommand.NO_ELEMENT_MESSAGE_TEMPLATE,
-            serverName,
-            mockMap.keys.joinToString(
-                ", "
+        val expectedMessage =
+            String.format(
+                StartServerCommand.NO_ELEMENT_MESSAGE_TEMPLATE,
+                serverName,
+                mockMap.keys.joinToString(
+                    ", ",
+                ),
             )
-        )
         every { mockService.startInstance(serverName) } returns Mono.error(NoSuchElementException(errorMessage))
 
         `when`(inputEvent.options).thenReturn(listOf(option))
@@ -101,8 +103,8 @@ class StartCommandTest : Discord4JEventTest() {
 
         every { mockService.startInstance(serverName) }.returns(
             Mono.error(
-                NoSuchElementException()
-            )
+                NoSuchElementException(),
+            ),
         )
 
         `when`(inputEvent.options).thenReturn(listOf(option))

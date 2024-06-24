@@ -12,10 +12,10 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 
 class GoogleSheetCacheTest {
-
-    private val googleSheetsService: GoogleSheetsService = mockk {
-        every { getSheet(any(), any()) } returns emptyList()
-    }
+    private val googleSheetsService: GoogleSheetsService =
+        mockk {
+            every { getSheet(any(), any()) } returns emptyList()
+        }
     private val driveService: GoogleDriveService = mockk()
 
     private val later = System.currentTimeMillis()
@@ -23,10 +23,11 @@ class GoogleSheetCacheTest {
 
     @Test
     fun `should update sheet when lastUpdate is greater than current value`() {
-        every { driveService.getLastUpdatedTime(any()) } returnsMany listOf(
-            DateTime(earlier),
-            DateTime(later)
-        )
+        every { driveService.getLastUpdatedTime(any()) } returnsMany
+            listOf(
+                DateTime(earlier),
+                DateTime(later),
+            )
 
         val cache = GoogleSheetCache(googleSheetsService, driveService)
 
@@ -43,10 +44,11 @@ class GoogleSheetCacheTest {
 
     @Test
     fun `should not update sheet when lastUpdate is the same`() {
-        every { driveService.getLastUpdatedTime(any()) } returnsMany listOf(
-            DateTime(earlier),
-            DateTime(earlier)
-        )
+        every { driveService.getLastUpdatedTime(any()) } returnsMany
+            listOf(
+                DateTime(earlier),
+                DateTime(earlier),
+            )
 
         val cache = GoogleSheetCache(googleSheetsService, driveService)
 

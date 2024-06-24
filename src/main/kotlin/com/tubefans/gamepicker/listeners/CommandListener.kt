@@ -8,22 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-final class CommandListener @Autowired constructor(
-    private val commands: List<SlashCommand>,
-    private val client: GatewayDiscordClient
-) {
+final class CommandListener
+    @Autowired
+    constructor(
+        private val commands: List<SlashCommand>,
+        private val client: GatewayDiscordClient,
+    ) {
+        private val logger = LogManager.getLogger(this::class.java)
 
-    private val logger = LogManager.getLogger(this::class.java)
+        init {
+            logger.info("Subscribing to commands: ${commands.joinToString { it.name }}")
+            client.on(ChatInputInteractionEvent::class.java, this::handle)
+                .doOnEach {
+                    System.gc() // ¯\_(ツ)_/¯ blame Connor
+                }
+                .subscribe()
+        }
 
-    init {
-        logger.info("Subscribing to commands: ${commands.joinToString { it.name }}")
-        client.on(ChatInputInteractionEvent::class.java, this::handle)
-            .doOnEach {
-                System.gc() // ¯\_(ツ)_/¯ blame Connor
-            }
-            .subscribe()
+        private fun handle(event: ChatInputInteractionEvent) = commands.first { it.name == event.commandName }.handle(event)
     }
-
-    private fun handle(event: ChatInputInteractionEvent) =
-        commands.first { it.name == event.commandName }.handle(event)
-}

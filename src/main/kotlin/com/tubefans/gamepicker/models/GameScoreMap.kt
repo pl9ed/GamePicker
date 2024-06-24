@@ -1,12 +1,11 @@
 package com.tubefans.gamepicker.models
 
 import com.tubefans.gamepicker.dto.DiscordUser
-import java.util.*
+import java.util.SortedSet
 
 class GameScoreMap(
-    val discordUsers: Collection<DiscordUser>
+    val discordUsers: Collection<DiscordUser>,
 ) {
-
     companion object {
         const val MAX_SCORE = 10L
         const val MIN_SCORE = 0L
@@ -25,7 +24,8 @@ class GameScoreMap(
     }
 
     fun getTopGames(n: Int): List<Pair<String, Long>> =
-        map.toList()
+        map
+            .toList()
             .map { (game, userSet) ->
                 var sum = 0L
                 userSet.forEach { user ->
@@ -36,8 +36,12 @@ class GameScoreMap(
                 it.second
             }.take(n)
 
-    fun getTopPlayersForGame(game: String, n: Int = 3): List<DiscordUser> =
-        map[game]?.filter { it.gameMap[game] != 0L }
+    fun getTopPlayersForGame(
+        game: String,
+        n: Int = 3,
+    ): List<DiscordUser> =
+        map[game]
+            ?.filter { it.gameMap[game] != 0L }
             ?.sortedByDescending {
                 it.gameMap[game]
             }?.take(n) ?: emptyList()

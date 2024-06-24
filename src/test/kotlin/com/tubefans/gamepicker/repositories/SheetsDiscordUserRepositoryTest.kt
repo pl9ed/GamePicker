@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class SheetsDiscordUserRepositoryTest {
-
     private val googleSheetCache: GoogleSheetCache = mockk()
     private val user = DiscordUser(Snowflake.of(1), "NAME")
 
@@ -18,13 +17,14 @@ class SheetsDiscordUserRepositoryTest {
 
     @Test
     fun `should find user by name`() {
-        every { googleSheetCache.userSheet } returns listOf(
-            listOf(user.name!!, user.discordId.asLong().toString())
-        )
+        every { googleSheetCache.userSheet } returns
+            listOf(
+                listOf(user.name!!, user.discordId.asLong().toString()),
+            )
 
         assertEquals(
             user,
-            repository.findOneByName(user.name!!).get()
+            repository.findOneByName(user.name!!).get(),
         )
     }
 

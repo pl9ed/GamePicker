@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class RecommendCommandTest {
-
     private val chatInputInteractionEventService: ChatInputInteractionEventService = mockk()
     private val userCache: UserCache = mockk()
     private val command = RecommendCommand(chatInputInteractionEventService, userCache)
@@ -24,13 +23,14 @@ class RecommendCommandTest {
 
     private val gameScoreMap = GameScoreMap(setOf(user1, user2, emptyUser))
 
-    private val responseTemplate = """
+    private val responseTemplate =
+        """
         ```
         TOP %d GAMES:
         | 1. | %s | %d | Fans: %s | Excludes: %s |
         | 2. | %s | %d | Fans: %s | Excludes: %s |
         ```
-    """.trimIndent()
+        """.trimIndent()
 
     @Test
     fun `should generate top games list`() {
@@ -39,9 +39,9 @@ class RecommendCommandTest {
                 responseTemplate,
                 2,
                 "a", 9, "a", "b, empty",
-                "b", 5, "a", "b, empty"
+                "b", 5, "a", "b, empty",
             ),
-            command.getReplyString(gameScoreMap, 2)
+            command.getReplyString(gameScoreMap, 2),
         )
     }
 
@@ -57,13 +57,14 @@ class RecommendCommandTest {
         val score = 100L
         val fans = listOf(user1)
         val excludes = listOf(user2, emptyUser)
-        val expected = listOf(
-            "1.",
-            game,
-            score,
-            "Fans: " + fans.joinToString { it.name!! },
-            "Excludes: " + excludes.map { it.name }.joinToString()
-        )
+        val expected =
+            listOf(
+                "1.",
+                game,
+                score,
+                "Fans: " + fans.joinToString { it.name!! },
+                "Excludes: " + excludes.map { it.name }.joinToString(),
+            )
 
         val actual = command.generateRowData(rank, game, score, fans, excludes)
         for (i in expected.indices) {
@@ -84,12 +85,13 @@ class RecommendCommandTest {
 
     @Test
     fun `should be able to explicitly set game count`() {
-        val singleResponseTemplate = """
+        val singleResponseTemplate =
+            """
             ```
             TOP %d GAMES:
             | 1. | %s | %d | Fans: %s | Excludes: %s |
             ```
-        """.trimIndent()
+            """.trimIndent()
 
         assertEquals(
             String.format(
@@ -98,20 +100,21 @@ class RecommendCommandTest {
                 "a",
                 9,
                 "a",
-                "b, empty"
+                "b, empty",
             ).trimIndent(),
-            command.getReplyString(gameScoreMap, 1)
+            command.getReplyString(gameScoreMap, 1),
         )
     }
 
     @Test
     fun `should display no games string when score map is empty`() {
-        val gameScoreMap: GameScoreMap = mockk {
-            every { getTopGames(any()) } returns emptyList()
-        }
+        val gameScoreMap: GameScoreMap =
+            mockk {
+                every { getTopGames(any()) } returns emptyList()
+            }
         assertEquals(
             NO_GAMES_RESPONSE,
-            command.getReplyString(gameScoreMap, 0)
+            command.getReplyString(gameScoreMap, 0),
         )
     }
 
@@ -128,11 +131,12 @@ class RecommendCommandTest {
             }
         }
 
-        val gameScoreMap: GameScoreMap = mockk {
-            every { getTopGames(10) } returns topTen
-            every { getTopPlayersForGame(any(), any()) } returns listOf(user1)
-            every { getNonPlayersForGame(any()) } returns listOf(user2)
-        }
+        val gameScoreMap: GameScoreMap =
+            mockk {
+                every { getTopGames(10) } returns topTen
+                every { getTopPlayersForGame(any(), any()) } returns listOf(user1)
+                every { getNonPlayersForGame(any()) } returns listOf(user2)
+            }
 
         val replyString = command.getReplyString(gameScoreMap, 50)
         // 10 + header + 2 ``` rows
@@ -148,11 +152,12 @@ class RecommendCommandTest {
             scores.add(pair)
         }
 
-        val gameScoreMap: GameScoreMap = mockk {
-            every { getTopGames(1) } returns listOf(scores.first())
-            every { getTopPlayersForGame(any(), any()) } returns listOf(user1)
-            every { getNonPlayersForGame(any()) } returns listOf(user2)
-        }
+        val gameScoreMap: GameScoreMap =
+            mockk {
+                every { getTopGames(1) } returns listOf(scores.first())
+                every { getTopPlayersForGame(any(), any()) } returns listOf(user1)
+                every { getNonPlayersForGame(any()) } returns listOf(user2)
+            }
 
         val replyString = command.getReplyString(gameScoreMap, -10)
 
@@ -160,7 +165,7 @@ class RecommendCommandTest {
 
         for (i in 2..3) {
             assertTrue(
-                !replyString.contains("$i | $i")
+                !replyString.contains("$i | $i"),
             )
         }
     }

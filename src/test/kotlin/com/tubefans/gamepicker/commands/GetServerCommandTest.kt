@@ -18,22 +18,26 @@ class GetServerCommandTest : Discord4JEventTest() {
     private val serverName = "name1"
     private val serverId = "id1"
     private val mockMap = mutableMapOf(Pair(serverName, serverId))
-    private val mockService: EC2Service = mockk {
-        every { instanceMap } returns mockMap
-    }
+    private val mockService: EC2Service =
+        mockk {
+            every { instanceMap } returns mockMap
+        }
     private val command = GetServerCommand(mockService)
 
     private val instanceStatusString = "instance status"
     private val instanceStateString = "instance state"
-    private val mockStatus: InstanceStatus = mockk {
-        every { instanceId() } returns serverId
-        every { instanceStatus() } returns mockk {
-            every { this@mockk.toString() } returns instanceStatusString
+    private val mockStatus: InstanceStatus =
+        mockk {
+            every { instanceId() } returns serverId
+            every { instanceStatus() } returns
+                mockk {
+                    every { this@mockk.toString() } returns instanceStatusString
+                }
+            every { instanceState() } returns
+                mockk {
+                    every { this@mockk.toString() } returns instanceStateString
+                }
         }
-        every { instanceState() } returns mockk {
-            every { this@mockk.toString() } returns instanceStateString
-        }
-    }
 
     @BeforeEach
     fun setup() {

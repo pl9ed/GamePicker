@@ -14,35 +14,39 @@ import org.junit.jupiter.api.Test
 import java.util.Optional
 
 class UserCacheTest {
-
     private val googleDriveService: GoogleDriveService = mockk()
-    private val googleSheetCache: GoogleSheetCache = mockk() {
-        every { dataSheet } returns mockk()
-    }
-    private val googleSheetsService: GoogleSheetsService = mockk {
-        every { mapToScores(any()) } returns emptyMap()
-    }
-    private val discordUserRepository: DiscordUserRepository = mockk() {
-        every { findOneByName(any()) } returns Optional.of(DiscordUser(Snowflake.of(1L), "name"))
-    }
+    private val googleSheetCache: GoogleSheetCache =
+        mockk {
+            every { dataSheet } returns mockk()
+        }
+    private val googleSheetsService: GoogleSheetsService =
+        mockk {
+            every { mapToScores(any()) } returns emptyMap()
+        }
+    private val discordUserRepository: DiscordUserRepository =
+        mockk {
+            every { findOneByName(any()) } returns Optional.of(DiscordUser(Snowflake.of(1L), "name"))
+        }
 
     @Test
     fun `should update when lastUpdate time is greater than current`() {
         val now = System.currentTimeMillis()
-        every { googleDriveService.getLastUpdatedTime() } returnsMany listOf(
-            DateTime(now - 2000L),
-            DateTime(now - 1000L),
-            DateTime(now)
-        )
+        every { googleDriveService.getLastUpdatedTime() } returnsMany
+            listOf(
+                DateTime(now - 2000L),
+                DateTime(now - 1000L),
+                DateTime(now),
+            )
 
         every { googleSheetsService.mapToScores(any()) } returns mapOf("key" to listOf(Pair("game", 0L)))
 
-        val cache = UserCache(
-            googleDriveService,
-            googleSheetCache,
-            googleSheetsService,
-            discordUserRepository
-        )
+        val cache =
+            UserCache(
+                googleDriveService,
+                googleSheetCache,
+                googleSheetsService,
+                discordUserRepository,
+            )
 
         // normally called by Spring
         cache.afterPropertiesSet()
@@ -65,12 +69,13 @@ class UserCacheTest {
         val now = System.currentTimeMillis()
         every { googleDriveService.getLastUpdatedTime() } returns DateTime(now)
 
-        val cache = UserCache(
-            googleDriveService,
-            googleSheetCache,
-            googleSheetsService,
-            discordUserRepository
-        )
+        val cache =
+            UserCache(
+                googleDriveService,
+                googleSheetCache,
+                googleSheetsService,
+                discordUserRepository,
+            )
 
         cache.afterPropertiesSet()
 

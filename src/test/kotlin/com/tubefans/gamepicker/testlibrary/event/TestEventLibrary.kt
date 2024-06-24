@@ -11,76 +11,100 @@ import io.mockk.mockk
 import java.util.Optional
 
 object TestEventLibrary {
-
-    fun createAddMeEvent(id: Long, name: String, username: String) = ChatInputInteractionEvent(
+    fun createAddMeEvent(
+        id: Long,
+        name: String,
+        username: String,
+    ) = ChatInputInteractionEvent(
         createGatewayDiscordClient(),
         mockk(),
         mockk {
-            every { commandInteraction } returns Optional.of(
+            every { commandInteraction } returns
+                Optional.of(
+                    mockk {
+                        every { options } returns listOf(stringOptionOf("name", name))
+                        every { getUser() } returns
+                            mockk {
+                                every { getId() } returns Snowflake.of(id)
+                                every { getUsername() } returns username
+                            }
+                    },
+                )
+            every { data } returns
                 mockk {
-                    every { options } returns listOf(stringOptionOf("name", name))
-                    every { getUser() } returns mockk {
-                        every { getId() } returns Snowflake.of(id)
-                        every { getUsername() } returns username
-                    }
-                }
-            )
-            every { data } returns mockk() {
-                every { applicationId() } returns mockk() {
-                    every { asLong() } returns 0L
-                }
-            }
-        }
-    )
-
-    fun createHelpEvent(command: Optional<ApplicationCommandRequest> = Optional.empty()) = ChatInputInteractionEvent(
-        createGatewayDiscordClient(),
-        mockk(),
-        mockk {
-            every { commandInteraction } returns Optional.of(
-                mockk {
-                    every { user } returns mockk()
-                    every { data } returns mockk() {
-                        every { applicationId() } returns mockk() {
+                    every { applicationId() } returns
+                        mockk {
                             every { asLong() } returns 0L
                         }
-                    }
                 }
-            )
-        }
+        },
     )
 
-    fun createRecommendEvent(mockVoiceChannel: VoiceChannel?): ChatInputInteractionEvent = mockk {
-        every {
-            interaction.member.get()
-                .voiceState.block()
-                ?.channel?.block()
-        } returns mockVoiceChannel
-    }
+    fun createHelpEvent(command: Optional<ApplicationCommandRequest> = Optional.empty()) =
+        ChatInputInteractionEvent(
+            createGatewayDiscordClient(),
+            mockk(),
+            mockk {
+                every { commandInteraction } returns
+                    Optional.of(
+                        mockk {
+                            every { user } returns mockk()
+                            every { data } returns
+                                mockk {
+                                    every { applicationId() } returns
+                                        mockk {
+                                            every { asLong() } returns 0L
+                                        }
+                                }
+                        },
+                    )
+            },
+        )
 
-    private fun createGatewayDiscordClient(): GatewayDiscordClient = mockk {
-        every { rest() } returns mockk() {
-            every { webhookService } returns mockk()
+    fun createRecommendEvent(mockVoiceChannel: VoiceChannel?): ChatInputInteractionEvent =
+        mockk {
+            every {
+                interaction.member.get()
+                    .voiceState.block()
+                    ?.channel?.block()
+            } returns mockVoiceChannel
         }
-    }
 
-    private fun stringOptionOf(name: String, value: String): ApplicationCommandInteractionOption = mockk {
-        every { getName() } returns name
-        every { getValue() } returns Optional.of(
-            mockk {
-                every { raw } returns value
-                every { asString() } returns value
-            }
-        )
-    }
+    private fun createGatewayDiscordClient(): GatewayDiscordClient =
+        mockk {
+            every { rest() } returns
+                mockk {
+                    every { webhookService } returns mockk()
+                }
+        }
 
-    private fun longOptionOf(name: String, value: Long): ApplicationCommandInteractionOption = mockk {
-        every { getName() } returns name
-        every { getValue() } returns Optional.of(
-            mockk {
-                every { raw } returns value.toString()
-                every { asLong() } returns value
-            }
-        )
-    }
+    private fun stringOptionOf(
+        name: String,
+        value: String,
+    ): ApplicationCommandInteractionOption =
+        mockk {
+            every { getName() } returns name
+            every { getValue() } returns
+                Optional.of(
+                    mockk {
+                        every { raw } returns value
+                        every { asString() } returns value
+                    },
+                )
+        }
+
+    private fun longOptionOf(
+        name: String,
+        value: Long,
+    ): ApplicationCommandInteractionOption =
+        mockk {
+            every { getName() } returns name
+            every { getValue() } returns
+                Optional.of(
+                    mockk {
+                        every { raw } returns value.toString()
+                        every { asLong() } returns value
+                    },
+                )
+        }
 }

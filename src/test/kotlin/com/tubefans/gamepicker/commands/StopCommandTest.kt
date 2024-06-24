@@ -18,9 +18,10 @@ class StopCommandTest : Discord4JEventTest() {
     private val serverName = "name1"
     private val serverId = "id1"
     private val mockMap = mutableMapOf(Pair(serverName, serverId))
-    private val mockService: EC2Service = mockk() {
-        every { instanceMap } returns mockMap
-    }
+    private val mockService: EC2Service =
+        mockk {
+            every { instanceMap } returns mockMap
+        }
 
     private val command = StopServerCommand(mockService)
 
@@ -47,9 +48,10 @@ class StopCommandTest : Discord4JEventTest() {
         val exceptionMessage = "exception message"
         val expectedMessage =
             String.format(AWS_ERROR_TEMPLATE, serverName, AwsServiceException::class.simpleName, exceptionMessage)
-        every { mockService.stopInstance(serverName) } returns Mono.error(
-            AwsServiceException.builder().message(exceptionMessage).build()
-        )
+        every { mockService.stopInstance(serverName) } returns
+            Mono.error(
+                AwsServiceException.builder().message(exceptionMessage).build(),
+            )
 
         command.handle(inputEvent).block()
 
@@ -62,9 +64,10 @@ class StopCommandTest : Discord4JEventTest() {
     fun `should respond with appropriate error message when serverName is not found`() {
         val expectedMessage =
             String.format(StopServerCommand.SERVER_NOT_FOUND_TEMPLATE, serverName, mockMap.keys.joinToString(","))
-        every { mockService.stopInstance(serverName) } returns Mono.error(
-            NoSuchElementException()
-        )
+        every { mockService.stopInstance(serverName) } returns
+            Mono.error(
+                NoSuchElementException(),
+            )
 
         command.handle(inputEvent).block()
 
@@ -81,11 +84,12 @@ class StopCommandTest : Discord4JEventTest() {
                 StopServerCommand.UNHANDLED_ERROR_TEMPLATE,
                 serverName,
                 RuntimeException::class.simpleName,
-                exceptionMessage
+                exceptionMessage,
             )
-        every { mockService.stopInstance(serverName) } returns Mono.error(
-            RuntimeException(exceptionMessage)
-        )
+        every { mockService.stopInstance(serverName) } returns
+            Mono.error(
+                RuntimeException(exceptionMessage),
+            )
 
         command.handle(inputEvent).block()
 

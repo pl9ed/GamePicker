@@ -17,46 +17,47 @@ import reactor.core.publisher.Mono
 import java.util.Optional
 
 @Service
-class ChatInputInteractionEventService @Autowired constructor(
-    private val discordUserService: DiscordUserService
-) {
+class ChatInputInteractionEventService
+    @Autowired
+    constructor(
+        private val discordUserService: DiscordUserService,
+    ) {
+        private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+        fun getCommandMessageChannel(event: ChatInputInteractionEvent): Mono<MessageChannel> = event.interaction.channel
 
-    fun getCommandMessageChannel(event: ChatInputInteractionEvent): Mono<MessageChannel> =
-        event.interaction.channel
+        fun getCurrentChannel(event: ChatInputInteractionEvent): VoiceChannel? =
+            event.interaction.member.get()
+                .voiceState.block()
+                ?.channel?.block()
 
-    fun getCurrentChannel(event: ChatInputInteractionEvent): VoiceChannel? =
-        event.interaction.member.get()
-            .voiceState.block()
-            ?.channel?.block()
-
-    fun getUsersInChannel(voiceChannel: VoiceChannel): Mono<Set<DiscordUser>> = mono {
-        voiceChannel.voiceStates.asFlow()
-            .map {
-                it.userId
-            }.map { snowflake ->
-                async {
-                    try {
-                        Optional.of(
-                            discordUserService.findById(snowflake).also {
-                                logger.info("Getting user with id {}", snowflake.toString())
+        fun getUsersInChannel(voiceChannel: VoiceChannel): Mono<Set<DiscordUser>> =
+            mono {
+                voiceChannel.voiceStates.asFlow()
+                    .map {
+                        it.userId
+                    }.map { snowflake ->
+                        async {
+                            try {
+                                Optional.of(
+                                    discordUserService.findById(snowflake).also {
+                                        logger.info("Getting user with id {}", snowflake.toString())
+                                    },
+                                )
+                            } catch (e: NoSuchElementException) {
+                                Optional.empty()
                             }
-                        )
-                    } catch (e: NoSuchElementException) {
-                        Optional.empty()
-                    }
-                }
-            }.map {
-                it.await()
-            }.filter {
-                it.isPresent
-            }.map {
-                it.get()
-            }.map {
-                it.also { user ->
-                    logger.info("Fetched user {}", user)
-                }
-            }.toList().toSet()
+                        }
+                    }.map {
+                        it.await()
+                    }.filter {
+                        it.isPresent
+                    }.map {
+                        it.get()
+                    }.map {
+                        it.also { user ->
+                            logger.info("Fetched user {}", user)
+                        }
+                    }.toList().toSet()
+            }
     }
-}
