@@ -9,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class GoogleSheetCache @Autowired constructor(
+class GoogleSheetCache
+@Autowired
+constructor(
     private val googleSheetsService: GoogleSheetsService,
     private val driveService: GoogleDriveService
 ) {
-
     companion object {
         const val SHEET_ID = "1FYL7O7RUkm4Fw-D2xw4R48QbY90hKf34oWgZ0_89vX8"
         const val DATA_RANGE = "Data"
@@ -62,6 +63,5 @@ class GoogleSheetCache @Autowired constructor(
             return googleSheetsService.getSheet(SHEET_ID, YO_RANGE).mapToString()
         }
 
-    private fun shouldUpdate(lastUpdate: DateTime): Boolean =
-        lastUpdate.value > this.lastUpdate.value
+    private fun shouldUpdate(lastUpdate: DateTime): Boolean = lastUpdate.value > this.lastUpdate.value
 }
