@@ -28,42 +28,50 @@ import java.util.Optional
 import kotlin.random.Random
 
 class YoMessageHandlerTest {
-
-    private var client: GatewayDiscordClient = mockk {
-        every { eventDispatcher } returns mockk() {
-            every { on(MessageCreateEvent::class.java) } returns Flux.empty()
+    private var client: GatewayDiscordClient =
+        mockk {
+            every { eventDispatcher } returns
+                mockk {
+                    every { on(MessageCreateEvent::class.java) } returns Flux.empty()
+                }
         }
-    }
 
     private lateinit var yoCountRepository: YoCountRepository
 
-    private val yoMessage: MessageCreateEvent = mockk {
-        every { message } returns mockk {
-            every { content } returns MESSAGE_STRING
+    private val yoMessage: MessageCreateEvent =
+        mockk {
+            every { message } returns
+                mockk {
+                    every { content } returns MESSAGE_STRING
+                }
         }
-    }
 
-    private val otherMessage: MessageCreateEvent = mockk {
-        every { message } returns mockk {
-            every { content } returns "abc"
+    private val otherMessage: MessageCreateEvent =
+        mockk {
+            every { message } returns
+                mockk {
+                    every { content } returns "abc"
+                }
         }
-    }
 
-    private val botUser: Member = mockk() {
-        every { isBot } returns true
-    }
-    private val user: Member = mockk() {
-        every { isBot } returns false
-    }
+    private val botUser: Member =
+        mockk {
+            every { isBot } returns true
+        }
+    private val user: Member =
+        mockk {
+            every { isBot } returns false
+        }
 
     private lateinit var handler: YoMessageHandler
 
     @BeforeEach
     fun setup() {
-        yoCountRepository = mockk {
-            every { getThreshold() } returns 5
-            every { serviceInitDate } returns LocalDate.now()
-        }
+        yoCountRepository =
+            mockk {
+                every { getThreshold() } returns 5
+                every { serviceInitDate } returns LocalDate.now()
+            }
         handler = YoMessageHandler(client, yoCountRepository)
     }
 
@@ -83,12 +91,14 @@ class YoMessageHandlerTest {
     fun shouldMatchAnyCase() {
         every { yoCountRepository.increment() } returns 0
 
-        val message: MessageCreateEvent = mockk {
-            every { message } returns mockk {
-                every { content } returns "yo"
+        val message: MessageCreateEvent =
+            mockk {
+                every { message } returns
+                    mockk {
+                        every { content } returns "yo"
+                    }
+                every { member } returns Optional.of(user)
             }
-            every { member } returns Optional.of(user)
-        }
 
         handler.shouldRespond(message)
 
@@ -100,12 +110,14 @@ class YoMessageHandlerTest {
     fun shouldNotCheckWhitespace() {
         every { yoCountRepository.increment() } returns 0
 
-        val message: MessageCreateEvent = mockk {
-            every { message } returns mockk {
-                every { content } returns "       \nyo     \n     "
+        val message: MessageCreateEvent =
+            mockk {
+                every { message } returns
+                    mockk {
+                        every { content } returns "       \nyo     \n     "
+                    }
+                every { member } returns Optional.of(user)
             }
-            every { member } returns Optional.of(user)
-        }
 
         handler.shouldRespond(message)
 
@@ -135,12 +147,14 @@ class YoMessageHandlerTest {
     @Test
     @DisplayName("should respond to 'yo' when count is multiple of threshold")
     fun shouldRespondOnCorrectCount() {
-        val message: MessageCreateEvent = mockk {
-            every { member } returns Optional.of(user)
-            every { message } returns mockk {
-                every { content } returns MESSAGE_STRING
+        val message: MessageCreateEvent =
+            mockk {
+                every { member } returns Optional.of(user)
+                every { message } returns
+                    mockk {
+                        every { content } returns MESSAGE_STRING
+                    }
             }
-        }
 
         every { yoCountRepository.increment() } returns yoCountRepository.getThreshold() * Random.nextInt(10)
 
@@ -150,12 +164,14 @@ class YoMessageHandlerTest {
     @Test
     @DisplayName("should not respond to 'yo' when count is not multiple of threshold")
     fun shouldNotRespondOnIncorrectCount() {
-        val message: MessageCreateEvent = mockk {
-            every { member } returns Optional.of(user)
-            every { message } returns mockk {
-                every { content } returns MESSAGE_STRING
+        val message: MessageCreateEvent =
+            mockk {
+                every { member } returns Optional.of(user)
+                every { message } returns
+                    mockk {
+                        every { content } returns MESSAGE_STRING
+                    }
             }
-        }
 
         every { yoCountRepository.increment() } returns
             (yoCountRepository.getThreshold() * Random.nextInt(10)) +
@@ -173,22 +189,24 @@ class YoMessageHandlerTest {
         val mockChannel = Mockito.mock(MessageChannel::class.java)
         `when`(mockChannel.createMessage(anyString())).thenReturn(MessageCreateMono.of(mockChannel))
 
-        every { yoMessage.message } returns mockk {
-            every { channel } returns Mono.just(mockChannel)
-        }
+        every { yoMessage.message } returns
+            mockk {
+                every { channel } returns Mono.just(mockChannel)
+            }
         every { yoCountRepository.increment() } returns count
         every { yoCountRepository.findCount() } returns count
 
-        val expectedMessage = String.format(
-            RESPONSE_TEMPLATE,
-            5,
-            5.00,
-            LocalDate.now().format(
-                DateTimeFormatter.ofLocalizedDate(
-                    FormatStyle.MEDIUM
-                )
+        val expectedMessage =
+            String.format(
+                RESPONSE_TEMPLATE,
+                5,
+                5.00,
+                LocalDate.now().format(
+                    DateTimeFormatter.ofLocalizedDate(
+                        FormatStyle.MEDIUM,
+                    ),
+                ),
             )
-        )
 
         handler.handle(yoMessage)
 

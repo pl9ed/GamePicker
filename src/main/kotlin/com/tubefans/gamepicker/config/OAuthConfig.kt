@@ -15,22 +15,21 @@ import java.io.FileInputStream
 
 @Configuration
 class OAuthConfig {
-
     companion object {
         const val CREDENTIALS_FILE = "service-key.json"
-        val scopes: List<String> = listOf(
-            SheetsScopes.SPREADSHEETS,
-            "https://www.googleapis.com/auth/cloud-platform",
-            "https://www.googleapis.com/auth/drive"
-        )
+        val scopes: List<String> =
+            listOf(
+                SheetsScopes.SPREADSHEETS,
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/drive",
+            )
     }
 
     @Bean
     fun jsonFactory(): JsonFactory = GsonFactory.getDefaultInstance()
 
     @Bean
-    fun netHttpTransport(): NetHttpTransport =
-        GoogleNetHttpTransport.newTrustedTransport()
+    fun netHttpTransport(): NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
 
     // TODO: use a single credential implementation xd
 

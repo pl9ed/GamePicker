@@ -11,9 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class SheetsConfigTest {
-
     companion object {
-
         private var row1 = mutableListOf("")
 
         @JvmStatic
@@ -36,20 +34,21 @@ class SheetsConfigTest {
     private val dataRange = "A1:L11"
     private val userRange = "A9:L11"
 
-    private val row10 = listOf(
-        "User2",
-        "10",
-        "0",
-        "5",
-        "5",
-        "1",
-        "5",
-        "5",
-        "5",
-        "5",
-        "5",
-        "5"
-    )
+    private val row10 =
+        listOf(
+            "User2",
+            "10",
+            "0",
+            "5",
+            "5",
+            "1",
+            "5",
+            "5",
+            "5",
+            "5",
+            "5",
+            "5",
+        )
 
     @Autowired
     private lateinit var googleSheetsService: GoogleSheetsService
@@ -62,16 +61,18 @@ class SheetsConfigTest {
 
     @Test
     fun `should get correct row from test sheet`() {
-        val actualRow = googleSheetsService.getValueRange(testSheetId, userRange)
-            .getValues()[1]
+        val actualRow =
+            googleSheetsService.getValueRange(testSheetId, userRange)
+                .getValues()[1]
 
         assertEquals(row10, actualRow)
     }
 
     @Test
     fun `should handle blank cells`() {
-        val actualRow1 = googleSheetsService.getValueRange(testSheetId, dataRange)
-            .getValues()[0]
+        val actualRow1 =
+            googleSheetsService.getValueRange(testSheetId, dataRange)
+                .getValues()[0]
 
         assertEquals(row1, actualRow1)
     }

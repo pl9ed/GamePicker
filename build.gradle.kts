@@ -2,7 +2,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("jacoco")
     id("org.sonarqube") version "3.5.0.2730"
     id("org.springframework.boot") version "3.0.6"
@@ -85,12 +85,11 @@ tasks.withType<JacocoReport> {
                     fileTree(it).apply {
                         exclude(
                             "**/com/tubefans/gamepicker/repositories/**/*",
-                            "**/com/tubefans/gamepicker/commands/RecommendCommand.kt"
-
+                            "**/com/tubefans/gamepicker/commands/RecommendCommand.kt",
                         )
                     }
-                }
-            )
+                },
+            ),
         )
     }
 }

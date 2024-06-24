@@ -9,24 +9,24 @@ import java.util.Optional
 
 @Component
 class SheetsDiscordUserRepository
-@Autowired
-constructor(
-    private val googleSheetCache: GoogleSheetCache
-) : DiscordUserRepository {
-    override fun findOneByName(name: String): Optional<DiscordUser> =
-        try {
-            Optional.of(
-                googleSheetCache.userSheet
-                    .first {
-                        it[0].trim().uppercase() == name.trim().uppercase()
-                    }.let {
-                        DiscordUser(discordId = Snowflake.of(it[1]), name = it[0].trim().uppercase())
-                    }
-            )
-        } catch (e: RuntimeException) {
-            when (e) {
-                is NoSuchElementException, is NumberFormatException -> Optional.empty()
-                else -> throw e
+    @Autowired
+    constructor(
+        private val googleSheetCache: GoogleSheetCache,
+    ) : DiscordUserRepository {
+        override fun findOneByName(name: String): Optional<DiscordUser> =
+            try {
+                Optional.of(
+                    googleSheetCache.userSheet
+                        .first {
+                            it[0].trim().uppercase() == name.trim().uppercase()
+                        }.let {
+                            DiscordUser(discordId = Snowflake.of(it[1]), name = it[0].trim().uppercase())
+                        },
+                )
+            } catch (e: RuntimeException) {
+                when (e) {
+                    is NoSuchElementException, is NumberFormatException -> Optional.empty()
+                    else -> throw e
+                }
             }
-        }
-}
+    }

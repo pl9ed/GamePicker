@@ -9,10 +9,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class DatabaseConfig @Autowired constructor(
-    val googleSheetCache: GoogleSheetCache,
-    val googleSheetsService: GoogleSheetsService
-) {
-    @Bean
-    fun yoCountRepository(): YoCountRepository = GoogleSheetYoCountRepository(googleSheetCache, googleSheetsService)
-}
+class DatabaseConfig
+    @Autowired
+    constructor(
+        val googleSheetCache: GoogleSheetCache,
+        val googleSheetsService: GoogleSheetsService,
+    ) {
+        @Bean
+        fun yoCountRepository(): YoCountRepository = GoogleSheetYoCountRepository(googleSheetCache, googleSheetsService)
+    }

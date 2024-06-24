@@ -14,31 +14,32 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class GoogleApiConfig @Autowired constructor(
-    private val netHttpTransport: NetHttpTransport,
-    private val credentialV2: Credential,
-    private val credentials: Credentials,
-    private val jsonFactory: JsonFactory
-) {
+class GoogleApiConfig
+    @Autowired
+    constructor(
+        private val netHttpTransport: NetHttpTransport,
+        private val credentialV2: Credential,
+        private val credentials: Credentials,
+        private val jsonFactory: JsonFactory,
+    ) {
+        @Bean
+        fun sheets(): Sheets =
+            Sheets.Builder(netHttpTransport, jsonFactory, credentialV2)
+                .setApplicationName(APP_NAME)
+                .build()
 
-    @Bean
-    fun sheets(): Sheets =
-        Sheets.Builder(netHttpTransport, jsonFactory, credentialV2)
-            .setApplicationName(APP_NAME)
-            .build()
+        @Bean
+        fun drive(): Drive =
+            Drive.Builder(netHttpTransport, jsonFactory, credentialV2)
+                .setApplicationName(APP_NAME)
+                .build()
 
-    @Bean
-    fun drive(): Drive =
-        Drive.Builder(netHttpTransport, jsonFactory, credentialV2)
-            .setApplicationName(APP_NAME)
-            .build()
-
-    @Bean
-    fun secretManagerServiceClient(): SecretManagerServiceClient =
-        SecretManagerServiceClient.create(
-            SecretManagerServiceSettings.newBuilder()
-                .setCredentialsProvider {
-                    credentials
-                }.build()
-        )
-}
+        @Bean
+        fun secretManagerServiceClient(): SecretManagerServiceClient =
+            SecretManagerServiceClient.create(
+                SecretManagerServiceSettings.newBuilder()
+                    .setCredentialsProvider {
+                        credentials
+                    }.build(),
+            )
+    }

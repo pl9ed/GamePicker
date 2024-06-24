@@ -10,31 +10,36 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class EventExtensionTests {
-
     private val gameName = "test-game"
     private val gameScore = 10L
 
-    private val gameNameOption: ApplicationCommandInteractionOption = mockk {
-        every { name } returns GameService.GAME_NAME_KEY
-        every { value.get() } returns mockk {
-            every { asString() } returns gameName
+    private val gameNameOption: ApplicationCommandInteractionOption =
+        mockk {
+            every { name } returns GameService.GAME_NAME_KEY
+            every { value.get() } returns
+                mockk {
+                    every { asString() } returns gameName
+                }
         }
-    }
-    private val gameScoreOptions: ApplicationCommandInteractionOption = mockk {
-        every { name } returns GameService.GAME_SCORE_KEY
-        every { value.get() } returns mockk {
-            every { asLong() } returns gameScore
+    private val gameScoreOptions: ApplicationCommandInteractionOption =
+        mockk {
+            every { name } returns GameService.GAME_SCORE_KEY
+            every { value.get() } returns
+                mockk {
+                    every { asLong() } returns gameScore
+                }
         }
-    }
 
-    private val mockGameOptions: List<ApplicationCommandInteractionOption> = mutableListOf(
-        gameNameOption,
-        gameScoreOptions
-    )
+    private val mockGameOptions: List<ApplicationCommandInteractionOption> =
+        mutableListOf(
+            gameNameOption,
+            gameScoreOptions,
+        )
 
-    private val gameUpdateEvent: ChatInputInteractionEvent = mockk() {
-        every { options } returns mockGameOptions
-    }
+    private val gameUpdateEvent: ChatInputInteractionEvent =
+        mockk {
+            every { options } returns mockGameOptions
+        }
 
     @Test
     fun `should get first game from options`() {
@@ -48,9 +53,10 @@ class EventExtensionTests {
 
     @Test
     fun `should throw on empty options`() {
-        val emptyEvent: ChatInputInteractionEvent = mockk() {
-            every { options } returns emptyList()
-        }
+        val emptyEvent: ChatInputInteractionEvent =
+            mockk {
+                every { options } returns emptyList()
+            }
 
         assertThrows(NoSuchElementException::class.java) {
             Assertions.assertEquals(null, emptyEvent.getGame())

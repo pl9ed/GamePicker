@@ -16,7 +16,6 @@ import java.util.NoSuchElementException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ChatInputInteractionEventServiceTest {
-
     private val id0 = Snowflake.of(0)
     private val id1 = Snowflake.of(1)
     private val missing = Snowflake.of(999)
@@ -24,36 +23,41 @@ class ChatInputInteractionEventServiceTest {
     private val user0 = DiscordUser(id0, "")
     private val user1 = DiscordUser(id1, "")
 
-    private val validVoiceStates: Flux<VoiceState> = Flux.just(
+    private val validVoiceStates: Flux<VoiceState> =
+        Flux.just(
+            mockk {
+                every { userId } returns id0
+            },
+            mockk {
+                every { userId } returns id1
+            },
+        )
+
+    private val voiceChannel: VoiceChannel =
         mockk {
-            every { userId } returns id0
-        },
-        mockk {
-            every { userId } returns id1
+            every { voiceStates } returns validVoiceStates
         }
-    )
 
-    private val voiceChannel: VoiceChannel = mockk {
-        every { voiceStates } returns validVoiceStates
-    }
-
-    private val missingIdVoiceState: Flux<VoiceState> = Flux.just(
+    private val missingIdVoiceState: Flux<VoiceState> =
+        Flux.just(
+            mockk {
+                every { userId } returns id0
+            },
+            mockk {
+                every { userId } returns missing
+            },
+        )
+    private val missingIdVoiceChannel: VoiceChannel =
         mockk {
-            every { userId } returns id0
-        },
-        mockk {
-            every { userId } returns missing
+            every { getVoiceStates() } returns missingIdVoiceState
         }
-    )
-    private val missingIdVoiceChannel: VoiceChannel = mockk {
-        every { getVoiceStates() } returns missingIdVoiceState
-    }
 
-    private val discordUserService: DiscordUserService = mockk() {
-        every { findById(id0) } returns user0
-        every { findById(id1) } returns user1
-        every { findById(missing) } throws NoSuchElementException()
-    }
+    private val discordUserService: DiscordUserService =
+        mockk {
+            every { findById(id0) } returns user0
+            every { findById(id1) } returns user1
+            every { findById(missing) } throws NoSuchElementException()
+        }
     private val chatInputInteractionEventService = ChatInputInteractionEventService(discordUserService)
 
     @Test
@@ -71,22 +75,24 @@ class ChatInputInteractionEventServiceTest {
     }
 
     @Test
-    fun `should get users in a voice channel`() = runTest {
-        val users = chatInputInteractionEventService.getUsersInChannel(voiceChannel).block()
+    fun `should get users in a voice channel`() =
+        runTest {
+            val users = chatInputInteractionEventService.getUsersInChannel(voiceChannel).block()
 
-        assertEquals(
-            setOf(user0, user1),
-            users
-        )
-    }
+            assertEquals(
+                setOf(user0, user1),
+                users,
+            )
+        }
 
     @Test
-    fun `should exclude entries when findById fails`() = runTest {
-        val users = chatInputInteractionEventService.getUsersInChannel(missingIdVoiceChannel).block()
+    fun `should exclude entries when findById fails`() =
+        runTest {
+            val users = chatInputInteractionEventService.getUsersInChannel(missingIdVoiceChannel).block()
 
-        assertEquals(
-            setOf(user0),
-            users
-        )
-    }
+            assertEquals(
+                setOf(user0),
+                users,
+            )
+        }
 }

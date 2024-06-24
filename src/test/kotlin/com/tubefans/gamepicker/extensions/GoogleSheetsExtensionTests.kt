@@ -7,13 +7,13 @@ import toName
 import toScore
 
 class GoogleSheetsExtensionTests {
-
-    private val whitespace = listOf(
-        " ",
-        "\t",
-        "\n",
-        ""
-    )
+    private val whitespace =
+        listOf(
+            " ",
+            "\t",
+            "\n",
+            "",
+        )
 
     @Test
     fun `should return name string`() {

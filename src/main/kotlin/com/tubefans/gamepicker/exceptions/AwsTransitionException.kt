@@ -13,8 +13,8 @@ class AwsTransitionException(message: String? = null, cause: Throwable? = null) 
             AWS_TRANSITION_TEMPLATE,
             resourceName,
             desiredState,
-            currentState
+            currentState,
         ),
-        null
+        null,
     )
 }

@@ -13,11 +13,12 @@ fun Any?.toScore(): Long? {
         We need to handle this separately so we know which
         toLong() implementation to use
          */
-        val number: Long = when (this) {
-            is Float -> this.toLong()
-            is Double -> this.toLong()
-            else -> this.toString().toLong()
-        }
+        val number: Long =
+            when (this) {
+                is Float -> this.toLong()
+                is Double -> this.toLong()
+                else -> this.toString().toLong()
+            }
         when {
             number > 10L -> 10L
             number < 0L -> 0L

@@ -11,50 +11,52 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
 @Component
-class HelpCommand @Autowired constructor(
-    private val commands: List<ApplicationCommandRequest>
-) : SlashCommand {
+class HelpCommand
+    @Autowired
+    constructor(
+        private val commands: List<ApplicationCommandRequest>,
+    ) : SlashCommand {
+        companion object {
+            const val GENERIC_HELP_HEADER = "Use /help {cmd} for more details"
+            const val COMMAND_PARAM_KEY = "command"
+            const val COMMAND_NOT_FOUND_TEMPLATE = "Command '%s' not found"
+        }
 
-    companion object {
-        const val GENERIC_HELP_HEADER = "Use /help {cmd} for more details"
-        const val COMMAND_PARAM_KEY = "command"
-        const val COMMAND_NOT_FOUND_TEMPLATE = "Command '%s' not found"
-    }
+        override val name: String = "help"
 
-    override val name: String = "help"
+        override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
+            if (event.options.isEmpty()) {
+                return event.reply()
+                    .withEphemeral(true)
+                    .withContent(getGenericHelpMessage())
+            }
 
-    override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
-        if (event.options.isEmpty()) {
+            val response = getResponseString(event.getStringOption(COMMAND_PARAM_KEY))
+
             return event.reply()
                 .withEphemeral(true)
-                .withContent(getGenericHelpMessage())
+                .withContent(response)
         }
 
-        val response = getResponseString(event.getStringOption(COMMAND_PARAM_KEY))
-
-        return event.reply()
-            .withEphemeral(true)
-            .withContent(response)
-    }
-
-    @VisibleForTesting
-    fun getGenericHelpMessage(): String {
-        val message = StringBuilder("$GENERIC_HELP_HEADER\n")
-        commands.forEach {
-            message.append("${it.toRowString()}\n")
+        @VisibleForTesting
+        fun getGenericHelpMessage(): String {
+            val message = StringBuilder("$GENERIC_HELP_HEADER\n")
+            commands.forEach {
+                message.append("${it.toRowString()}\n")
+            }
+            return message.trim().toString()
         }
-        return message.trim().toString()
-    }
 
-    @VisibleForTesting
-    fun getResponseString(commandName: String): String = try {
-        commands.first {
-            it.name().lowercase() == commandName.lowercase()
-        }.toHelpString()
-    } catch (e: NoSuchElementException) {
-        String.format(
-            COMMAND_NOT_FOUND_TEMPLATE,
-            commandName
-        )
+        @VisibleForTesting
+        fun getResponseString(commandName: String): String =
+            try {
+                commands.first {
+                    it.name().lowercase() == commandName.lowercase()
+                }.toHelpString()
+            } catch (e: NoSuchElementException) {
+                String.format(
+                    COMMAND_NOT_FOUND_TEMPLATE,
+                    commandName,
+                )
+            }
     }
-}

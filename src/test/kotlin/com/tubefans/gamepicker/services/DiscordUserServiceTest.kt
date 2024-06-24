@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class DiscordUserServiceTest {
-
     private val id = Snowflake.of(10)
     private val name = "name"
 
@@ -33,11 +32,12 @@ class DiscordUserServiceTest {
     @Test
     fun `should map valid names to users`() {
         val names = listOf("name_a", "name_b", "name_c")
-        every { userCache.users } returns mutableSetOf(
-            userA,
-            userB,
-            userC
-        )
+        every { userCache.users } returns
+            mutableSetOf(
+                userA,
+                userB,
+                userC,
+            )
 
         val (users, failed) = discordUserService.getUsersFromNames(names)
         assertEquals(names.size, users.size)
@@ -46,10 +46,11 @@ class DiscordUserServiceTest {
     @Test
     fun `should add to failed set when it cannot find user by name`() {
         val names = listOf(userA, userB, userC).mapNotNull { it.name }
-        every { userCache.users } returns mutableSetOf(
-            userA,
-            userC
-        )
+        every { userCache.users } returns
+            mutableSetOf(
+                userA,
+                userC,
+            )
 
         val (users, failed) = discordUserService.getUsersFromNames(names)
         assertEquals(setOf(userA, userC), users)

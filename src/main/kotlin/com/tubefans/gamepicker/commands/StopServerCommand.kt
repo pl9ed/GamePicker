@@ -12,39 +12,41 @@ import software.amazon.awssdk.services.ec2.model.InstanceStateName
 
 @Component
 class StopServerCommand
-@Autowired
-constructor(
-    private val ec2Service: EC2Service
-) : SlashCommand {
-    companion object {
-        const val NAME_KEY = "name"
+    @Autowired
+    constructor(
+        private val ec2Service: EC2Service,
+    ) : SlashCommand {
+        companion object {
+            const val NAME_KEY = "name"
 
-        const val AWS_ERROR_TEMPLATE = "Failed to stop instance %s, %s: %s"
-        const val SERVER_NOT_FOUND_TEMPLATE = "Failed to find EC2 instance associated with %s. Valid values are: %s"
-        const val UNHANDLED_ERROR_TEMPLATE = "Uncaught exception when stopping instance %s, %s: %s"
-    }
+            const val AWS_ERROR_TEMPLATE = "Failed to stop instance %s, %s: %s"
+            const val SERVER_NOT_FOUND_TEMPLATE = "Failed to find EC2 instance associated with %s. Valid values are: %s"
+            const val UNHANDLED_ERROR_TEMPLATE = "Uncaught exception when stopping instance %s, %s: %s"
+        }
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+        private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override val name = "stop-server"
+        override val name = "stop-server"
 
-    override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
-        val serverName = event.getStringOption(NAME_KEY)
-        return event.deferReply()
-            .then(ec2Service.stopInstance(serverName))
-            .map { instanceId ->
-                "Stopping $serverName running on $instanceId"
-            }.onErrorResume { e ->
-                Mono.just(getErrorMessage(serverName, e))
-            }.flatMap { message ->
-                event.editReply(message)
-            }.flatMap { message ->
-                ec2Service.sendConfirmationMessage(serverName, message.channel, InstanceStateName.STOPPED)
-            }.then()
-    }
+        override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
+            val serverName = event.getStringOption(NAME_KEY)
+            return event.deferReply()
+                .then(ec2Service.stopInstance(serverName))
+                .map { instanceId ->
+                    "Stopping $serverName running on $instanceId"
+                }.onErrorResume { e ->
+                    Mono.just(getErrorMessage(serverName, e))
+                }.flatMap { message ->
+                    event.editReply(message)
+                }.flatMap { message ->
+                    ec2Service.sendConfirmationMessage(serverName, message.channel, InstanceStateName.STOPPED)
+                }.then()
+        }
 
-    private fun getErrorMessage(serverName: String, e: Throwable) =
-        when (e) {
+        private fun getErrorMessage(
+            serverName: String,
+            e: Throwable,
+        ) = when (e) {
             is AwsServiceException -> {
                 logger.error("Failed to stop instance", e)
                 String.format(AWS_ERROR_TEMPLATE, serverName, e::class.simpleName, e.message)
@@ -60,4 +62,4 @@ constructor(
                 String.format(UNHANDLED_ERROR_TEMPLATE, serverName, e::class.simpleName, e.message)
             }
         }
-}
+    }

@@ -15,38 +15,43 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class HelpCommandTest {
+    private val option1: ApplicationCommandOptionData =
+        mockk {
+            every { name() } returns "option1 name"
+            every { description() } returns "option1 description"
+        }
+    private val option2: ApplicationCommandOptionData =
+        mockk {
+            every { name() } returns "option2 name"
+            every { description() } returns "option2 description"
+        }
 
-    private val option1: ApplicationCommandOptionData = mockk {
-        every { name() } returns "option1 name"
-        every { description() } returns "option1 description"
-    }
-    private val option2: ApplicationCommandOptionData = mockk {
-        every { name() } returns "option2 name"
-        every { description() } returns "option2 description"
-    }
-
-    private val cmd1: ApplicationCommandRequest = mockk {
-        every { name() } returns "cmd1 name"
-        every { description().isAbsent } returns false
-        every { description().get() } returns "cmd1 description"
-        every { options() } returns Possible.absent()
-    }
-    private val cmd2: ApplicationCommandRequest = mockk {
-        every { name() } returns "cmd2 name"
-        every { description().isAbsent } returns false
-        every { description().get() } returns "cmd2 description"
-        every { options() } returns Possible.of(
-            listOf(
-                option1,
-                option2
-            )
-        )
-    }
-    private val cmd3: ApplicationCommandRequest = mockk {
-        every { name() } returns "cmd3 name"
-        every { description().get() } returns "cmd3 description"
-        every { options() } returns Possible.of(emptyList())
-    }
+    private val cmd1: ApplicationCommandRequest =
+        mockk {
+            every { name() } returns "cmd1 name"
+            every { description().isAbsent } returns false
+            every { description().get() } returns "cmd1 description"
+            every { options() } returns Possible.absent()
+        }
+    private val cmd2: ApplicationCommandRequest =
+        mockk {
+            every { name() } returns "cmd2 name"
+            every { description().isAbsent } returns false
+            every { description().get() } returns "cmd2 description"
+            every { options() } returns
+                Possible.of(
+                    listOf(
+                        option1,
+                        option2,
+                    ),
+                )
+        }
+    private val cmd3: ApplicationCommandRequest =
+        mockk {
+            every { name() } returns "cmd3 name"
+            every { description().get() } returns "cmd3 description"
+            every { options() } returns Possible.of(emptyList())
+        }
 
     private val commands: List<ApplicationCommandRequest> = listOf(cmd1, cmd2, cmd3)
 
@@ -54,16 +59,17 @@ class HelpCommandTest {
 
     @Test
     fun `should parse ApplicationCommandRequest to {name} {params} {description}`() {
-        val expectedString = """
+        val expectedString =
+            """
             $GENERIC_HELP_HEADER
             ${cmd1.toRowString()}
             ${cmd2.toRowString()}
             ${cmd3.toRowString()}
-        """.trimIndent()
+            """.trimIndent()
 
         assertEquals(
             expectedString,
-            command.getGenericHelpMessage()
+            command.getGenericHelpMessage(),
         )
     }
 
@@ -76,7 +82,7 @@ class HelpCommandTest {
 
         assertEquals(
             command.getGenericHelpMessage(),
-            response.content().get()
+            response.content().get(),
         )
     }
 
@@ -87,9 +93,9 @@ class HelpCommandTest {
         assertEquals(
             String.format(
                 COMMAND_NOT_FOUND_TEMPLATE,
-                cmd
+                cmd,
             ),
-            command.getResponseString(cmd)
+            command.getResponseString(cmd),
         )
     }
 
@@ -99,7 +105,7 @@ class HelpCommandTest {
 
         assertEquals(
             expectedString,
-            command.getResponseString(cmd2.name())
+            command.getResponseString(cmd2.name()),
         )
     }
 
@@ -109,7 +115,7 @@ class HelpCommandTest {
 
         assertEquals(
             expectedString,
-            command.getResponseString(cmd1.name())
+            command.getResponseString(cmd1.name()),
         )
     }
 }
