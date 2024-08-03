@@ -24,20 +24,23 @@ class GoogleApiConfig
     ) {
         @Bean
         fun sheets(): Sheets =
-            Sheets.Builder(netHttpTransport, jsonFactory, credentialV2)
+            Sheets
+                .Builder(netHttpTransport, jsonFactory, credentialV2)
                 .setApplicationName(APP_NAME)
                 .build()
 
         @Bean
         fun drive(): Drive =
-            Drive.Builder(netHttpTransport, jsonFactory, credentialV2)
+            Drive
+                .Builder(netHttpTransport, jsonFactory, credentialV2)
                 .setApplicationName(APP_NAME)
                 .build()
 
         @Bean
         fun secretManagerServiceClient(): SecretManagerServiceClient =
             SecretManagerServiceClient.create(
-                SecretManagerServiceSettings.newBuilder()
+                SecretManagerServiceSettings
+                    .newBuilder()
                     .setCredentialsProvider {
                         credentials
                     }.build(),
