@@ -21,6 +21,7 @@ sonarqube {
         property("sonar.projectKey", "pl9ed_game-picker")
         property("sonar.organization", "pl9ed")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.exclusions", sonarExclusions.joinToString(","))
     }
 }
 
@@ -93,3 +94,14 @@ tasks.withType<JacocoReport> {
         )
     }
 }
+
+var sonarExclusions =
+    arrayOf(
+        "**/GamePickerApplication.kt",
+        "**/CommandListener.kt",
+        "**/com/tubefans/gamepicker/config/**/*",
+        "**/GlobalCommandRegistrar.kt",
+        "**/com/tubefans/gamepicker/repositories/**/*",
+        "**/com/tubefans/gamepicker/exceptions/**/*",
+        "**/com/tubefans/gamepicker/listeners/**/*",
+    )
