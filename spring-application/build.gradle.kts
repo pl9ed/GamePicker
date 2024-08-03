@@ -1,4 +1,3 @@
-
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -29,31 +28,30 @@ repositories {
 }
 
 dependencies {
-    implementation(springLibs.starterWeb)
-    implementation(springLibs.jacksonModuleKotlin)
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation(discord4jLibs.discord4jCore)
-    implementation(discord4jLibs.kotlinReflect)
-    implementation(discord4jLibs.kotlinXCoroutinesReactor)
-    implementation(discord4jLibs.reactorKotlinExtensions)
+    implementation("com.discord4j:discord4j-core:3.2.4")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
-    implementation(googleLibs.apiClient)
-    implementation(googleLibs.apiServicesSheets)
-    implementation(googleLibs.drive)
-    implementation(googleLibs.oauthClient)
-    implementation(googleLibs.secretsManager)
+    implementation("com.google.api-client:google-api-client:1.25.0")
+    implementation("com.google.apis:google-api-services-sheets:v4-rev612-1.25.0")
+    implementation("com.google.apis:google-api-services-drive:v3-rev197-1.25.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+    implementation("com.google.cloud:google-cloud-secretmanager:2.17.0")
 
-    // TODO: move to library
     implementation(platform("software.amazon.awssdk:bom:2.23.11"))
     implementation("software.amazon.awssdk:aws-core")
     implementation("software.amazon.awssdk:ec2")
 
-    developmentOnly(springLibs.devtools)
-    testImplementation(libs.kotlinxCoroutinesTest)
-    testImplementation(springLibs.mockK)
-    testImplementation(springLibs.starterTest)
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-inline:3.11.2")
-    testImplementation(discord4jLibs.reactorTest)
+    testImplementation("io.projectreactor:reactor-test:3.6.8")
 }
 
 tasks.withType<KotlinCompile> {
