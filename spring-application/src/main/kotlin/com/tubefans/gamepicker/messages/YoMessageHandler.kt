@@ -30,14 +30,22 @@ final class YoMessageHandler
 
         init {
             logger.info("Subscribing to message events ${this::class.simpleName}")
-            client.eventDispatcher.on(MessageCreateEvent::class.java).filter { shouldRespond(it) }.flatMap { handle(it) }
+            client.eventDispatcher
+                .on(MessageCreateEvent::class.java)
+                .filter { shouldRespond(it) }
+                .flatMap { handle(it) }
                 .subscribe()
         }
 
         override fun getMessageString(): String = MESSAGE_STRING
 
         override fun shouldRespond(message: MessageCreateEvent): Boolean {
-            if (message.message.content.uppercase().trim() != getMessageString()) return false
+            if (message.message.content
+                    .uppercase()
+                    .trim() != getMessageString()
+            ) {
+                return false
+            }
             logger.info("Message matched string, checking if sender is bot")
 
             if (message.member.get().isBot) return false
@@ -49,16 +57,17 @@ final class YoMessageHandler
             return count != 0 && count % yoCountRepository.getThreshold() == 0
         }
 
-        override fun handle(event: MessageCreateEvent): Mono<Void> {
-            return event.message.channel.map {
-                logger.info("Creating message in ${it.id}")
-                it.createMessage(createResponse())
-            }.doOnSuccess {
-                logger.info("Sent response message to ${getMessageString()}")
-            }.doOnError { e ->
-                logger.error("Failed to send response to ${getMessageString()}", e)
-            }.block()?.then() ?: Mono.empty()
-        }
+        override fun handle(event: MessageCreateEvent): Mono<Void> =
+            event.message.channel
+                .map {
+                    logger.info("Creating message in ${it.id}")
+                    it.createMessage(createResponse())
+                }.doOnSuccess {
+                    logger.info("Sent response message to ${getMessageString()}")
+                }.doOnError { e ->
+                    logger.error("Failed to send response to ${getMessageString()}", e)
+                }.block()
+                ?.then() ?: Mono.empty()
 
         private fun createResponse() =
             String.format(
