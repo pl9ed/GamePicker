@@ -32,13 +32,6 @@ dependencies {
     implementation(project(":persistence:ports"))
     implementation(project(":persistence:google-sheets-persistence"))
 
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.cloud:google-cloud-secretmanager:2.17.0")
 
@@ -47,11 +40,6 @@ dependencies {
     implementation("software.amazon.awssdk:ec2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-    testImplementation("io.mockk:mockk:1.13.5")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.mockito:mockito-inline:3.11.2")
-    testImplementation("io.projectreactor:reactor-test:3.6.8")
 }
 
 tasks.withType<KotlinCompile> {
