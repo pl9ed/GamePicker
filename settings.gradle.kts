@@ -23,3 +23,4 @@ dependencyResolutionManagement {
 
 include("spring-application")
 include("core")
+include("arbitragexiv")
