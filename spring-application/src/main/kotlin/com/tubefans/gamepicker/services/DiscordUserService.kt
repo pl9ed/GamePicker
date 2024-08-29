@@ -31,15 +31,16 @@ class DiscordUserService
             runBlocking {
                 val userSet = mutableSetOf<DiscordUser>()
                 val failedSet = mutableSetOf<String>()
-                names.map { name ->
-                    async {
-                        try {
-                            userSet.add(findOneByName(name))
-                        } catch (e: NoSuchElementException) {
-                            failedSet.add(name)
+                names
+                    .map { name ->
+                        async {
+                            try {
+                                userSet.add(findOneByName(name))
+                            } catch (e: NoSuchElementException) {
+                                failedSet.add(name)
+                            }
                         }
-                    }
-                }.awaitAll()
+                    }.awaitAll()
 
                 Pair(userSet, failedSet)
             }

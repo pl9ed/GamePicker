@@ -6,7 +6,7 @@ plugins {
     id("org.sonarqube") version "5.0.0.4638"
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.7.22"
+    kotlin("jvm") version "2.0.20"
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
 }
@@ -30,6 +30,7 @@ repositories {
 dependencies {
     implementation(project(":core"))
     implementation(project(":persistence:ports"))
+    implementation(project(":persistence:google-sheets-persistence"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -38,9 +39,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
-    implementation("com.google.api-client:google-api-client:1.25.0")
-    implementation("com.google.apis:google-api-services-sheets:v4-rev612-1.25.0")
-    implementation("com.google.apis:google-api-services-drive:v3-rev197-1.25.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.cloud:google-cloud-secretmanager:2.17.0")
 

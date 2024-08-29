@@ -40,7 +40,11 @@ class GoogleSheetsService
             range: String,
         ): List<List<Any>> =
             try {
-                sheets.spreadsheets().values()[id, range].execute().getValues()
+                sheets
+                    .spreadsheets()
+                    .values()[id, range]
+                    .execute()
+                    .getValues()
             } catch (e: HttpResponseException) {
                 logger.error("Failed to get sheet from Google API", e)
                 emptyList()
@@ -60,12 +64,14 @@ class GoogleSheetsService
             val gameIndexMap = mutableMapOf<Int, String>()
 
             sheet[0].forEachIndexed { i, game ->
-                game.toString().takeIf {
-                    it.isNotBlank()
-                }?.let {
-                    logger.info("{} at {}", it, i)
-                    gameIndexMap[i] = it
-                }
+                game
+                    .toString()
+                    .takeIf {
+                        it.isNotBlank()
+                    }?.let {
+                        logger.info("{} at {}", it, i)
+                        gameIndexMap[i] = it
+                    }
             }
 
             val maxCol = sheet[0].size
@@ -100,7 +106,10 @@ class GoogleSheetsService
             logger.info("Attempting to write to sheet at range {} for values {}", range, values.joinToString { it.joinToString() })
             val body = ValueRange().setValues(values)
             try {
-                sheets.spreadsheets().values().update(id, range, body)
+                sheets
+                    .spreadsheets()
+                    .values()
+                    .update(id, range, body)
                     .setValueInputOption("USER_ENTERED")
                     .execute()
             } catch (e: GoogleJsonResponseException) {

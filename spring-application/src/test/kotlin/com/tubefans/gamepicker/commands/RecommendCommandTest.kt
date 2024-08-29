@@ -38,8 +38,14 @@ class RecommendCommandTest {
             String.format(
                 responseTemplate,
                 2,
-                "a", 9, "a", "b, empty",
-                "b", 5, "a", "b, empty",
+                "a",
+                9,
+                "a",
+                "b, empty",
+                "b",
+                5,
+                "a",
+                "b, empty",
             ),
             command.getReplyString(gameScoreMap, 2),
         )
@@ -94,14 +100,15 @@ class RecommendCommandTest {
             """.trimIndent()
 
         assertEquals(
-            String.format(
-                singleResponseTemplate,
-                1,
-                "a",
-                9,
-                "a",
-                "b, empty",
-            ).trimIndent(),
+            String
+                .format(
+                    singleResponseTemplate,
+                    1,
+                    "a",
+                    9,
+                    "a",
+                    "b, empty",
+                ).trimIndent(),
             command.getReplyString(gameScoreMap, 1),
         )
     }

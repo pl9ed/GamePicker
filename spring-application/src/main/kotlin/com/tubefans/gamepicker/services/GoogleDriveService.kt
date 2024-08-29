@@ -17,7 +17,8 @@ class GoogleDriveService
         }
 
         fun getLastUpdatedTime(id: String = SHEET_ID): DateTime =
-            drive.Files()
+            drive
+                .Files()
                 .get(id)
                 .setFields(MODIFIED_TIME_KEY)
                 .execute()
