@@ -24,3 +24,6 @@ dependencyResolutionManagement {
 include("spring-application")
 include("core")
 include("arbitragexiv")
+include(":persistence:ports")
+include(":persistence:google-sheets-persistence")
+include(":persistence:mongo-persistence")

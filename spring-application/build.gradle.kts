@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "com.tubefans"
-version = "0.0.1"
+version = "1.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 sonarqube {
@@ -29,6 +29,7 @@ repositories {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":persistence:ports"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
