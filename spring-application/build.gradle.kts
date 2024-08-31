@@ -40,6 +40,16 @@ dependencies {
     implementation("software.amazon.awssdk:ec2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation(kotlin("stdlib-jdk8"))
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test:3.6.8")
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("org.mockito:mockito-inline:3.11.2")
 }
 
 tasks.withType<KotlinCompile> {
