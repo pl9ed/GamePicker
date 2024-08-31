@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm")
 }
 
 group = "com.tubefans.gamepicker"

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm")
 }
 
 group = "com.tubefans.gamepicker"
@@ -25,8 +25,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(17)
 }

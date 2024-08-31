@@ -5,10 +5,6 @@ plugins {
 
 group = "com.tubefans.gamepicker"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":core"))
 }
