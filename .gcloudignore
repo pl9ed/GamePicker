@@ -13,5 +13,13 @@
 .git
 .gitignore
 
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+.kotlin/
+
 # Target directory for maven builds
 target/
