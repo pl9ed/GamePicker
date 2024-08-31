@@ -25,7 +25,8 @@ class GetServerCommand
 
         override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
             val serverName = event.getStringOption(NAME_KEY)
-            return event.deferReply()
+            return event
+                .deferReply()
                 .then(ec2Service.getInstanceStatus(serverName))
                 .map { status ->
                     status.toDisplayString(serverName)

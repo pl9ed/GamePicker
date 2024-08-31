@@ -53,7 +53,8 @@ class StartCommandTest : Discord4JEventTest() {
         val expectedMessage = "Failed to start instance: $errorMessage"
         every { mockService.startInstance(serverName) }.returns(
             Mono.error(
-                AwsServiceException.builder()
+                AwsServiceException
+                    .builder()
                     .message(errorMessage)
                     .build(),
             ),

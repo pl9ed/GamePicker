@@ -30,7 +30,8 @@ class StopServerCommand
 
         override fun handle(event: ChatInputInteractionEvent): Mono<Void> {
             val serverName = event.getStringOption(NAME_KEY)
-            return event.deferReply()
+            return event
+                .deferReply()
                 .then(ec2Service.stopInstance(serverName))
                 .map { instanceId ->
                     "Stopping $serverName running on $instanceId"

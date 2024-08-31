@@ -1,12 +1,8 @@
 plugins {
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm")
 }
 
 group = "com.tubefans.gamepicker"
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     api(discord4jLibs.discord4jCore)
@@ -25,8 +21,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(17)
 }

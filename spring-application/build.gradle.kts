@@ -6,7 +6,7 @@ plugins {
     id("org.sonarqube") version "5.0.0.4638"
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm")
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
 }
@@ -23,24 +23,18 @@ sonarqube {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+
     implementation(project(":core"))
     implementation(project(":persistence:ports"))
     implementation(project(":persistence:google-persistence"))
+    implementation(project(":aws"))
 
     implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
 
-    implementation(platform("software.amazon.awssdk:bom:2.23.11"))
-    implementation("software.amazon.awssdk:aws-core")
-    implementation("software.amazon.awssdk:ec2")
-
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    implementation(kotlin("stdlib-jdk8"))
 
     testImplementation(springLibs.starterTest)
     testImplementation(libs.reactorTest)
