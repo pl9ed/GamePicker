@@ -3,7 +3,4 @@ discord4jVersion = "3.2.4"
 
 [libraries]
 discord4jCore = { group = "com.discord4j", name = "discord4j-core", version.ref = "discord4jVersion" }
-kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
-kotlinXCoroutinesReactor = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions" }
-reactorKotlinExtensions = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor" }
-reactorTest = { group = "io.projectreactor", name = "reactor-test" }
+
