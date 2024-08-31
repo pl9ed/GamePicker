@@ -16,6 +16,11 @@ class GoogleSheetsService
     ) {
         private val logger = LoggerFactory.getLogger(this::class.java)
 
+        fun getValueRange(
+            id: String,
+            range: String,
+        ) = googleSheetsRepository.getValueRange(id, range)
+
         /**
          * @param id Google Sheet id
          * @param range String representation of range, e.x. 'A1:A5'
