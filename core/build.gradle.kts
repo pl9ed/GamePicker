@@ -4,10 +4,6 @@ plugins {
 
 group = "com.tubefans.gamepicker"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     api(discord4jLibs.discord4jCore)
     api(springLibs.starterWebflux)

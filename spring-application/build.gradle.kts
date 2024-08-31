@@ -23,10 +23,6 @@ sonarqube {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project(":core"))
     implementation(project(":persistence:ports"))
