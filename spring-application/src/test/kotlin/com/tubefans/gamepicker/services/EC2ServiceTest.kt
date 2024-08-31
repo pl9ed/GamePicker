@@ -165,7 +165,8 @@ class EC2ServiceTest {
         @Test
         fun `should propagate exceptions from ec2client calls`() {
             every { mockEc2Client.startInstances(ofType(StartInstancesRequest::class)) } throws
-                AwsServiceException.builder()
+                AwsServiceException
+                    .builder()
                     .build()
 
             assertThrows(AwsServiceException::class.java) {
@@ -248,7 +249,8 @@ class EC2ServiceTest {
                 }
 
             val expectedRequest =
-                DescribeInstanceStatusRequest.builder()
+                DescribeInstanceStatusRequest
+                    .builder()
                     .instanceIds(serverId)
                     .includeAllInstances(true)
                     .build()
@@ -274,7 +276,8 @@ class EC2ServiceTest {
         @Test
         fun `should propagate exception if describeInstanceStatus() fails`() {
             val expectedRequest =
-                DescribeInstanceStatusRequest.builder()
+                DescribeInstanceStatusRequest
+                    .builder()
                     .instanceIds(serverId)
                     .includeAllInstances(true)
                     .build()
@@ -292,7 +295,8 @@ class EC2ServiceTest {
         @Test
         fun `should throw AwsServiceException if response does not contain instance status when getting server status`() {
             val expectedRequest =
-                DescribeInstanceStatusRequest.builder()
+                DescribeInstanceStatusRequest
+                    .builder()
                     .instanceIds(serverId)
                     .includeAllInstances(true)
                     .build()
@@ -312,7 +316,8 @@ class EC2ServiceTest {
         @Test
         fun `should throw AwsServiceException if response list is empty when getting server status`() {
             val expectedRequest =
-                DescribeInstanceStatusRequest.builder()
+                DescribeInstanceStatusRequest
+                    .builder()
                     .instanceIds(serverId)
                     .includeAllInstances(true)
                     .build()
@@ -355,7 +360,8 @@ class EC2ServiceTest {
             }
 
         private val expectedRequest: DescribeInstanceStatusRequest =
-            DescribeInstanceStatusRequest.builder()
+            DescribeInstanceStatusRequest
+                .builder()
                 .instanceIds(serverId)
                 .includeAllInstances(true)
                 .build()
@@ -387,13 +393,14 @@ class EC2ServiceTest {
 
             every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returns successResponse
 
-            StepVerifier.create(
-                service.sendConfirmationMessage(
-                    serverName,
-                    Mono.just(channel),
-                    desiredState,
-                ),
-            ).verifyComplete()
+            StepVerifier
+                .create(
+                    service.sendConfirmationMessage(
+                        serverName,
+                        Mono.just(channel),
+                        desiredState,
+                    ),
+                ).verifyComplete()
 
             verify(exactly = 1) { mockEc2Client.describeInstanceStatus(expectedRequest) }
             Mockito.verify(channel, times(1)).createMessage(expectedMessage)
@@ -417,13 +424,14 @@ class EC2ServiceTest {
             every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returnsMany responses
 
             val stepVerifier =
-                StepVerifier.withVirtualTime {
-                    service.sendConfirmationMessage(
-                        serverName,
-                        Mono.just(channel),
-                        InstanceStateName.STOPPED,
-                    )
-                }.expectSubscription()
+                StepVerifier
+                    .withVirtualTime {
+                        service.sendConfirmationMessage(
+                            serverName,
+                            Mono.just(channel),
+                            InstanceStateName.STOPPED,
+                        )
+                    }.expectSubscription()
 
             var attempts = 0
 
@@ -442,13 +450,14 @@ class EC2ServiceTest {
         fun `should not send follow up if getInstanceStatus() fails due no matching server name`() {
             every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } throws NoSuchElementException()
 
-            StepVerifier.create(
-                service.sendConfirmationMessage(
-                    serverName,
-                    Mono.just(channel),
-                    InstanceStateName.STOPPED,
-                ),
-            ).verifyComplete()
+            StepVerifier
+                .create(
+                    service.sendConfirmationMessage(
+                        serverName,
+                        Mono.just(channel),
+                        InstanceStateName.STOPPED,
+                    ),
+                ).verifyComplete()
 
             verify(exactly = 1) { mockEc2Client.describeInstanceStatus(expectedRequest) }
             Mockito.verifyNoInteractions(channel)
@@ -459,13 +468,14 @@ class EC2ServiceTest {
             val exceptionMessage = "test exception"
             every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } throws RuntimeException(exceptionMessage)
 
-            StepVerifier.create(
-                service.sendConfirmationMessage(
-                    serverName,
-                    Mono.just(channel),
-                    InstanceStateName.STOPPED,
-                ),
-            ).verifyComplete()
+            StepVerifier
+                .create(
+                    service.sendConfirmationMessage(
+                        serverName,
+                        Mono.just(channel),
+                        InstanceStateName.STOPPED,
+                    ),
+                ).verifyComplete()
 
             verify(exactly = 1) { mockEc2Client.describeInstanceStatus(expectedRequest) }
             Mockito.verify(channel, times(1)).createMessage(exceptionMessage)
@@ -485,13 +495,14 @@ class EC2ServiceTest {
             every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returnsMany responses
 
             val stepVerifier =
-                StepVerifier.withVirtualTime {
-                    service.sendConfirmationMessage(
-                        serverName,
-                        Mono.just(channel),
-                        InstanceStateName.STOPPED,
-                    )
-                }.expectSubscription()
+                StepVerifier
+                    .withVirtualTime {
+                        service.sendConfirmationMessage(
+                            serverName,
+                            Mono.just(channel),
+                            InstanceStateName.STOPPED,
+                        )
+                    }.expectSubscription()
 
             var attempts = 0
 
@@ -513,13 +524,14 @@ class EC2ServiceTest {
 
             every { mockEc2Client.describeInstanceStatus(eq(expectedRequest)) } returns failureResponse
 
-            StepVerifier.withVirtualTime {
-                service.sendConfirmationMessage(
-                    serverName,
-                    Mono.just(channel),
-                    InstanceStateName.STOPPED,
-                )
-            }.expectSubscription()
+            StepVerifier
+                .withVirtualTime {
+                    service.sendConfirmationMessage(
+                        serverName,
+                        Mono.just(channel),
+                        InstanceStateName.STOPPED,
+                    )
+                }.expectSubscription()
                 .expectNoEvent(Duration.ofSeconds(TOTAL_RETRY_DURATION))
                 .expectNext()
                 .verifyComplete()

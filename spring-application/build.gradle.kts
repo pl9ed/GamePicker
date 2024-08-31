@@ -24,19 +24,17 @@ sonarqube {
 }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+
     implementation(project(":core"))
     implementation(project(":persistence:ports"))
     implementation(project(":persistence:google-persistence"))
+    implementation(project(":aws"))
 
     implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
 
-    implementation(platform("software.amazon.awssdk:bom:2.23.11"))
-    implementation("software.amazon.awssdk:aws-core")
-    implementation("software.amazon.awssdk:ec2")
-
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    implementation(kotlin("stdlib-jdk8"))
 
     testImplementation(springLibs.starterTest)
     testImplementation(libs.reactorTest)
