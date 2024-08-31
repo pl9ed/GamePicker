@@ -4,13 +4,11 @@ import com.tubefans.gamepicker.cache.GoogleSheetCache
 import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.SHEET_ID
 import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.YO_RANGE
 import com.tubefans.gamepicker.repositories.YoCountRepository
-import com.tubefans.gamepicker.services.GoogleSheetsService
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Service
 class YoCountService
@@ -23,7 +21,7 @@ class YoCountService
             const val DEFAULT_THRESHOLD = 50
             val DEFAULT_INIT_DATE: LocalDate = LocalDate.of(2023, 9, 1)
             const val COUNT_CELL = "B1:B1"
-            val remoteDateFormat: SimpleDateFormat = SimpleDateFormat("yyyy/MM/dd")
+            val remoteDateFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
         }
 
         private val logger = LogManager.getLogger()
@@ -35,7 +33,7 @@ class YoCountService
                 initDate!!
             } catch (e: NullPointerException) {
                 LocalDate
-                    .ofInstant(remoteDateFormat.parse(googleSheetCache.yoSheet[1][1]).toInstant(), ZoneId.systemDefault())
+                    .parse(googleSheetCache.yoSheet[1][1], remoteDateFormat)
                     .also {
                         initDate = it
                     }
@@ -44,17 +42,26 @@ class YoCountService
                 DEFAULT_INIT_DATE
             }
 
-        override fun getThreshold(): Int =
+        override fun getThreshold(): Int {
+            var error: Throwable? = null
             try {
                 threshold!!
             } catch (e: NullPointerException) {
-                googleSheetCache.yoSheet[2][1].toInt().also {
-                    threshold = it
+                try {
+                    googleSheetCache.yoSheet[2][1].toInt().also {
+                        threshold = it
+                    }
+                } catch (e: Throwable) {
+                    error = e
                 }
-            } catch (e: RuntimeException) {
-                logger.error("Failed to get threshold. Falling back to default of $DEFAULT_THRESHOLD", e)
-                DEFAULT_THRESHOLD
             }
+
+            if (error != null) {
+                logger.error("Failed to get threshold from Google Sheets. Falling back to default $DEFAULT_THRESHOLD", error)
+            }
+
+            return DEFAULT_THRESHOLD
+        }
 
         override fun findCount(): Int =
             try {
