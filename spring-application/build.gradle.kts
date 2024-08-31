@@ -32,24 +32,20 @@ dependencies {
     implementation(project(":persistence:ports"))
     implementation(project(":persistence:google-sheets-persistence"))
 
-    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
-    implementation("com.google.cloud:google-cloud-secretmanager:2.17.0")
+    implementation(googleLibs.oauthClient)
+    implementation(googleLibs.secretsManager)
 
     implementation(platform("software.amazon.awssdk:bom:2.23.11"))
     implementation("software.amazon.awssdk:aws-core")
     implementation("software.amazon.awssdk:ec2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
     implementation(kotlin("stdlib-jdk8"))
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.projectreactor:reactor-test:3.6.8")
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-    testImplementation("io.mockk:mockk:1.13.5")
-    testImplementation("org.mockito:mockito-inline:3.11.2")
+
+    testImplementation(springLibs.starterTest)
+    testImplementation(libs.reactorTest)
+    testImplementation(libs.kotlinxCoroutinesTest)
+    testImplementation(springLibs.mockK)
 }
 
 tasks.withType<KotlinCompile> {
