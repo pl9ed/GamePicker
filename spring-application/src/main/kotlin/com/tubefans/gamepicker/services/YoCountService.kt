@@ -1,18 +1,19 @@
-package com.tubefans.gamepicker.repositories
+package com.tubefans.gamepicker.services
 
 import com.tubefans.gamepicker.cache.GoogleSheetCache
 import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.SHEET_ID
 import com.tubefans.gamepicker.cache.GoogleSheetCache.Companion.YO_RANGE
+import com.tubefans.gamepicker.repositories.YoCountRepository
 import com.tubefans.gamepicker.services.GoogleSheetsService
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 
-@Component
-class GoogleSheetYoCountRepository
+@Service
+class YoCountService
     @Autowired
     constructor(
         private val googleSheetCache: GoogleSheetCache,
