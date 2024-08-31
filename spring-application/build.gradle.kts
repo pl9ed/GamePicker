@@ -6,13 +6,13 @@ plugins {
     id("org.sonarqube") version "5.0.0.4638"
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.7.22"
+    kotlin("jvm") version "2.0.20"
     kotlin("plugin.spring") version "1.7.22"
     kotlin("plugin.jpa") version "1.7.22"
 }
 
 group = "com.tubefans"
-version = "0.0.1"
+version = "1.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 sonarqube {
@@ -28,30 +28,24 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation(project(":core"))
+    implementation(project(":persistence:ports"))
+    implementation(project(":persistence:google-sheets-persistence"))
 
-    implementation("com.discord4j:discord4j-core:3.2.4")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-
-    implementation("com.google.api-client:google-api-client:1.25.0")
-    implementation("com.google.apis:google-api-services-sheets:v4-rev612-1.25.0")
-    implementation("com.google.apis:google-api-services-drive:v3-rev197-1.25.0")
-    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
-    implementation("com.google.cloud:google-cloud-secretmanager:2.17.0")
+    implementation(googleLibs.oauthClient)
+    implementation(googleLibs.secretsManager)
 
     implementation(platform("software.amazon.awssdk:bom:2.23.11"))
     implementation("software.amazon.awssdk:aws-core")
     implementation("software.amazon.awssdk:ec2")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-    testImplementation("io.mockk:mockk:1.13.5")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.mockito:mockito-inline:3.11.2")
-    testImplementation("io.projectreactor:reactor-test:3.6.8")
+    implementation(kotlin("stdlib-jdk8"))
+
+    testImplementation(springLibs.starterTest)
+    testImplementation(libs.reactorTest)
+    testImplementation(libs.kotlinxCoroutinesTest)
+    testImplementation(springLibs.mockK)
 }
 
 tasks.withType<KotlinCompile> {

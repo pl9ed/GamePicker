@@ -1,5 +1,10 @@
 [versions]
-kotlinxCoroutineTestVersion = "1.7.1"
+kotinxCoroutinesVersion = "1.8.1"
+kotlinxCoroutineTestVersion = "1.8.1"
 
 [libraries]
+kotlinReflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
+kotlinXCoroutinesReactor = { group = "io.projectreactor.kotlin", name = "reactor-kotlin-extensions" }
+reactorKotlinExtensions = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactor", version.ref = "kotinxCoroutinesVersion" }
+reactorTest = { group = "io.projectreactor", name = "reactor-test" }
 kotlinxCoroutinesTest = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutineTestVersion" }

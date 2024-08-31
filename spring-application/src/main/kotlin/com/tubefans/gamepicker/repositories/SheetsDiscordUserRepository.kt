@@ -4,10 +4,10 @@ import com.tubefans.gamepicker.cache.GoogleSheetCache
 import com.tubefans.gamepicker.dto.DiscordUser
 import discord4j.common.util.Snowflake
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import java.util.Optional
 
-@Component
+@Repository
 class SheetsDiscordUserRepository
     @Autowired
     constructor(

@@ -1,3 +1,7 @@
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+}
+
 rootProject.name = "GamePicker"
 
 dependencyResolutionManagement {
@@ -18,3 +22,8 @@ dependencyResolutionManagement {
 }
 
 include("spring-application")
+include("core")
+include("arbitragexiv")
+include(":persistence:ports")
+include(":persistence:google-sheets-persistence")
+include(":persistence:mongo-persistence")

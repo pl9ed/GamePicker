@@ -4,7 +4,7 @@ import com.tubefans.gamepicker.dto.DiscordUser
 import java.util.SortedSet
 
 class GameScoreMap(
-    val discordUsers: Collection<DiscordUser>,
+    private val discordUsers: Collection<DiscordUser>,
 ) {
     companion object {
         const val MAX_SCORE = 10L

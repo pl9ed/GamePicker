@@ -50,22 +50,24 @@ class UserCache
         private fun updateUsers() =
             runBlocking {
                 logger.info("Updating users from google sheets")
-                googleSheetsService.mapToScores(googleSheetCache.dataSheet)
+                googleSheetsService
+                    .mapToScores(googleSheetCache.dataSheet)
                     .map { (unformattedName, games) ->
                         val name = unformattedName.uppercase()
                         val discordUser = discordUserRepository.findOneByName(name).get()
-                        games.map { (unformattedGame, score) ->
-                            async {
-                                val game = unformattedGame.uppercase()
-                                logger.info(
-                                    "Updating {}[{}]={}",
-                                    name,
-                                    game,
-                                    score,
-                                )
-                                discordUser.gameMap[game] = score
-                            }
-                        }.awaitAll()
+                        games
+                            .map { (unformattedGame, score) ->
+                                async {
+                                    val game = unformattedGame.uppercase()
+                                    logger.info(
+                                        "Updating {}[{}]={}",
+                                        name,
+                                        game,
+                                        score,
+                                    )
+                                    discordUser.gameMap[game] = score
+                                }
+                            }.awaitAll()
                         logger.info("Replacing {}", discordUser.name)
                         users.removeIf { it.discordId == discordUser.discordId }
                         users.add(discordUser)

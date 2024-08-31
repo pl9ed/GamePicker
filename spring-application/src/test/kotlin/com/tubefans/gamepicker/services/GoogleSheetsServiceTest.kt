@@ -3,6 +3,7 @@ package com.tubefans.gamepicker.services
 import com.google.api.services.sheets.v4.Sheets
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +25,8 @@ class GoogleSheetsServiceTest {
         val text = String(javaClass.getResourceAsStream(testSheetPath)!!.readBytes())
         text.split("\n").forEach { line ->
             val row =
-                line.replace("\r", "")
+                line
+                    .replace("\r", "")
                     .replace("\n", "")
                     .split(",")
                     .toMutableList()
@@ -35,7 +37,8 @@ class GoogleSheetsServiceTest {
     @BeforeEach
     fun setup() {
         every {
-            sheets.spreadsheets()
+            sheets
+                .spreadsheets()
                 .values()
                 .get(sheetId, range)
                 .execute()
@@ -131,5 +134,34 @@ class GoogleSheetsServiceTest {
     @Test
     fun `should generate empty map for blank sheets`() {
         assertTrue(googleSheetsService.mapToScores(emptyList()).isEmpty())
+    }
+
+    @Test
+    fun `should write to sheet`() {
+        every {
+            sheets
+                .spreadsheets()
+                .values()
+                .update(sheetId, range, any())
+                .setValueInputOption("USER_ENTERED")
+                .execute()
+        } returns mockk()
+
+        val values =
+            listOf(
+                listOf("1", "2", "3"),
+                listOf("4", "5", "6"),
+            )
+
+        googleSheetsService.writeRange(sheetId, range, values)
+
+        verify {
+            sheets
+                .spreadsheets()
+                .values()
+                .update(sheetId, range, any())
+                .setValueInputOption("USER_ENTERED")
+                .execute()
+        }
     }
 }
