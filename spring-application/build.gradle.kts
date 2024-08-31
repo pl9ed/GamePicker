@@ -30,7 +30,7 @@ repositories {
 dependencies {
     implementation(project(":core"))
     implementation(project(":persistence:ports"))
-    implementation(project(":persistence:google-sheets-persistence"))
+    implementation(project(":persistence:google-persistence"))
 
     implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
