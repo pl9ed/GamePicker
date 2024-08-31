@@ -67,3 +67,5 @@ out/
 credentials.json
 **/service-key.json
 tokens/
+
+.kotlin/
