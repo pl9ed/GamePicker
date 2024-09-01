@@ -24,7 +24,8 @@ class AWSConfig
 
         @Bean
         fun ec2Client(): Ec2Client =
-            Ec2Client.builder()
+            Ec2Client
+                .builder()
                 .region(Region.US_EAST_1)
                 .credentialsProvider { basicCredentials() }
                 .build()
@@ -33,12 +34,14 @@ class AWSConfig
         fun basicCredentials(): AwsCredentials =
             try {
                 val accessId =
-                    googleSecretsManager.accessSecretVersion(ACCESS_ID_KEY)
+                    googleSecretsManager
+                        .accessSecretVersion(ACCESS_ID_KEY)
                         .payload
                         .data
                         .toStringUtf8()
                 val secret =
-                    googleSecretsManager.accessSecretVersion(SECRET_KEY)
+                    googleSecretsManager
+                        .accessSecretVersion(SECRET_KEY)
                         .payload
                         .data
                         .toStringUtf8()

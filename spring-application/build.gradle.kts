@@ -6,8 +6,9 @@ plugins {
     id("org.sonarqube") version "5.0.0.4638"
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
+    id("org.jetbrains.kotlin.plugin.spring") version "2.0.20"
     kotlin("jvm")
-    kotlin("plugin.spring") version "1.7.22"
+    kotlin("plugin.allopen") version "2.0.20"
     kotlin("plugin.jpa") version "1.7.22"
 }
 
@@ -30,6 +31,7 @@ dependencies {
     implementation(project(":persistence:ports"))
     implementation(project(":persistence:google-persistence"))
     implementation(project(":aws"))
+    implementation(project(":arbitragexiv"))
 
     implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
