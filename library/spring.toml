@@ -5,7 +5,6 @@ mockKVersion = "1.13.5"
 
 [libraries]
 starterDataMongoDbReactive = { group = "org.springframework.boot", name = "spring-boot-starter-data-mongodb-reactive", version.ref = "springVersion"}
-starterDataMongoDb = { group = "org.springframework.boot", name = "spring-boot-starter-data-mongodb" }
 starterWebflux = { group = "org.springframework.boot", name = "spring-boot-starter-webflux", version.ref = "springVersion" }
 jacksonModuleKotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin" }
 # embeddedMongo = { group = "de.flapdoodle.embed", name = "de.flapdoodle.embed.mongo", version.ref = "embeddedMongoVersion" }
