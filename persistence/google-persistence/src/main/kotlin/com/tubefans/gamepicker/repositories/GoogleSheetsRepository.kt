@@ -6,10 +6,10 @@ import com.google.api.services.sheets.v4.model.ValueRange
 import org.apache.http.client.HttpResponseException
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Component
 
-@Repository
-class GoogleSheetsRepository
+@Component
+open class GoogleSheetsRepository
     @Autowired
     constructor(
         private val sheets: Sheets,
