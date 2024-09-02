@@ -11,12 +11,13 @@ import com.google.auth.Credentials
 import com.google.auth.oauth2.GoogleCredentials
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.util.ResourceUtils
 import java.io.FileInputStream
 
 @Configuration
 class OAuthConfig {
     companion object {
-        const val CREDENTIALS_FILE = "service-key.json"
+        const val CREDENTIALS_FILE_PATH = "service-key.json"
         val scopes: List<String> =
             listOf(
                 SheetsScopes.SPREADSHEETS,
@@ -35,11 +36,13 @@ class OAuthConfig {
 
     @Bean
     fun getCredentialsV2(netHttpTransport: NetHttpTransport): Credential =
-        GoogleCredential.fromStream(FileInputStream(CREDENTIALS_FILE))
+        GoogleCredential
+            .fromStream(FileInputStream(ResourceUtils.getFile("classpath:$CREDENTIALS_FILE_PATH")))
             .createScoped(scopes)
 
     @Bean
     fun getCredentials(): Credentials =
-        GoogleCredentials.fromStream(FileInputStream(CREDENTIALS_FILE))
+        GoogleCredentials
+            .fromStream(FileInputStream(ResourceUtils.getFile("classpath:$CREDENTIALS_FILE_PATH")))
             .createScoped(scopes)
 }
