@@ -1,4 +1,4 @@
-package com.tubefans.gamepicker.models
+package com.tubefans.arbitragexiv.models
 
 data class UserItemList(
     val userId: String? = null,

@@ -1,8 +1,8 @@
 package com.tubefans.arbitragexiv.controllers
 
 import com.tubefans.arbitragexiv.dto.AddItemRequest
+import com.tubefans.arbitragexiv.models.UserItemList
 import com.tubefans.arbitragexiv.services.UserItemListService
-import com.tubefans.gamepicker.models.UserItemList
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

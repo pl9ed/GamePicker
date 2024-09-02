@@ -1,8 +1,8 @@
 package com.tubefans.arbitragexiv.services
 
 import com.tubefans.arbitragexiv.dto.AddItemRequest
+import com.tubefans.arbitragexiv.models.UserItemList
 import com.tubefans.arbitragexiv.repositories.UserItemListRepository
-import com.tubefans.gamepicker.models.UserItemList
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import kotlin.reflect.full.memberProperties

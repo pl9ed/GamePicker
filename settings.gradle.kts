@@ -22,9 +22,10 @@ dependencyResolutionManagement {
 }
 
 include("spring-application")
-include("core")
 include("arbitragexiv")
+include("aws")
 include(":persistence:ports")
 include(":persistence:google-persistence")
 include(":persistence:mongo-persistence")
-include("aws")
+include("core:arbitragexiv")
+include("core:gamepicker")

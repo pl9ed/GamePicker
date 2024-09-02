@@ -6,7 +6,7 @@ plugins {
 group = "com.tubefans.gamepicker"
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":core:arbitragexiv"))
     implementation(project(":aws"))
     implementation(project(":persistence:mongo-persistence"))
     implementation(googleLibs.secretsManager)

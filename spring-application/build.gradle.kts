@@ -27,7 +27,7 @@ sonarqube {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(project(":core"))
+    implementation(project(":core:gamepicker"))
     implementation(project(":persistence:ports"))
     implementation(project(":persistence:google-persistence"))
     implementation(project(":aws"))
@@ -35,6 +35,7 @@ dependencies {
 
     implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
+    implementation(libs.kotlinXCoroutinesReactor)
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 

@@ -6,7 +6,7 @@ plugins {
 group = "com.tubefans.gamepicker"
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":core:gamepicker"))
 
     api(platform("software.amazon.awssdk:bom:2.23.11"))
     api("software.amazon.awssdk:aws-core")
