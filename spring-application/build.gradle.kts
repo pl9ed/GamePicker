@@ -2,8 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
-    id("jacoco")
-    id("org.sonarqube") version "5.0.0.4638"
     id("org.springframework.boot") version "3.0.6"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.jetbrains.kotlin.plugin.spring") version "2.0.20"
@@ -50,35 +48,5 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
-    }
-}
-
-tasks.withType<Test> {
-    filter {
-        excludeTestsMatching("*.integration.*")
-    }
-}
-
-tasks.jacocoTestReport {
-    dependsOn("test")
-    reports {
-        xml.required.set(true)
-    }
-}
-
-tasks.withType<JacocoReport> {
-    afterEvaluate {
-        classDirectories.setFrom(
-            files(
-                classDirectories.files.map {
-                    fileTree(it).apply {
-                        exclude(
-                            "**/com/tubefans/gamepicker/repositories/**/*",
-                            "**/com/tubefans/gamepicker/commands/RecommendCommand.kt",
-                        )
-                    }
-                },
-            ),
-        )
     }
 }
