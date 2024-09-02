@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.tubefans.gamepicker"
+group = "com.tubefans"
 
 dependencies {
     implementation(project(":core:gamepicker"))

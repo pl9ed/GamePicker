@@ -29,6 +29,7 @@ dependencies {
 
     implementation(project(":core:gamepicker"))
     implementation(project(":persistence:ports"))
+    implementation(project(":persistence:mongo-persistence"))
     implementation(project(":persistence:google-persistence"))
     implementation(project(":aws"))
     implementation(project(":arbitragexiv"))

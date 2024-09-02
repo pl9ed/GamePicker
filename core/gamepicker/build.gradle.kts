@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.tubefans"
+group = "com.tubefans.gamepicker"
 
 dependencies {
     api(discord4jLibs.discord4jCore)
