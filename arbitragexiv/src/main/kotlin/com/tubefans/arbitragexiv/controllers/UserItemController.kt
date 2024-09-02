@@ -2,6 +2,7 @@ package com.tubefans.arbitragexiv.controllers
 
 import com.tubefans.arbitragexiv.dao.UserItemList
 import com.tubefans.arbitragexiv.dto.AddItemRequest
+import com.tubefans.arbitragexiv.dto.RemoveItemRequest
 import com.tubefans.arbitragexiv.services.UserItemListService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,11 +28,19 @@ class UserItemController(
         return userItemListService.getUserItemList(userId)
     }
 
-    @PostMapping("/add")
+    @PostMapping
     fun addItems(
         @RequestBody addRequest: AddItemRequest,
     ): Mono<UserItemList> {
         log.info("Adding items for user ${addRequest.userId}, request: $addRequest")
         return userItemListService.addItem(addRequest)
+    }
+
+    @PostMapping("/remove")
+    fun deleteItems(
+        @RequestBody removeRequest: RemoveItemRequest,
+    ): Mono<UserItemList> {
+        log.info("Removing items for user ${removeRequest.userId}, request: $removeRequest")
+        return userItemListService.removeItem(removeRequest)
     }
 }
