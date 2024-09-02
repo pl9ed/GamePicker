@@ -3,11 +3,15 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.tubefans.gamepicker"
+group = "com.tubefans"
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":core:arbitragexiv"))
     implementation(project(":aws"))
     implementation(project(":persistence:mongo-persistence"))
     implementation(googleLibs.secretsManager)
+    implementation(libs.kotlinReflect)
+
+    testImplementation(springLibs.starterTest)
+    testImplementation(libs.reactorTest)
 }

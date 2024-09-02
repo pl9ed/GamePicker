@@ -1,8 +1,8 @@
 package com.tubefans.arbitragexiv.repositories
 
-import com.tubefans.gamepicker.models.UserItemList
-import org.springframework.data.mongodb.repository.MongoRepository
+import com.tubefans.arbitragexiv.dao.UserItemList
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserItemListRepository : MongoRepository<UserItemList, String>
+interface UserItemListRepository : ReactiveMongoRepository<UserItemList, String>

@@ -27,14 +27,16 @@ sonarqube {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(project(":core"))
+    implementation(project(":core:gamepicker"))
     implementation(project(":persistence:ports"))
+    implementation(project(":persistence:mongo-persistence"))
     implementation(project(":persistence:google-persistence"))
     implementation(project(":aws"))
     implementation(project(":arbitragexiv"))
 
     implementation(googleLibs.oauthClient)
     implementation(googleLibs.secretsManager)
+    implementation(libs.kotlinXCoroutinesReactor)
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -52,7 +54,6 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform()
     filter {
         excludeTestsMatching("*.integration.*")
     }
