@@ -5,5 +5,5 @@ import com.tubefans.arbitragexiv.models.ListType
 
 data class AddItemRequest(
     @JsonProperty("user_id") val userId: String,
-    @JsonProperty("additional_items") val additionalItems: Map<ListType, List<Int>>,
+    @JsonProperty("additional_items") val additionalItems: Map<ListType, Set<Int>>,
 )
