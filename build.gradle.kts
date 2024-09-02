@@ -29,6 +29,10 @@ subprojects {
         systemProperty("rootDirPath", rootProject.projectDir.absolutePath)
     }
 
+    tasks.check {
+        dependsOn(tasks.named<JacocoReport>("jacocoTestReport"))
+    }
+
     tasks.jacocoTestReport {
         dependsOn("test")
         reports {
