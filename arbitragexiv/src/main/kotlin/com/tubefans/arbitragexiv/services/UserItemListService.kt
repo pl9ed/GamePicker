@@ -1,7 +1,7 @@
 package com.tubefans.arbitragexiv.services
 
+import com.tubefans.arbitragexiv.dao.UserItemList
 import com.tubefans.arbitragexiv.dto.AddItemRequest
-import com.tubefans.arbitragexiv.models.UserItemList
 import com.tubefans.arbitragexiv.repositories.UserItemListRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -25,7 +25,7 @@ class UserItemListService(
             ).map { originalEntity ->
                 val updatedMap = originalEntity.itemLists.toMutableMap()
                 for ((listKey, items) in request.additionalItems) {
-                    val updatedList = originalEntity.itemLists[listKey]?.toMutableList() ?: mutableListOf()
+                    val updatedList = originalEntity.itemLists[listKey]?.toMutableSet() ?: mutableSetOf()
                     updatedList.addAll(items)
                     updatedMap[listKey] = updatedList
                 }
