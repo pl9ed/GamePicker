@@ -59,6 +59,21 @@ class UserItemControllerTest {
     }
 
     @Test
+    @DisplayName("should return 404 when no map is found for a given user")
+    fun `test getItems not found`() {
+        val userId = "testUser"
+
+        Mockito.`when`(userItemListRepository.findById(userId)).thenReturn(Mono.empty())
+
+        webTestClient
+            .get()
+            .uri("/arbitragexiv/items/$userId")
+            .exchange()
+            .expectStatus()
+            .isNotFound
+    }
+
+    @Test
     @DisplayName("should add items to a user's list")
     fun `test addItems endpoint`() {
         val userId = "testUser"
@@ -80,12 +95,53 @@ class UserItemControllerTest {
     }
 
     @Test
+    @DisplayName("should handle creating and adding items to a user's list if no list exists")
+    fun `test addItems not found`() {
+        val userId = "testUser"
+        val addItemRequest = AddItemRequest(userId, mapOf(ListType.FLIP to setOf(3, 4)))
+        val expectedResponse = UserItemList(addItemRequest.userId, mapOf(ListType.FLIP to setOf(3, 4)))
+
+        Mockito.`when`(userItemListRepository.findById(userId)).thenReturn(Mono.empty())
+
+        webTestClient
+            .post()
+            .uri("/arbitragexiv/items")
+            .bodyValue(addItemRequest)
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectBody<UserItemList>()
+            .consumeWith { assertEquals(expectedResponse, it.responseBody) }
+    }
+
+    @Test
     @DisplayName("should remove items from a user's list")
     fun `test deleteItems endpoint`() {
         val userId = "testUser"
         val originalItemList = UserItemList(userId, mapOf(ListType.CRAFTING to setOf(1, 2)))
         val removeItemRequest = RemoveItemRequest(userId, mapOf(ListType.CRAFTING to setOf(1)))
         val expectedResponse = UserItemList(removeItemRequest.userId, mapOf(ListType.CRAFTING to setOf(2)))
+
+        Mockito.`when`(userItemListRepository.findById(removeItemRequest.userId)).thenReturn(Mono.just(originalItemList))
+
+        webTestClient
+            .post()
+            .uri("/arbitragexiv/items/remove")
+            .bodyValue(removeItemRequest)
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectBody<UserItemList>()
+            .consumeWith { assertEquals(expectedResponse, it.responseBody) }
+    }
+
+    @Test
+    @DisplayName("should be idempotent when removing items from a user's list")
+    fun `test deleteItems idempotency`() {
+        val userId = "testUser"
+        val originalItemList = UserItemList(userId, mapOf(ListType.CRAFTING to setOf(1, 2)))
+        val removeItemRequest = RemoveItemRequest(userId, mapOf(ListType.CRAFTING to setOf(3)))
+        val expectedResponse = UserItemList(removeItemRequest.userId, mapOf(ListType.CRAFTING to setOf(1, 2)))
 
         Mockito.`when`(userItemListRepository.findById(removeItemRequest.userId)).thenReturn(Mono.just(originalItemList))
 
