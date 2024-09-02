@@ -3,6 +3,7 @@ package com.tubefans.arbitragexiv.services
 import com.tubefans.arbitragexiv.dao.UserItemList
 import com.tubefans.arbitragexiv.dto.AddItemRequest
 import com.tubefans.arbitragexiv.dto.RemoveItemRequest
+import com.tubefans.arbitragexiv.exceptions.NotFoundException
 import com.tubefans.arbitragexiv.models.ListType
 import com.tubefans.arbitragexiv.repositories.UserItemListRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -47,7 +48,7 @@ class UserItemListServiceTest {
     }
 
     @Test
-    @DisplayName("should return empty when user item list not found")
+    @DisplayName("should return NotFoundException when user item list not found")
     fun getUserItemListReturnsEmptyWhenNotFound() {
         val userId = "user123"
         `when`(userItemListRepository.findById(userId)).thenReturn(Mono.empty())
@@ -58,7 +59,7 @@ class UserItemListServiceTest {
             .create(result)
             .then {
                 verify(userItemListRepository).findById(userId)
-            }.verifyComplete()
+            }.verifyError(NotFoundException::class.java)
     }
 
     @Test
