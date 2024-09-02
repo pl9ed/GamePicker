@@ -52,33 +52,3 @@ tasks.withType<KotlinCompile> {
         jvmTarget = "17"
     }
 }
-
-tasks.withType<Test> {
-    filter {
-        excludeTestsMatching("*.integration.*")
-    }
-}
-
-tasks.jacocoTestReport {
-    dependsOn("test")
-    reports {
-        xml.required.set(true)
-    }
-}
-
-tasks.withType<JacocoReport> {
-    afterEvaluate {
-        classDirectories.setFrom(
-            files(
-                classDirectories.files.map {
-                    fileTree(it).apply {
-                        exclude(
-                            "**/com/tubefans/gamepicker/repositories/**/*",
-                            "**/com/tubefans/gamepicker/commands/RecommendCommand.kt",
-                        )
-                    }
-                },
-            ),
-        )
-    }
-}
