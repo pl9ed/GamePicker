@@ -11,4 +11,7 @@ dependencies {
     implementation(project(":persistence:mongo-persistence"))
     implementation(googleLibs.secretsManager)
     implementation(libs.kotlinReflect)
+
+    testImplementation(springLibs.starterTest)
+    testImplementation(libs.reactorTest)
 }

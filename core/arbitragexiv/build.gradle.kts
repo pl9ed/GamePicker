@@ -15,7 +15,3 @@ dependencies {
     testApi(springLibs.mockK)
     testApi(libs.kotlinxCoroutinesTest)
 }
-
-tasks.test {
-    useJUnitPlatform()
-}
