@@ -2,6 +2,7 @@ package com.tubefans.arbitragexiv.services
 
 import com.tubefans.arbitragexiv.dao.UserItemList
 import com.tubefans.arbitragexiv.dto.AddItemRequest
+import com.tubefans.arbitragexiv.dto.RemoveItemRequest
 import com.tubefans.arbitragexiv.repositories.UserItemListRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -25,9 +26,31 @@ class UserItemListService(
             ).map { originalEntity ->
                 val updatedMap = originalEntity.itemLists.toMutableMap()
                 for ((listKey, items) in request.additionalItems) {
-                    val updatedList = originalEntity.itemLists[listKey]?.toMutableSet() ?: mutableSetOf()
-                    updatedList.addAll(items)
-                    updatedMap[listKey] = updatedList
+                    val updatedSet = originalEntity.itemLists[listKey]?.toMutableSet() ?: mutableSetOf()
+                    updatedSet.addAll(items)
+                    updatedMap[listKey] = updatedSet
+                }
+                originalEntity.copy(itemLists = updatedMap)
+            }.flatMap { updatedEntity ->
+                userItemListRepository.save(updatedEntity)
+            }
+
+    fun removeItem(request: RemoveItemRequest): Mono<UserItemList> =
+        userItemListRepository
+            .findById(request.userId)
+            .switchIfEmpty(
+                Mono.just(
+                    UserItemList(
+                        userId = request.userId,
+                        itemLists = emptyMap(),
+                    ),
+                ),
+            ).map { originalEntity ->
+                val updatedMap = originalEntity.itemLists.toMutableMap()
+                for ((listKey, items) in request.itemsToRemove) {
+                    val updatedSet = originalEntity.itemLists[listKey]?.toMutableSet() ?: mutableSetOf()
+                    updatedSet.removeAll(items)
+                    updatedMap[listKey] = updatedSet
                 }
                 originalEntity.copy(itemLists = updatedMap)
             }.flatMap { updatedEntity ->
