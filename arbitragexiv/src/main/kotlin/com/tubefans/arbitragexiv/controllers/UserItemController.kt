@@ -5,7 +5,6 @@ import com.tubefans.arbitragexiv.dto.AddItemRequest
 import com.tubefans.arbitragexiv.dto.RemoveItemRequest
 import com.tubefans.arbitragexiv.services.UserItemListService
 import org.slf4j.LoggerFactory
-import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -37,7 +36,7 @@ class UserItemController(
         return userItemListService.addItem(addRequest)
     }
 
-    @DeleteMapping
+    @PostMapping("/remove")
     fun deleteItems(
         @RequestBody removeRequest: RemoveItemRequest,
     ): Mono<UserItemList> {

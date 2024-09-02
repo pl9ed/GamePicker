@@ -38,14 +38,7 @@ class UserItemListService(
     fun removeItem(request: RemoveItemRequest): Mono<UserItemList> =
         userItemListRepository
             .findById(request.userId)
-            .switchIfEmpty(
-                Mono.just(
-                    UserItemList(
-                        userId = request.userId,
-                        itemLists = emptyMap(),
-                    ),
-                ),
-            ).map { originalEntity ->
+            .map { originalEntity ->
                 val updatedMap = originalEntity.itemLists.toMutableMap()
                 for ((listKey, items) in request.itemsToRemove) {
                     val updatedSet = originalEntity.itemLists[listKey]?.toMutableSet() ?: mutableSetOf()
@@ -55,5 +48,12 @@ class UserItemListService(
                 originalEntity.copy(itemLists = updatedMap)
             }.flatMap { updatedEntity ->
                 userItemListRepository.save(updatedEntity)
-            }
+            }.switchIfEmpty(
+                Mono.just(
+                    UserItemList(
+                        userId = request.userId,
+                        itemLists = emptyMap(),
+                    ),
+                ),
+            )
 }
