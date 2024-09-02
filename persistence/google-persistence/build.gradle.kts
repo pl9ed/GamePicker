@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    kotlin("jvm")
+    kotlin("jvm") version "2.0.20"
 }
 
 group = "com.tubefans"

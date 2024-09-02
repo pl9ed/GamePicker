@@ -39,8 +39,9 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Create credentials.json
-        run:
+        run: >
           echo "$CREDENTIALS_JSON" > "$GITHUB_WORKSPACE/service-key.json"
+          echo "$CREDENTIALS_JSON" > "$GITHUB_WORKSPACE/spring-application/src/main/resources/service-key.json"
 
       - name: Auth
         uses: google-github-actions/auth@v1
